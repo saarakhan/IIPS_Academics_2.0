@@ -51,7 +51,6 @@ export const AuthContextProvider = ({children}) =>{
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
-
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
@@ -74,6 +73,7 @@ export const AuthContextProvider = ({children}) =>{
   );
 
 }
+
 export const UserAuth = () => {
   return useContext(AuthContext);
 };
