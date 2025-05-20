@@ -1,15 +1,16 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import {Link} from "react-router-dom"
 import SignIn from "./components/SignIn/SignIn";
 import { UserAuth } from "./Context/AuthContext";
-import "./App.css";
+import { createClient } from "@supabase/supabase-js";
+import Navbar from "./components/Navbar/Navbar";
 
 function App() {
-  // const user = UserAuth();
- 
+
+
   return (
     <>
-      <SignIn/>
+    <Navbar/>
     </>
   );
 }
