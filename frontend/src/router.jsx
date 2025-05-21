@@ -1,19 +1,24 @@
-import {createBrowserRouter} from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import SignUp from "./components/SignUp/SIgnUp";
 import SignIn from "./components/SignIn/SignIn";
-import Dashboard from "./routes/Dashboard";
-import PrivateRoute from "./components/PrivateRoute";
+import Dashboard from "./Dashboard/Dashboard";
+import PrivateRoute from "./PrivateRoute/PrivateRoute"; // Optional if using protected route logic
 
-export const router = createBrowserRouter([
-  { path: "/", element: <App /> },
-  { path: "/signup", element: <SignUp /> },
-  { path: "/signin", element: <SignIn /> },
-  {
-    path: "/dashboard",
-    element: (
-      <PrivateRoute>
-        <Dashboard />
-      </PrivateRoute>
-    ),
-  },
-]);
+function Router() {
+  return (
+    <Routes>
+      <Route path="/signup" element={<SignUp />} />
+      <Route path="/signin" element={<SignIn />} />
+      <Route
+        path="/dashboard"
+        element={
+          <PrivateRoute>
+            <Dashboard />
+           </PrivateRoute>
+        }
+      />
+    </Routes>
+  );
+}
+
+export default Router;
