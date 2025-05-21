@@ -6,7 +6,8 @@ const subjects = [
         year: "3",
         semester: "6",
         teacher: "Yasmin",
-        department: "MCA"
+        department: "MCA",
+        code: "IC-2K22"
     },
     {
         id: 2,
@@ -14,7 +15,8 @@ const subjects = [
         year: "2",
         semester: "5",
         teacher: "Kirti Mathur",
-        department: "MTech"
+        department: "MTech",
+        code: "IT-2K23"
     },
     {
         id: 3,
@@ -22,7 +24,8 @@ const subjects = [
         year: "3",
         semester: "6",
         teacher: "Nitin Nagar",
-        department: "MTech"
+        department: "MTech",
+        code: "IT-2K22"
     },
     {
         id: 4,
@@ -30,7 +33,8 @@ const subjects = [
         year: "2",
         semester: "4",
         teacher: "Sonali",
-        department: "MCA"
+        department: "MCA",
+        code: "IC-2K23"
     },
     {
         id: 5,
@@ -38,7 +42,9 @@ const subjects = [
         year: "3",
         semester: "6",
         teacher: "Vivek Shriwastav",
-        department: "MTech"
+        department: "MTech",
+        code: "IT-2K22"
+
     },
     {
         id: 6,
@@ -46,7 +52,8 @@ const subjects = [
         year: "2",
         semester: "4",
         teacher: "Rahul",
-        department: "MCA"
+        department: "MCA",
+        code: "IC-2K23"
     },
 
 ];
