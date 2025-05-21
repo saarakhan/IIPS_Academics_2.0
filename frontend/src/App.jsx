@@ -1,4 +1,4 @@
- import { Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 // import SignIn from "./components/SignIn/SignIn";
