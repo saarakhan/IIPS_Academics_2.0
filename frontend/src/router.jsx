@@ -1,24 +1,30 @@
-import { Routes, Route } from "react-router-dom";
-import SignUp from "./components/SignUp/SIgnUp";
-import SignIn from "./components/SignIn/SignIn";
+import { createBrowserRouter } from 'react-router-dom';
+import SignIn from './components/SignIn/SignIn';
+import SubjectDetail from './components/academics/SubjectDetail';
+import Subject from './components/academics/Subject';
+import App from './App';
 import Dashboard from "./Dashboard/Dashboard";
-import PrivateRoute from "./PrivateRoute/PrivateRoute"; // Optional if using protected route logic
+import PrivateRoute from "./PrivateRoute/PrivateRoute";
 
-function Router() {
-  return (
-    <Routes>
-      <Route path="/signup" element={<SignUp />} />
-      <Route path="/signin" element={<SignIn />} />
-      <Route
-        path="/dashboard"
-        element={
-          <PrivateRoute>
-            <Dashboard />
-           </PrivateRoute>
-        }
-      />
-    </Routes>
-  );
-}
+export const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <App />,
+    children: [
+      { index: true, element: <Subject /> },
+      { path: 'subject/:id', element: <SubjectDetail /> },
+    ],
+  },
+  { path: '/signin', element: <SignIn /> }, 
+  {
+    path: '/dashboard',
+    element: (
+      <PrivateRoute>   
+        <Dashboard />
+      </PrivateRoute>
+    ),
+  },
+]);
 
-export default Router;
+
+export default router;

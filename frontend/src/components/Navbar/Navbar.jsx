@@ -13,14 +13,21 @@ export default function Navbar() {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex space-x-6 items-center text-sm">
-          {["Home", "Academics", "Placement", "Events", "About", "Contributors"].map((item) => (
-            <a
+          {[
+            "Home",
+            "Academics",
+            "Placement",
+            "Events",
+            "About",
+            "Contributors",
+          ].map((item) => (
+            <Link
               key={item}
-              href={`#${item.toLowerCase()}`}
+              to={`/${item.toLowerCase()}`}
               className="hover:text-gray-400 transition-colors"
             >
               {item}
-            </a>
+            </Link>
           ))}
         </div>
 
@@ -49,14 +56,21 @@ export default function Navbar() {
       {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden mt-2 space-y-2 px-4 text-sm">
-          {["Home", "Academics", "Placement", "Events", "About", "Contributors"].map((item) => (
-            <a
+          {[
+            "Home",
+            "Academics",
+            "Placement",
+            "Events",
+            "About",
+            "Contributors",
+          ].map((item) => (
+            <Link
               key={item}
-              href={`#${item.toLowerCase()}`}
-              className="block text-gray-300 hover:text-white"
+              to={`/${item.toLowerCase()}`}
+              className="hover:text-gray-400 transition-colors"
             >
               {item}
-            </a>
+            </Link>
           ))}
           <div className="flex items-center space-x-4 mt-2">
             <MoonIcon className="h-5 w-5 cursor-pointer" />
