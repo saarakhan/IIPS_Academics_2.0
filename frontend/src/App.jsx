@@ -1,23 +1,36 @@
 import { Outlet } from "react-router-dom";
-import Navbar from "./components/Navbar/Navbar";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-// import SignIn from "./components/SignIn/SignIn";
+import SignIn from "./components/SignIn/SignIn";
 // import Subject from "./components/academics/Subject"
-// import { AuthContextProvider } from "./Context/AuthContext";
+import Navbar from "./components/Navbar/Navbar";
+import PrivateRoute from "./PrivateRoute/PrivateRoute";
+import Dashboard from "./Dashboard/Dashboard";
+import Home from "./components/Home/Home";
 
 function App() {
   return (
     <>
-      {/* <AuthContextProvider> */}
-        <BrowserRouter>
-          <Navbar />
-          <Outlet />
-          {/* <Routes>
+    
+        <Navbar />
+        <Outlet />
+        <Routes>
             <Route path="/signin" element={<SignIn />}></Route>
-            <Route path="/academics" element={<Subject />}></Route>
-          </Routes> */}
-        </BrowserRouter>
-      {/* </AuthContextProvider> */}
+          
+          </Routes>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/signin" element={<SignIn />} />
+          {/* <Route path="/academics" element={<Subject />} /> */}
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          />
+        </Routes>
+    
     </>
   );
 }

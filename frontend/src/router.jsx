@@ -1,11 +1,12 @@
 import { createBrowserRouter } from 'react-router-dom';
-import SignUp from './components/SignUp/SIgnUp';
 import SignIn from './components/SignIn/SignIn';
-import Dashboard from './routes/Dashboard';
-import PrivateRoute from './components/PrivateRoute';
-import SubjectDetail from './components/academics/SubjectDetail/SubjectDetail';
-import Subject from './components/academics/Subject/Subject';
+
+import SubjectDetail from './components/academics/SubjectDetail';
+import Subject from './components/academics/Subject';
+
 import App from './App';
+import Dashboard from "./Dashboard/Dashboard";
+import PrivateRoute from "./PrivateRoute/PrivateRoute";
 
 export const router = createBrowserRouter([
   {
@@ -16,7 +17,6 @@ export const router = createBrowserRouter([
       { path: 'subject/:id', element: <SubjectDetail /> },
     ],
   },
-  { path: '/signup', element: <SignUp /> },
   { path: '/signin', element: <SignIn /> }, 
   {
     path: '/dashboard',
@@ -27,3 +27,6 @@ export const router = createBrowserRouter([
     ),
   },
 ]);
+
+
+export default router;

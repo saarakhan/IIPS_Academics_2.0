@@ -1,11 +1,7 @@
 import { useState } from "react";
-import {
-  MoonIcon,
-  UserIcon,
-  Bars3Icon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { MoonIcon, UserIcon, Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
+
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -39,9 +35,10 @@ export default function Navbar() {
         <div className="hidden md:flex items-center space-x-4">
           <MoonIcon className="h-5 w-5 cursor-pointer" />
           <UserIcon className="h-5 w-5 cursor-pointer" />
-          <button className="bg-white text-black px-3 py-1 rounded hover:bg-gray-200 transition">
-            Login
-          </button>
+
+          <Link to="/" style={{ marginRight: "1rem" }}>Home</Link>
+      <Link to="/signin">Login</Link>
+      
         </div>
 
         {/* Mobile Toggle */}
@@ -78,9 +75,10 @@ export default function Navbar() {
           <div className="flex items-center space-x-4 mt-2">
             <MoonIcon className="h-5 w-5 cursor-pointer" />
             <UserIcon className="h-5 w-5 cursor-pointer" />
-            <button className="bg-white text-black px-3 py-1 rounded hover:bg-gray-200 transition">
-              Login
-            </button>
+            
+            <Link to="/" style={{ marginRight: "1rem" }}>Home</Link>
+      <Link to="/signin">Login</Link>
+
           </div>
         </div>
       )}

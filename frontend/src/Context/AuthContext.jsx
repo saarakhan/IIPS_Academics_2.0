@@ -8,53 +8,56 @@ export const AuthContextProvider = ({children}) =>{
     const [session, setSession] = useState(undefined)
 
     //signup
-    const SignUpNewUser = async(email, password) =>{
-        const {data, error} = await supabase.auth.signUp({
-            email: email.toLowerCase(),
-            password: password
-        });
-        if(error){
-            console.error("Error signing up: ", error);
-            return { success: false, error };
-        }
-        return {success: true, data}
-    }
+    // const SignUpNewUser = async(email, password) =>{
+    //     const {data, error} = await supabase.auth.signUp({
+    //         email: email.toLowerCase(),
+    //         password
+    //     });
+    //     if(error){
+    //         console.error("Error signing up: ", error);
+    //         return { success: false, error };
+    //     }
+    //     return {success: true, data}
+    // }
 
     // Sign in
-  const SignInUser = async (email, password) => {
+   const SignInUser = async (email, password) => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      // Try signing in first
+      let { data, error } = await supabase.auth.signInWithPassword({
         email: email.toLowerCase(),
-        password: password,
+        password,
       });
 
-      // Handle Supabase error explicitly
       if (error) {
-        console.error("Sign-in error:", error.message); // Log the error for debugging
-        return { success: false, error: error.message }; // Return the error
+        // If credentials are invalid, try signing up
+        if (error.message === "Invalid login credentials") {
+          const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+            email: email.toLowerCase(),
+            password,
+          });
+
+          if (signUpError) {
+            console.error("Sign-up error:", signUpError.message);
+            return { success: false, error: signUpError.message };
+          }
+
+          console.log("Sign-up success:", signUpData);
+          return { success: true, data: signUpData };
+        } else {
+          console.error("Sign-in error:", error.message);
+          return { success: false, error: error.message };
+        }
       }
 
-      // If no error, return success
+      // Sign-in success
       console.log("Sign-in success:", data);
-      return { success: true, data }; // Return the user data
-    } catch (error) {
-      // Handle unexpected issues
-      console.error("Unexpected error during sign-in:", err.message);
-      return {
-        success: false,
-        error: "An unexpected error occurred. Please try again.",
-      };
+      return { success: true, data };
+    } catch (err) {
+      console.error("Unexpected error:", err.message);
+      return { success: false, error: "An unexpected error occurred." };
     }
   };
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-  }, []);
 
   // Sign out
   async function SignOut() {
@@ -64,9 +67,25 @@ export const AuthContextProvider = ({children}) =>{
     }
   }
 
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+       console.log("Initial session:", session); //for debug
+      setSession(session);
+    });
+      const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+         console.log("Auth state changed, session:", session); // ✅ Debug
+      setSession(session);
+    });
+     return () => {
+    authListener.subscription?.unsubscribe();
+  };
+  }, []);
+
+  
+
    return (
     <AuthContext.Provider
-      value={{ SignUpNewUser, SignInUser, session, SignOut }}
+      value={{ SignInUser, session, SignOut }}
     >
       {children}
     </AuthContext.Provider>
