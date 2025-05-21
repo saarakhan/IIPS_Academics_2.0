@@ -3,8 +3,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SignIn from "./components/SignIn/SignIn";
 // import Subject from "./components/academics/Subject"
 import Navbar from "./components/Navbar/Navbar";
-import PrivateRoute from "./PrivateRoute/PrivateRoute";
-import Dashboard from "./Dashboard/Dashboard";
+import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
+import Dashboard from "./components/Dashboard/Dashboard";
 import Home from "./components/Home/Home";
 
 function App() {
