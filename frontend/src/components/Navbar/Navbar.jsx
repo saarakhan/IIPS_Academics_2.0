@@ -34,6 +34,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Menu */}
+
         <div className="hidden md:flex space-x-2 items-center text-sm">
           {[
             "Home",
@@ -55,6 +56,7 @@ export default function Navbar() {
               {item}
             </Link>
           ))}
+
         </div>
 
         {/* Desktop Auth */}
