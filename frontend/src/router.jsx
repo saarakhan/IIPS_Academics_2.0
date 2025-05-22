@@ -6,6 +6,7 @@ import App from "./App";
 import Dashboard from "./Dashboard/Dashboard";
 import PrivateRoute from "./PrivateRoute/PrivateRoute";
 import Home from "./components/Home/Home";
+import SignUp from "./components/SignUp.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -14,6 +15,7 @@ export const router = createBrowserRouter([
     children: [
       { path: "home", element: <Home /> },
       { path: "signin", element: <SignIn /> },
+      { path: "signup", element: <SignUp /> },
       { path: "academics", element: <Subject /> },
       { path: "subject/:id", element: <SubjectDetail /> },
       {

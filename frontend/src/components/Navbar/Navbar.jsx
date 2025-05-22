@@ -1,9 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MoonIcon, UserIcon, Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
+import { UserAuth } from "../../Context/AuthContext";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { session, SignOut } = UserAuth();
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (session && session.user) {
+        const { data } = await import("../../supabaseClient").then(m => m.supabase)
+          .then(supabase => supabase
+            .from('profiles')
+            .select('full_name, email, avatar_url')
+            .eq('id', session.user.id)
+            .single()
+          );
+        setProfile(data);
+      } else {
+        setProfile(null);
+      }
+    };
+    fetchProfile();
+  }, [session]);
 
   return (
     <nav className="bg-black text-white px-4 py-3 shadow-md">
@@ -34,11 +55,30 @@ export default function Navbar() {
         {/* Icons + Login */}
         <div className="hidden md:flex items-center space-x-4">
           <MoonIcon className="h-5 w-5 cursor-pointer" />
-          <UserIcon className="h-5 w-5 cursor-pointer" />
-
-          <Link to="/" style={{ marginRight: "1rem" }}>Home</Link>
-      <Link to="/signin">Login</Link>
-      
+          {session && session.user ? (
+            <>
+              {profile && profile.avatar_url ? (
+                <img src={profile.avatar_url} alt="avatar" className="h-8 w-8 rounded-full border-2 border-blue-400" />
+              ) : (
+                <div className="h-8 w-8 flex items-center justify-center rounded-full bg-blue-600 text-white font-bold text-lg border-2 border-blue-400">
+                  {profile && profile.full_name
+                    ? profile.full_name.charAt(0).toUpperCase()
+                    : session.user.email.charAt(0).toUpperCase()}
+                </div>
+              )}
+              <button
+                onClick={SignOut}
+                className="ml-2 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs"
+              >
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/" style={{ marginRight: "1rem" }}>Home</Link>
+              <Link to="/signin">Login</Link>
+            </>
+          )}
         </div>
 
         {/* Mobile Toggle */}
@@ -74,11 +114,30 @@ export default function Navbar() {
           ))}
           <div className="flex items-center space-x-4 mt-2">
             <MoonIcon className="h-5 w-5 cursor-pointer" />
-            <UserIcon className="h-5 w-5 cursor-pointer" />
-            
-            <Link to="/" style={{ marginRight: "1rem" }}>Home</Link>
-      <Link to="/signin">Login</Link>
-
+            {session && session.user ? (
+              <>
+                {profile && profile.avatar_url ? (
+                  <img src={profile.avatar_url} alt="avatar" className="h-8 w-8 rounded-full border-2 border-blue-400" />
+                ) : (
+                  <div className="h-8 w-8 flex items-center justify-center rounded-full bg-blue-600 text-white font-bold text-lg border-2 border-blue-400">
+                    {profile && profile.full_name
+                      ? profile.full_name.charAt(0).toUpperCase()
+                      : session.user.email.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <button
+                  onClick={SignOut}
+                  className="ml-2 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs"
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/" style={{ marginRight: "1rem" }}>Home</Link>
+                <Link to="/signin">Login</Link>
+              </>
+            )}
           </div>
         </div>
       )}
