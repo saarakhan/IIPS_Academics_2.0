@@ -1,4 +1,4 @@
-import { BookIcon, CalendarIcon, StarIcon } from "../Icons";
+import { BookIcon, CalendarIcon, StarIcon } from "../../Icons"; 
 
 const contributions = [
   {
