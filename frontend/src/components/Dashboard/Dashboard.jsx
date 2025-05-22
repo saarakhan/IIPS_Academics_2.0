@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import demo from "../../assets/demo.png";
 import { Line } from "rc-progress";
-import { UserIcon, StarIcon, DownloadIcon, ChevronUpIcon } from "../../Icons";
+import { StarIcon, DownloadIcon, ChevronUpIcon } from "../../Icons";
 import Notes from "./Notes";
 import PYQs from "./PYQs";
 import  Syllabus from "./Syllabus"
 
 const Dashboard = () => {
-  const [active, setActive] = useState("Overview");
+  const [active, setActive] = useState("Contributions");
   const [activeTab, setActiveTab] = useState("Notes");
   // tabs
   const tabs = [
@@ -18,7 +18,7 @@ const Dashboard = () => {
 
   // buttons array
   const menuItems = [
-    { label: "Overview", icon: <UserIcon /> },
+
     { label: "Contributions", icon: <ChevronUpIcon /> },
     { label: "Rewards", icon: <StarIcon size={16} /> },
     { label: "Downloads", icon: <DownloadIcon size={16} /> },
