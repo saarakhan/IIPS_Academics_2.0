@@ -1,3 +1,4 @@
+import { useNavigate, Link } from "react-router-dom";
 import { useContext, useState } from "react";
 import {
   MoonIcon,
@@ -5,7 +6,8 @@ import {
   Bars3Icon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { Link, useNavigate } from "react-router-dom";
+
+
 import { UserAuth } from "../../Context/AuthContext";
 
 export default function Navbar() {

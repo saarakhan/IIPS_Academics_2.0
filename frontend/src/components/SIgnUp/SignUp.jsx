@@ -2,82 +2,53 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserAuth } from "../../Context/AuthContext";
 
-const SignIn = () => {
+const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const { SignInUser, signInWithGoogle, signInWithGitHub } = UserAuth();
   const navigate = useNavigate();
 
-  // checking
-  const auth = UserAuth();
-  const SignIn = auth?.SignIn;
-  if (!SignIn) {
-    console.log("Not Sign");
-  }
-
-  const handleSignIn = async (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
-    const { success, data, error } = await SignInUser(email, password);
-
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      setTimeout(() => setError(null), 3000);
+      return;
+    }
+    setLoading(true);
+    const { success, error } = await SignInUser(email, password);
+    setLoading(false);
     if (!success) {
       setError(error);
-      setTimeout(() => {
-        setError("");
-      }, 3000);
+      setTimeout(() => setError(null), 3000);
     } else {
       navigate("/dashboard");
     }
   };
 
-  const handleSignInByGoogle = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError(null);
-  const { success, error } = await signInWithGoogle();
-  setLoading(false);
-
-  if (!success) {
-    setError(error);
-    setTimeout(() => setError(""), 3000);
-  } else {
-    navigate("/dashboard");
-  }
-};
-
-const handleSignInByGitHub = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError(null);
-  const { success, error } = await signInWithGitHub();
-  setLoading(false);
-
-  if (!success) {
-    setError(error);
-    setTimeout(() => setError(""), 3000);
-  } else {
-    navigate("/dashboard");
-  }
-};
-
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#fbf2e3] bg-opacity-50 backdrop-blur-[10px]">
-
+    <div className="min-h-screen flex items-center justify-center px-4 bg-gray-100">
       <form
-        onSubmit={handleSignIn}
-        className="w-full max-w-md bg-[#F3F6F2] bg-opacity-50 backdrop-blur-lg shadow-xl rounded-lg p-8 sm:p-10 transform scale-95 animate-[popIn_0.3s_ease-out_forwards]"
+        onSubmit={handleSignUp}
+        className="w-full max-w-md bg-white shadow-lg rounded-lg p-8 sm:p-10"
       >
-        <h2 className="text-2xl font-bold pb-2 text-center text-[#C79745]">
-          Sign in
+        <h2 className="text-2xl font-bold pb-2 text-center text-gray-800">
+          Sign up
         </h2>
-
+        <p className="text-center text-sm text-gray-600 mb-6">
+          Already have an account?{" "}
+          <Link to="/signin" className="text-blue-600 hover:underline">
+            Sign in
+          </Link>
+        </p>
         <div className="flex flex-col py-2">
           <input
             onChange={(e) => setEmail(e.target.value)}
-            className="p-3 mt-1 border border-gray-300 text-[#2b3333] rounded-md focus:outline-none focus:ring-2 focus:ring-[#C79745]"
+            className="p-3 mt-1 border border-gray-300 text-[#2b3333] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             type="email"
             name="email"
             id="email"
@@ -88,7 +59,7 @@ const handleSignInByGitHub = async (e) => {
         <div className="flex flex-col py-2">
           <input
             onChange={(e) => setPassword(e.target.value)}
-            className="p-3 mt-1 border border-gray-300 text-[#2b3333] rounded-md focus:outline-none focus:ring-2 focus:ring-[#C79745]"
+            className="p-3 mt-1 border border-gray-300 text-[#2b3333] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             type="password"
             name="password"
             id="password"
@@ -96,14 +67,24 @@ const handleSignInByGitHub = async (e) => {
             required
           />
         </div>
-
+        <div className="flex flex-col py-2">
+          <input
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="p-3 mt-1 border border-gray-300 text-[#2b3333] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            type="password"
+            name="confirmPassword"
+            id="confirmPassword"
+            placeholder="Confirm Password"
+            required
+          />
+        </div>
         <button
           type="submit"
-          className="w-full mt-4 bg-[#2B3333] py-3 shadow-lg shadow-[#2B3333] rounded-lg transition duration-300 text-white"
+          className="w-full mt-4 bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition duration-300"
+          disabled={loading}
         >
-          Sign In
+          {loading ? "Signing Up..." : "Sign Up"}
         </button>
-
         <div className="flex items-center my-4">
           <div className="flex-grow h-px bg-gray-300" />
           <span className="mx-2 text-gray-400 text-sm">OR</span>
@@ -113,7 +94,13 @@ const handleSignInByGitHub = async (e) => {
           <button
             type="button"
             className="flex items-center justify-center w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 mb-2"
-            onClick={handleSignInByGoogle}
+            onClick={async (e) => {
+              e.preventDefault();
+              setLoading(true);
+              setError(null);
+              await signInWithGoogle();
+              setLoading(false);
+            }}
           >
             <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="h-5 w-5 mr-2" />
             Continue with Google
@@ -121,35 +108,24 @@ const handleSignInByGitHub = async (e) => {
           <button
             type="button"
             className="flex items-center justify-center w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-             onClick={handleSignInByGitHub}
+            onClick={async (e) => {
+              e.preventDefault();
+              setLoading(true);
+              setError(null);
+              await signInWithGitHub();
+              setLoading(false);
+            }}
           >
             <img src="https://www.svgrepo.com/show/512317/github-142.svg" alt="GitHub" className="h-5 w-5 mr-2" />
             Continue with GitHub
           </button>
         </div>
-
         {error && (
           <p className="text-red-600 text-center pt-4 text-sm">{error}</p>
         )}
       </form>
-
-      {/* Keyframes for pop-in animation */}
-      <style>
-        {`
-          @keyframes popIn {
-            0% {
-              opacity: 0;
-              transform: scale(0.9);
-            }
-            100% {
-              opacity: 1;
-              transform: scale(1);
-            }
-          }
-        `}
-      </style>
     </div>
   );
 };
 
-export default SignIn;
+export default SignUp;

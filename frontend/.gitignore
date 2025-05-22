@@ -87,3 +87,4 @@ out/
 *.log
 coverage/
 public/static/
+.env*
