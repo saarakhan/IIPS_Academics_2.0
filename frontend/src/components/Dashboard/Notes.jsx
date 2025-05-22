@@ -1,5 +1,6 @@
 import { BookIcon, CalendarIcon, StarIcon } from "../../Icons";
 import { FaAngleRight } from "react-icons/fa6";
+
 const contributions = [
   {
     title: "Data Structures and Algorithms",
@@ -94,3 +95,4 @@ export default function Notes() {
     </div>
   );
 }
+
