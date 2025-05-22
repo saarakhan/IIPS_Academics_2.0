@@ -1,113 +1,86 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import  HeroImage  from "../../assets/HeroImage.png";
+import HeroImage from "../../assets/HeroImage.png";
 import CardGroup from "./CardGroup";
-
+import SectionNav from "../Navbar/SectionNav.jsx"
+import Typewriter from "./typewriter.jsx"
 function HeroSection() {
   return (
-    <section className="bg-gray-100 py-10 px-4 h-screen">
-      <div className="flex justify-around items-center">
-        <div className="flex flex-col gap-7 w-1/2">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">
-            Welcome to IIPS Academics
+    <section className="bg-[#F3F6F2] relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 py-20 md:py-28 flex flex-col md:flex-row items-center gap-8">
+        <div className="md:w-1/2 space-y-6">
+          <h1 className="text-4xl md:text-5xl font-bold leading-tight">
+            <Typewriter text="Welcome to IIPS Academics" speed={50} />
           </h1>
-          <p className="text-2xl">
+          <p className="text-xl md:text-2xl text-gray-700">
             We brought you everything faculty notes, previous papers, syllabus,
             placement data, events, clubs.
           </p>
-
-          <div className="flex gap-4">
-            <button className="bg-white border  px-4 py-2 rounded-xl font-semibold  shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]">
+          <div className="flex flex-wrap gap-4">
+            <button className="bg-white border-2 border-black px-6 py-3 rounded-lg font-semibold shadow-[8px_5px_4px_0px_rgba(0,0,0,0.25)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[4px_2px_4px_0px_rgba(0,0,0,0.25)] transition-all">
               Explore Academics
             </button>
-            <button className="bg-gray-800 text-white  px-4 py-2 rounded-xl  shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]">
+            <button className="bg-[#2B3333] text-white px-6 py-3 rounded-lg font-semibold shadow-[8px_5px_4px_0px_rgba(0,0,0,0.25)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[4px_2px_4px_0px_rgba(0,0,0,0.25)] transition-all">
               Upcoming Events
             </button>
           </div>
         </div>
-        <img src={HeroImage} alt="Hero" className="rounded-lg w-1/4" />
+        <div className="md:w-1/2 flex justify-center">
+          <img 
+            src={HeroImage} 
+            alt="Hero" 
+            className="w-full max-w-md rounded-lg" 
+          />
+        </div>
       </div>
     </section>
-  );x
-}
-
-const tabs = [
-  { name: "Home", path: "/" },
-  { name: "Academics", path: "/academics" },
-  { name: "Placements", path: "/placements" },
-  { name: "Events", path: "/events" },
-  { name: "About", path: "/about" },
-  { name: "Contributors", path: "/contributors" },
-];
-
-function TabNav() {
-  const [activeTab, setActiveTab] = useState("Home");
-
-  return (
-    <div className="flex flex-wrap justify-center gap-2 py-4">
-      {tabs.map((tab) => (
-        <button
-          key={tab.name}
-          onClick={() => setActiveTab(tab.name)}
-          className={`px-4 py-1 rounded border ${
-            activeTab === tab.name ? "bg-black text-white" : "bg-gray-200"
-          }`}
-        >
-          {tab.name}
-        </button>
-      ))}
-    </div>
   );
 }
 
 function Footer() {
   return (
-    <footer className="bg-white border-t mt-12 py-6">
-      <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-3 gap-6 text-sm">
+    <footer className="bg-white border-t border-[#C79745]">
+      <div className="max-w-7xl mx-auto px-4 py-8 grid md:grid-cols-3 gap-8">
         <div>
-          <h3 className="font-bold">IIPS Academics</h3>
+          <h3 className="text-lg font-bold mb-4">IIPS Academics</h3>
           <p className="text-gray-600">
-            The unofficial website for IIPS providing resources and info for
-            students.
+            The unofficial website for IIPS providing resources and info for students.
           </p>
         </div>
         <div>
-          <h4 className="font-bold">Quick Links</h4>
-          <ul className="text-gray-700">
-            <li>
-              <Link to="/academics">Academics</Link>
-            </li>
-            <li>
-              <Link to="/placements">Placements</Link>
-            </li>
-            <li>
-              <Link to="/events">Events</Link>
-            </li>
-            <li>
-              <Link to="/about">About</Link>
-            </li>
+          <h4 className="text-lg font-bold mb-4">Quick Links</h4>
+          <ul className="space-y-2">
+            {["Academics", "Placements", "Events", "About"].map((item) => (
+              <li key={item}>
+                <Link 
+                  to={`/${item.toLowerCase()}`} 
+                  className="text-gray-700 hover:text-[#C79745] transition-colors"
+                >
+                  {item}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
         <div>
-          <h4 className="font-bold">Resources</h4>
-          <ul className="text-gray-700">
-            <li>
-              <Link to="/materials">Study Material</Link>
-            </li>
-            <li>
-              <Link to="/papers">Previous Year Papers</Link>
-            </li>
-            <li>
-              <Link to="/syllabus">Syllabus</Link>
-            </li>
-            <li>
-              <Link to="/timetable">Timetable</Link>
-            </li>
+          <h4 className="text-lg font-bold mb-4">Resources</h4>
+          <ul className="space-y-2">
+            {["Study Material", "Previous Year Papers", "Syllabus", "Timetable"].map((item) => (
+              <li key={item}>
+                <Link 
+                  to={`/${item.toLowerCase().replace(' ', '-')}`} 
+                  className="text-gray-700 hover:text-[#C79745] transition-colors"
+                >
+                  {item}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
       </div>
-      <div className="text-center text-xs text-gray-500 mt-6">
-        © 2025 IIPS Academics. All rights reserved
+      <div className="border-t border-[#C79745] py-4">
+        <div className="max-w-7xl mx-auto px-4 text-center text-sm text-gray-500">
+          © 2025 IIPS Academics. All rights reserved
+        </div>
       </div>
     </footer>
   );
@@ -115,12 +88,14 @@ function Footer() {
 
 const Home = () => {
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <HeroSection />
-      <TabNav />
-      <CardGroup />
+      <SectionNav />
+      <main className="flex-grow">
+        <CardGroup />
+      </main>
       <Footer />
-    </>
+    </div>
   );
 };
 
