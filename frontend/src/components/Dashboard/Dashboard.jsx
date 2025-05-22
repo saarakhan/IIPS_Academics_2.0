@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import demo from "../assets/demo.png";
+import demo from '../../assets/demo.png'
 import { Line } from "rc-progress";
-import { UserIcon, StarIcon, DownloadIcon, ChevronUpIcon } from "../Icons";
+import { UserIcon, StarIcon, DownloadIcon, ChevronUpIcon } from "../../Icons";
 
 const Dashboard = () => {
   const [active, setActive] = useState("Overview");

@@ -3,10 +3,10 @@ import SignIn from "./components/SignIn/SignIn";
 import SubjectDetail from "./components/academics/SubjectDetail/SubjectDetail";
 import Subject from "./components/academics/Subject/Subject";
 import App from "./App";
-import Dashboard from "./Dashboard/Dashboard";
-import PrivateRoute from "./PrivateRoute/PrivateRoute";
+import Dashboard from "./components/Dashboard/Dashboard.jsx";
+import PrivateRoute from "./components/PrivateRoute/PrivateRoute.jsx";
 import Home from "./components/Home/Home";
-import SignUp from "./components/SignUp.jsx";
+import SignUp from "./components/SIgnUp/SignUp.jsx";
 
 export const router = createBrowserRouter([
   {
