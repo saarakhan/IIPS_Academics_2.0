@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import demo from '../../assets/demo.png'
+import demo from "../../assets/demo.png";
 import { Line } from "rc-progress";
-import { UserIcon, StarIcon, DownloadIcon, ChevronUpIcon } from "../Icons";
+import { UserIcon, StarIcon, DownloadIcon, ChevronUpIcon } from "../../Icons";
 import Notes from "./Notes";
 
 const Dashboard = () => {
@@ -22,7 +22,7 @@ const Dashboard = () => {
     { label: "Downloads", icon: <DownloadIcon size={16} /> },
   ];
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-col items-center gap-2 mb-4">
       {/* text  */}
       <div>
         <p className="text-center mt-5 text-2xl font-bold">Profile</p>
@@ -31,7 +31,7 @@ const Dashboard = () => {
         </p>
       </div>
 
-      <div className="flex w-full justify-center gap-15  ">
+      <div className="flex w-full justify-center gap-15 flex-col items-center lg:flex-row">
         {/* profile overview  */}
 
         <div className="border-2 w-[90%] md:w-1/2 lg:w-[30%] xl:w-[22%] flex flex-col items-center py-4 px-6 rounded-2xl ">
@@ -62,7 +62,7 @@ const Dashboard = () => {
           {/* user activity details */}
           <div className="w-full">
             {" "}
-            <hr className="border-1  mt-8 mb-3 text" />
+            <hr className="border-1  mt-5 mb-2 text" />
             {/* data  */}
             <div className="flex justify-around mt-0 text-sm sm:text-base">
               <div className="flex flex-col items-center">
@@ -78,7 +78,7 @@ const Dashboard = () => {
                 <p className="text-[#C79745]">Ratings</p>
               </div>
             </div>
-            <hr className="border-1  mt-3 mb-8" />
+            <hr className="border-1  mt-2 mb-5" />
           </div>
           {/* buttons  */}
           <div className="w-full flex flex-col gap-3">
@@ -103,17 +103,17 @@ const Dashboard = () => {
 
         {/* user history  */}
 
-        <div className="flex flex-col border-2 rounded-2xl p-3 w-[60%] ">
-          <p className="text-3xl font-bold">Your Contributions</p>
-          <p className="text-base">
-            Resources you've shared with the community
+        <div className="flex flex-col border-2 rounded-2xl p-3 lg:w-[60%] w-[90%] h-[550px]">
+          <p className="text-3xl font-bold ">Your Contributions</p>
+          <p className="text-base ">
+            Resources you've shared with the community.
           </p>
-          <div className="flex flex-wrap  gap-2 py-2 px-2 w-fit border mt-2 rounded-lg">
+          <div className="flex flex-wrap  gap-2 py-2 px-2 sm:w-fit border mt-2 rounded-lg w-full">
             {tabs.map((tab) => (
               <button
                 key={tab.name}
                 onClick={() => setActiveTab(tab.name)}
-                className={`px-4 py-1 rounded border ${
+                className={`px-4 py-1 rounded border  cursor-pointer ${
                   activeTab === tab.name ? "bg-black text-white" : "bg-gray-200"
                 }`}
               >
@@ -129,6 +129,10 @@ const Dashboard = () => {
           ) : activeTab === "Syllabus" ? (
             <div>Syllabus</div>
           ) : null}
+
+          <button className="px-2 py-2 w-full bg-[#1E1E1E] rounded-2xl text-white cursor-pointer hover:bg-black">
+            Upload New Resources
+          </button>
         </div>
       </div>
     </div>
