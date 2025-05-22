@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import demo from "../assets/demo.png";
+import demo from '../../assets/demo.png'
 import { Line } from "rc-progress";
 import { UserIcon, StarIcon, DownloadIcon, ChevronUpIcon } from "../Icons";
 import Notes from "./Notes";
