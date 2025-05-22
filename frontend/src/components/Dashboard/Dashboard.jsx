@@ -3,6 +3,8 @@ import demo from "../../assets/demo.png";
 import { Line } from "rc-progress";
 import { UserIcon, StarIcon, DownloadIcon, ChevronUpIcon } from "../../Icons";
 import Notes from "./Notes";
+import PYQs from "./PYQs";
+import  Syllabus from "./Syllabus"
 
 const Dashboard = () => {
   const [active, setActive] = useState("Overview");
@@ -125,9 +127,9 @@ const Dashboard = () => {
           {activeTab === "Notes" ? (
             <Notes />
           ) : activeTab === "PYQs" ? (
-            <div>PYQs</div>
+            <PYQs />
           ) : activeTab === "Syllabus" ? (
-            <div>Syllabus</div>
+            <Syllabus/>
           ) : null}
 
           <button className="px-2 py-2 w-full bg-[#1E1E1E] rounded-2xl text-white cursor-pointer hover:bg-black">

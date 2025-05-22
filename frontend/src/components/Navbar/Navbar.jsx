@@ -32,22 +32,24 @@ export default function Navbar() {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex space-x-6 items-center text-sm">
-          {[
-            "Home",
-            "Academics",
-            "Placement",
-            "Events",
-            "About",
-            "Contributors",
-          ].map((item) => (
-            <Link
-              key={item}
-              to={`/${item.toLowerCase()}`}
-              className="hover:text-[#C79745] hover:underline transition-colors text-[#2B3333] "
-            >
-              {item}
-            </Link>
-          ))}
+          <Link
+            
+            to="/"
+            className="hover:text-[#C79745] hover:underline transition-colors text-[#2B3333] "
+          >
+           Home
+          </Link>
+          {["Academics", "Placement", "Events", "About", "Contributors"].map(
+            (item) => (
+              <Link
+                key={item}
+                to={`/${item.toLowerCase()}`}
+                className="hover:text-[#C79745] hover:underline transition-colors text-[#2B3333] "
+              >
+                {item}
+              </Link>
+            )
+          )}
         </div>
 
         {/* Desktop Icons + Login */}
