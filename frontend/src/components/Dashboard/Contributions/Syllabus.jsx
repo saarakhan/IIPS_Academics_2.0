@@ -50,7 +50,7 @@ function CardContent({ children }) {
 }
 export default function Syllabus() {
   return (
-    <div className="mt-3 flex flex-col gap-2 h-[350px] overflow-y-auto pr-2">
+    <div className="mt-3 flex flex-col gap-2 h-[350px] overflow-y-auto pr-2 custom-scrollbar">
       {contributions?.length > 0 ? (
         contributions.map((item, index) => (
           <Card key={index}>

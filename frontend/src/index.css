@@ -58,3 +58,14 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 } */
+
+
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #C79745;
+  border-radius: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
