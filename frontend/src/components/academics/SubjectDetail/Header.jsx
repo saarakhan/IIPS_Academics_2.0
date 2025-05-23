@@ -1,15 +1,16 @@
 import { ArrowLeftIcon, BuildingIcon } from '../../../Icons';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 const Header = ({ subject }) => {
+  const navigate = useNavigate();
   return (
     <div>
-      <header className='bg-gradient-to-r from-[#002855] to-[#004080] text-white shadow-md'>
+      <header className='bg-gradient-to-r from-[#5a9db7] to-[#4a8da7]   text-white shadow-md'>
         <div className='container mx-auto py-5 px-6'>
           <div className='flex justify-between items-center mb-1'>
-            <Link to='/' className='inline-flex items-center text-white/90 hover:text-white transition text-sm bg-white/10 px-3 py-1 rounded-full'>
+            <button onClick={() => navigate(-1)} className='cursor-pointer inline-flex items-center text-white/90 hover:text-white transition text-sm bg-white/10 px-3 py-1 rounded-full'>
               <ArrowLeftIcon className='h-4 w-4 mr-1' />
               Back
-            </Link>
+            </button>
           </div>
           <h1 className='text-2xl font-bold'>{subject.name}</h1>
           <div className='flex items-center mt-1 text-sm text-white/80'>

@@ -42,7 +42,6 @@ const Contributions = () => {
         <Syllabus key={`syllabus-${uploadCounter}`} />
       ) : null}
       
-      {/* The general upload button and ResourceUploadModal instance are removed from here */}
     </div>
   );
 };
