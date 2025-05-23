@@ -5,34 +5,33 @@ import FilterPanel from './FilterPanel';
 import SubjectCard from './SubjectCard';
 import EmptyState from './EmptyState';
 import { FilterIcon, XIcon } from '../../../Icons';
+import Header from '../Header/Header';
 
 function Subject() {
   const navigate = useNavigate();
 
-  const [nameFilter, setNameFilter] = useState('');
-  const [teacherFilter, setTeacherFilter] = useState('');
+  const [searchFilter, setSearchFilter] = useState('');
   const [semesterFilter, setSemesterFilter] = useState('');
   const [departmentFilter, setDepartmentFilter] = useState('');
   const [showFilters, setShowFilters] = useState(true);
   const [filteredSubjects, setFilteredSubjects] = useState(subjects);
   const [departmentDropdownOpen, setDepartmentDropdownOpen] = useState(false);
 
-  const departments = [...new Set(subjects.map(subject => subject.department).filter(Boolean))];
+  const departments = ['MBA', 'MCA', 'MTech'];
+  const semesters = Array.from({ length: 10 }, (_, i) => (i + 1).toString());
 
   useEffect(() => {
     const filtered = subjects.filter(
       subject =>
-        subject.name.toLowerCase().includes(nameFilter.toLowerCase()) &&
-        subject.teacher.toLowerCase().includes(teacherFilter.toLowerCase()) &&
-        subject.semester.toLowerCase().includes(semesterFilter.toLowerCase()) &&
+        (subject.name.toLowerCase().includes(searchFilter.toLowerCase()) || subject.teacher.toLowerCase().includes(searchFilter.toLowerCase())) &&
+        (semesterFilter === '' || subject.semester === semesterFilter) &&
         (departmentFilter === '' || subject.department === departmentFilter)
     );
     setFilteredSubjects(filtered);
-  }, [nameFilter, teacherFilter, semesterFilter, departmentFilter]);
+  }, [searchFilter, semesterFilter, departmentFilter]);
 
   const clearFilters = () => {
-    setNameFilter('');
-    setTeacherFilter('');
+    setSearchFilter('');
     setSemesterFilter('');
     setDepartmentFilter('');
   };
@@ -43,31 +42,14 @@ function Subject() {
 
   return (
     <div className='min-h-screen bg-gradient-to-b from-[#f5f7fa] to-[#f0f4f8]'>
-      <div className='container mx-auto py-8 px-6'>
-        <div className='flex justify-between items-center mb-6'>
-          <h2 className='text-xl font-bold text-[#2b3333]'>Available Resources</h2>
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className='flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm text-sm text-[#003366] hover:bg-[#003366] hover:text-white transition-all border border-[#e0e5ec] cursor-pointer'>
-            {showFilters ? (
-              <div className='flex items-center'>
-                <XIcon className='h-3 w-3 mr-1' /> Hide Filter
-              </div>
-            ) : (
-              <div className='flex items-center'>
-                <FilterIcon className='h-3 w-3 mr-1' /> Show Filter
-              </div>
-            )}
-          </button>
-        </div>
+      <div className='container'>
+        <Header />
 
         {showFilters && (
           <FilterPanel
             {...{
-              nameFilter,
-              setNameFilter,
-              teacherFilter,
-              setTeacherFilter,
+              searchFilter,
+              setSearchFilter,
               semesterFilter,
               setSemesterFilter,
               departmentFilter,
@@ -75,12 +57,13 @@ function Subject() {
               departmentDropdownOpen,
               setDepartmentDropdownOpen,
               departments,
+              semesters,
               clearFilters,
             }}
           />
         )}
 
-        <div className='mb-6'>
+        <div className='mb-6 ml-4'>
           <p className='text-sm text-gray-500'>
             Showing <span className='font-medium text-[#003366]'>{filteredSubjects.length}</span> {filteredSubjects.length === 1 ? 'subject' : 'subjects'}
           </p>
@@ -89,7 +72,7 @@ function Subject() {
         {filteredSubjects.length === 0 ? (
           <EmptyState onClear={clearFilters} />
         ) : (
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-4   '>
             {filteredSubjects.map(subject => (
               <SubjectCard key={subject.id} subject={subject} onClick={handleCardClick} />
             ))}
