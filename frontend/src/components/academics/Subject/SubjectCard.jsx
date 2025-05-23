@@ -1,47 +1,53 @@
+import React from 'react';
 import { BookOpenIcon, UserIcon, BuildingIcon } from '../../../Icons';
 
 function SubjectCard({ subject, onClick }) {
+  const handleCardClick = () => {
+    if (onClick) onClick(subject.id || '');
+  };
+
   return (
-    <div className='group relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all  border border-[#e0e5ec] transform hover:-translate-y-1'>
-      <div className='absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#003366] to-[#0056b3]'></div>
-      <div className='p-5 pb-3'>
-        <div className='flex justify-between items-start'>
-          <div className='flex-1 pr-4'>
-            <h3 className='text-[#003366] text-lg font-bold group-hover:text-[#0056b3] line-clamp-2'>
-              {subject.code ? `${subject.code}: ` : ''}
-              {subject.name}
-            </h3>
-            <div className='flex items-center mt-1'>
-              <BuildingIcon className='h-3.5 w-3.5 text-gray-400 mr-1.5' />
-              <p className='text-sm text-gray-600'>{subject.department || 'Department'}</p>
-            </div>
-          </div>
-          <div className='bg-[#f0f4f8] p-2 rounded-full flex-shrink-0 group-hover:bg-[#003366]'>
-            <BookOpenIcon className='h-5 w-5 text-[#003366] group-hover:text-white' />
-          </div>
+    <div className='relative group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg border border-gray-100 transition-all duration-300 transform hover:-translate-y-1 w-full'>
+      <div className='absolute top-0 right-0 w-24 h-24 -mr-10 -mt-10 bg-gradient-to-br from-[#77B0CF]/20 to-[#5a9db7]/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-500'></div>
+
+      <div className='relative px-4 py-3 text-white bg-gradient-to-r from-[#5a9db7] to-[#4a8da7]'>
+        <div className='absolute inset-0 bg-grid-white/[0.05] bg-[length:20px_20px]'></div>
+        <div className='relative inline-flex items-center gap-1.5 text-xs font-medium bg-white/20 rounded-full px-2 py-0.5 mb-1'>
+          <span className='z-10 text-white'>{subject.code}</span>
         </div>
+        <h2 className='text-base font-bold leading-tight truncate' title={subject.name}>
+          {subject.name}
+        </h2>
       </div>
-      <div className='px-5 py-3'>
-        <div className='grid grid-cols-2 gap-4'>
-          <div className='bg-[#f8f9fa] p-3 rounded-lg'>
-            <p className='text-xs text-gray-500 uppercase mb-1'>Year</p>
-            <div className='text-sm font-bold text-[#2b3333]'>{subject.year || 'Not specified'}</div>
+
+      <div className='p-4'>
+        <div className='grid grid-cols-2 gap-2 mb-3'>
+          <div className='bg-gray-50 rounded-lg p-2 text-center group-hover:bg-gray-100/80 transition-colors'>
+            <div className='text-[10px] font-semibold uppercase tracking-wide text-[#C79745]/90 mb-1'>Semester</div>
+            <div className='text-sm font-bold text-gray-800'>{subject.semester}</div>
           </div>
-          <div className='bg-[#f8f9fa] p-3 rounded-lg'>
-            <p className='text-xs text-gray-500 uppercase mb-1'>Semester</p>
-            <div className='text-sm font-bold text-[#2b3333]'>{subject.semester}</div>
+          <div className='bg-gray-50 rounded-lg p-2 text-center group-hover:bg-gray-100/80 transition-colors'>
+            <div className='text-[10px] font-semibold uppercase tracking-wide text-[#C79745]/90 mb-1'>Year</div>
+            <div className='text-sm font-bold text-gray-800'>{subject.year}</div>
           </div>
         </div>
-        <div className='mt-4 flex items-center'>
-          <UserIcon className='h-4 w-4 text-gray-400 mr-2' />
-          <span className='text-sm text-gray-600'>
-            Instructor: <span className='font-medium text-[#2b3333]'>{subject.teacher}</span>
+
+        <div className='flex items-center text-xs text-gray-600 bg-gray-50 rounded-lg px-3 py-2 mb-2 group-hover:bg-gray-100/80 transition-colors'>
+          <BuildingIcon className='h-4 w-4 mr-2 text-[#C79745]' />
+          <span className='font-medium text-gray-800 truncate'>{subject.department}</span>
+        </div>
+
+        <div className='flex items-center text-xs text-gray-600 bg-gray-50 rounded-lg px-3 py-2 mb-2 group-hover:bg-gray-100/80 transition-colors'>
+          <UserIcon className='h-4 w-4 mr-2 text-[#C79745]' />
+          <span className='truncate'>
+            <span className='text-[#C79745]'>Instructor:</span> <span className='font-medium text-gray-800'>{subject.teacher || 'TBA'}</span>
           </span>
         </div>
-      </div>
-      <div className='p-5 pt-3'>
-        <button onClick={() => onClick(subject.id)} className='w-full bg-[#003366] hover:bg-[#002855] text-white py-2.5 rounded-lg transition-colors shadow-sm font-medium cursor-pointer'>
-          View Details
+
+        <button
+          onClick={handleCardClick}
+          className='cursor-pointer mt-1 w-full bg-gradient-to-r from-[#5a9db7] to-[#4a8da7] hover:from-[#4a8da7] hover:to-[#3a7d97] text-white font-semibold text-sm py-2 rounded-xl shadow hover:shadow-md transition-all duration-300'>
+          Click to View Resource
         </button>
       </div>
     </div>
