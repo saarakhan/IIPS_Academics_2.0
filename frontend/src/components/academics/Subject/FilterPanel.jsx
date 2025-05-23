@@ -1,90 +1,86 @@
-import { SearchIcon, FilterIcon, XIcon, CalendarIcon, UserIcon } from '../../../Icons';
-import DepartmentDropdown from './DepartmentDropdown';
+import { SearchIcon, XIcon } from '../../../Icons';
 
-function FilterPanel({
-  nameFilter,
-  setNameFilter,
-  teacherFilter,
-  setTeacherFilter,
-  semesterFilter,
-  setSemesterFilter,
-  departmentFilter,
-  setDepartmentFilter,
-  departmentDropdownOpen,
-  setDepartmentDropdownOpen,
-  departments,
-  clearFilters,
-}) {
+function FilterPanel({ searchFilter, setSearchFilter, semesterFilter, setSemesterFilter, departmentFilter, setDepartmentFilter, departments, semesters, clearFilters }) {
+  const hasActiveFilters = searchFilter || semesterFilter || departmentFilter;
+
   return (
-    <div className='bg-white rounded-xl shadow-lg p-6 mb-8 border border-[#e0e5ec] animate-fadeIn'>
-      <div className='flex justify-between items-center mb-4'>
-        <div>
-          <h2 className='text-lg font-bold text-[#2b3333] flex items-center'>
-            <FilterIcon className='h-5 w-5 mr-2 text-[#003366]' />
-            Filter Resources
-          </h2>
-          <p className='text-gray-500 text-sm mt-1'>Find the right resources for your courses</p>
-        </div>
-        <button onClick={clearFilters} className='text-xs bg-[#f0f4f8] hover:bg-[#e0e5ec] text-[#003366] px-3 py-1.5 rounded-full transition-colors flex items-center'>
-          <XIcon className='h-3 w-3 mr-1' />
-          Clear All
-        </button>
+    <div className='bg-white p-6 rounded-xl shadow-lg border border-gray-100 mb-6'>
+      <div className='flex items-center justify-between mb-6'>
+        {hasActiveFilters && (
+          <button
+            onClick={clearFilters}
+            className='flex items-center gap-2 px-3 py-1.5 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200 text-sm cursor-pointer'
+            title='Clear all filters'>
+            <XIcon size={16} />
+            <span>Clear</span>
+          </button>
+        )}
       </div>
 
       <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-        <div className='space-y-2'>
-          <label className='text-sm font-medium text-[#2b3333] block'>Subject Name</label>
+        {/* Search input with icon */}
+        <div className='relative'>
+          <label className='block text-sm font-medium text-gray-700 mb-2'>Search Courses</label>
           <div className='relative'>
-            <SearchIcon className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
+            <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+              <SearchIcon className='h-5 w-5 text-gray-400' />
+            </div>
             <input
               type='text'
-              placeholder='Filter by subject name'
-              value={nameFilter}
-              onChange={e => setNameFilter(e.target.value)}
-              className='w-full pl-10 pr-3 py-2.5 bg-[#f8f9fa] border border-[#e0e5ec] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003366]'
+              value={searchFilter}
+              onChange={e => setSearchFilter(e.target.value)}
+              placeholder='Search subjects or instructors...'
+              className='block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 sm:text-sm'
             />
           </div>
         </div>
 
-        {/* Department Filter */}
-        <DepartmentDropdown
-          departmentFilter={departmentFilter}
-          setDepartmentFilter={setDepartmentFilter}
-          departmentDropdownOpen={departmentDropdownOpen}
-          setDepartmentDropdownOpen={setDepartmentDropdownOpen}
-          departments={departments}
-        />
-
-        {/* Teacher Filter */}
-        <div className='space-y-2'>
-          <label className='text-sm font-medium text-[#2b3333] block'>Instructor</label>
-          <div className='relative'>
-            <UserIcon className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
-            <input
-              type='text'
-              placeholder='Filter by instructor'
-              value={teacherFilter}
-              onChange={e => setTeacherFilter(e.target.value)}
-              className='w-full pl-10 pr-3 py-2.5 bg-[#f8f9fa] border border-[#e0e5ec] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003366]'
-            />
-          </div>
+        {/* Semester dropdown */}
+        <div>
+          <label className='block text-sm font-medium text-gray-700 mb-2'>Semester</label>
+          <select
+            value={semesterFilter}
+            onChange={e => setSemesterFilter(e.target.value)}
+            className='block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 sm:text-sm bg-white cursor-pointer'>
+            <option value=''>All Semesters</option>
+            {semesters.map(sem => (
+              <option key={sem} value={sem}>
+                Semester {sem}
+              </option>
+            ))}
+          </select>
         </div>
 
-        {/* Semester Filter */}
-        <div className='space-y-2'>
-          <label className='text-sm font-medium text-[#2b3333] block'>Semester</label>
-          <div className='relative'>
-            <CalendarIcon className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400' />
-            <input
-              type='text'
-              placeholder='Filter by semester'
-              value={semesterFilter}
-              onChange={e => setSemesterFilter(e.target.value)}
-              className='w-full pl-10 pr-3 py-2.5 bg-[#f8f9fa] border border-[#e0e5ec] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#003366]'
-            />
-          </div>
+        {/* Department dropdown */}
+        <div>
+          <label className='block text-sm font-medium text-gray-700 mb-2'>Department</label>
+          <select
+            value={departmentFilter}
+            onChange={e => setDepartmentFilter(e.target.value)}
+            className='block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 sm:text-sm bg-white cursor-pointer'>
+            <option value=''>All Departments</option>
+            {departments.map(dept => (
+              <option key={dept} value={dept}>
+                {dept}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
+
+      {/* Active filters indicator */}
+      {hasActiveFilters && (
+        <div className='mt-4 pt-4 border-t border-gray-100'>
+          <div className='flex items-center gap-2 text-sm text-gray-600'>
+            <span className='font-medium'>Active filters:</span>
+            <div className='flex flex-wrap gap-2'>
+              {searchFilter && <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800'>Search: "{searchFilter}"</span>}
+              {semesterFilter && <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800'>Semester {semesterFilter}</span>}
+              {departmentFilter && <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800'>{departmentFilter}</span>}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,10 +1,15 @@
-import { useState } from "react";
+import React, { useState } from "react"; // Removed useCallback, ResourceUploadModal, UploadCloudIcon
 import Notes from "./Notes";
 import PYQs from "./PYQs";
 import Syllabus from "./Syllabus";
 
 const Contributions = () => {
   const [activeTab, setActiveTab] = useState("Notes");
+
+  const [uploadCounter, setUploadCounter] = useState(0); 
+
+  
+
   // tabs
   const tabs = [
     { name: "Notes", path: "/" },
@@ -30,15 +35,14 @@ const Contributions = () => {
         ))}
       </div>
       {activeTab === "Notes" ? (
-        <Notes />
+        <Notes key={`notes-${uploadCounter}`} /> 
       ) : activeTab === "PYQs" ? (
-        <PYQs />
+        <PYQs key={`pyqs-${uploadCounter}`} />
       ) : activeTab === "Syllabus" ? (
-        <Syllabus />
+        <Syllabus key={`syllabus-${uploadCounter}`} />
       ) : null}
-      <button className="px-2 py-2 w-full bg-[#1E1E1E] rounded-2xl text-white cursor-pointer hover:bg-black mt-4">
-        Upload New Resources
-      </button>
+      
+      {/* The general upload button and ResourceUploadModal instance are removed from here */}
     </div>
   );
 };
