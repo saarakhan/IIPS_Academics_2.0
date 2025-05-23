@@ -4,14 +4,7 @@ const SubjectInfo = ({ subject }) => {
   return (
     <div>
       <div className='bg-white rounded-xl shadow-sm overflow-hidden mb-6 border border-[#e0e5ec]'>
-        <div className='grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-[#e0e5ec]'>
-          <div className='p-4'>
-            <div className='flex items-center mb-1.5'>
-              <CalendarIcon className='h-4 w-4 text-[#C79745]/90 mr-2' />
-              <h3 className='text-xs font-medium text-[#C79745]/90 uppercase'>Year</h3>
-            </div>
-            <p className='text-[#2b3333] font-semibold'>{subject.year || 'Not specified'}</p>
-          </div>
+        <div className='grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#e0e5ec]'>
           <div className='p-4'>
             <div className='flex items-center mb-1.5'>
               <CalendarIcon className='h-4 w-4 text-[#C79745]/90 mr-2' />
