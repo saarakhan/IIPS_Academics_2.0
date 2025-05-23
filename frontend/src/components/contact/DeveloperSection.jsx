@@ -4,7 +4,7 @@ import { Github, Linkedin, Mail } from "lucide-react"
 const developers = [
   {
     name: "Ayush Sharma",
-    role: "Lead Developer",
+    role: "Mentor",
     image: "/placeholder.svg?height=300&width=300",
     github: "https://github.com/AyushSharma72",
   },
@@ -39,7 +39,7 @@ export default function DevelopersSection() {
           {developers.map((dev, index) => (
             <div
               key={index}
-              className="bg-white rounded-lg overflow-hidden shadow-lg border border-gray-100 transition-transform hover:transform hover:scale-105"
+              className="bg-white rounded-lg overflow-hidden shadow-lg border border-gray-100 transition-transform cursor-pointer"
             >
               <div className="bg-[#2b3333] p-6 flex justify-center">
                 <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-[#fffefe]">

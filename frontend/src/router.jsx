@@ -7,6 +7,7 @@ import Dashboard from "./components/Dashboard/Dashboard.jsx";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute.jsx";
 import Home from "./components/Home/Home";
 import SignUp from "./components/SIgnUp/SignUp.jsx";
+import ContactPage from "./components/contact/ContactPage.jsx"
 
 export const router = createBrowserRouter([
   {
@@ -18,6 +19,7 @@ export const router = createBrowserRouter([
       { path: "signup", element: <SignUp /> },
       { path: "academics", element: <Subject /> },
       { path: "subject/:id", element: <SubjectDetail /> },
+      { path: "/Contact", element: <ContactPage /> },
       {
         path: "dashboard",
         element: (
@@ -28,10 +30,10 @@ export const router = createBrowserRouter([
       },
     ],
   },
-  { path: '/signup', element: <SignUp /> },
-  { path: '/signin', element: <SignIn /> },
+  { path: "/signup", element: <SignUp /> },
+  { path: "/signin", element: <SignIn /> },
   {
-    path: '/dashboard',
+    path: "/dashboard",
     element: (
       <PrivateRoute>
         <Dashboard />
