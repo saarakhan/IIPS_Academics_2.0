@@ -159,7 +159,7 @@ export default function PYQs() { // Removed propKey
             </Card>
           ))
         ) : (
-          <div className="w-full justify-center flex flex-col items-center text-center py-10">
+          <div className="w-full justify-center flex flex-col items-center text-center">
             <img src={noData} className="w-[200px] md:w-[250px]" alt="No PYQs uploaded" />
             <p className="mt-4 text-lg text-gray-700">
               You haven't uploaded any PYQs yet.

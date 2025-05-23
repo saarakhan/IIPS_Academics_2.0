@@ -80,7 +80,7 @@ const Rewards = () => {
           </div>
         ))
       ) : (
-        <div className="w-full justify-center flex flex-col items-center text-center py-10">
+        <div className="w-full justify-center flex flex-col items-center text-center">
           <img src={noData} className="w-[250px] md:w-[300px]" alt="No rewards yet" />
           <p className="mt-4 text-xl text-gray-700">
             No rewards earned yet.

@@ -128,7 +128,7 @@ button:focus-visible {
 } */
 
 
-/*
+
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background-color: #C79745;
   border-radius: 8px;
@@ -136,4 +136,4 @@ button:focus-visible {
 
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
-} */
+}

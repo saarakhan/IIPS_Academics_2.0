@@ -151,7 +151,7 @@ export default function Syllabus() { // Removed propKey
             </Card>
           ))
         ) : (
-          <div className="w-full justify-center flex flex-col items-center text-center py-10">
+          <div className="w-full justify-center flex flex-col items-center text-center">
             <img src={noData} className="w-[200px] md:w-[250px]" alt="No syllabus files uploaded" />
             <p className="mt-4 text-lg text-gray-700">
               You haven't uploaded any syllabus files yet.
