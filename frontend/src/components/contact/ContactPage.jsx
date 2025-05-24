@@ -1,12 +1,13 @@
 import ContactForm from "./ContactForm";
 import DevelopersSection from "./DeveloperSection";
-import Image from "../../assets/ContactusImage.jpg";
-import Footer from "../Home/Footer";
+import Image from "../../assets/GetInTouch.jpg";
 
 export default function ContactPage() {
   return (
-    <main className="min-h-screen bg-[#fffefe]\ text-[#2b3333]">
-      <h1 className="text-4xl mt-5 w-full text-center font-bold">Contact Us</h1>
+    <main className="min-h-screen bg-gradient-to-br from-[#fefefe] to-[#f5f5f5] text-[#2b3333] font-arvo">
+      <h1 className="text-5xl mt-8 w-full text-center font-bold text-[#222] drop-shadow-md">
+        Contact Us
+      </h1>
 
       {/* Contact Section */}
       <section className="py-16">
@@ -15,16 +16,18 @@ export default function ContactPage() {
             <img
               src={Image}
               alt="Customer support representative"
-              className="rounded-xl shadow-xl w-full max-w-md object-cover"
+              className="rounded-md -mt-3 shadow-2xl w-full max-w-[24rem] object-cover transition-transform duration-500 hover:scale-105"
             />
           </div>
-          <div className="order-2 md:order-1">
-            <h2 className="text-3xl font-semibold mb-4">Get in Touch</h2>
-            <p className="text-lg text-gray-700 mb-6">
+          <div className="order-2 md:order-1 md:-mt-7">
+            <h2 className="text-4xl font-bold py-2  text-[#333]">
+              Get In Touch
+            </h2>
+            <p className="text-lg text-gray-700 mb-6 leading-relaxed">
               Have questions or feedback? We'd love to hear from you. Fill out
               the form below and our team will get back to you shortly.
             </p>
-            <div className="bg-white p-6 rounded-xl shadow-lg">
+            <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-200 hover:shadow-2xl transition-shadow duration-300">
               <ContactForm />
             </div>
           </div>
@@ -32,12 +35,9 @@ export default function ContactPage() {
       </section>
 
       {/* Developers Section */}
-      <section className="bg-gray-50 py-12">
+      <section className="bg-[#f7f7f7] py-16 border-t border-gray-200">
         <DevelopersSection />
       </section>
-
-      {/* Footer */}
-      <Footer />
     </main>
   );
 }

@@ -16,30 +16,32 @@ export default function StudentContributions() {
 
   // Fetch data from Supabase
   useEffect(() => {
-    const fetchContributions = async () => {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("first_name, last_name, course, total_uploads, rewards_points");
+  const fetchContributions = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("first_name, last_name, course, total_uploads, rewards_points")
+      .gt("total_uploads", 0); // Only include users with contributions
 
-      if (error) {
-        console.error("Error fetching contributions:", error.message);
-        setContributionsData([]);
-      } else {
-        const formattedData = data.map((item, index) => ({
-          id: index,
-          name: `${item.first_name} ${item.last_name}`,
-          course: item.course,
-          uploads: item.total_uploads || 0,
-          rewardPoints: item.rewards_points || 0,
-        }));
-        setContributionsData(formattedData);
-      }
-      setLoading(false);
-    };
+    if (error) {
+      console.error("Error fetching contributions:", error.message);
+      setContributionsData([]);
+    } else {
+      const formattedData = data.map((item, index) => ({
+        id: index,
+        name: `${item.first_name} ${item.last_name}`,
+        course: item.course,
+        uploads: item.total_uploads || 0,
+        rewardPoints: item.rewards_points || 0,
+      }));
+      setContributionsData(formattedData);
+    }
+    setLoading(false);
+  };
 
-    fetchContributions();
-  }, []);
+  fetchContributions();
+}, []);
+
 
   const uniqueCourses = [
     ...new Set(contributionsData.map((item) => item.course)),
