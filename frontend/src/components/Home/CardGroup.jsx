@@ -7,8 +7,8 @@ function InfoCard({ title, description, content, link, buttonText }) {
       <p className="text-gray-700 mb-1">{description}</p>
       <p className="text-gray-600 mb-6">{content}</p>
       <div className="text-center">
-        <Link 
-          to={link} 
+        <Link
+          to={link}
           className="inline-block w-full max-w-xs bg-[#2B3333] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#1a1f1f] transition-colors"
         >
           {buttonText}
@@ -22,14 +22,16 @@ const infoData = [
   {
     title: "Course Materials",
     description: "Access study material for all courses",
-    content: "Find lecture notes, presentations, and reference notes for all subjects",
+    content:
+      "Find lecture notes, presentations, and reference notes for all subjects",
     link: "/materials",
     buttonText: "View Materials",
   },
   {
     title: "Previous Year Papers",
     description: "Practice with past exams ;)",
-    content: "Access previous years question papers and solutions for better preparation",
+    content:
+      "Access previous years question papers and solutions for better preparation",
     link: "/papers",
     buttonText: "View Papers",
   },

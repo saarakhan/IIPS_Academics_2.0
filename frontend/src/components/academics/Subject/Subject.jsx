@@ -4,7 +4,7 @@ import subjects from '../../../Subject';
 import FilterPanel from './FilterPanel';
 import SubjectCard from './SubjectCard';
 import EmptyState from './EmptyState';
-import { FilterIcon, XIcon } from '../../../Icons';
+
 import Header from '../Header/Header';
 
 function Subject() {

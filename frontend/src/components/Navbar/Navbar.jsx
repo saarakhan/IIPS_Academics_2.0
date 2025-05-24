@@ -30,7 +30,9 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Logo */}
         <Link to="/">
-          <div className="text-2xl font-bold text-[#C79745]">IIPS Academics</div>
+          <div className="text-2xl font-bold text-[#C79745]">
+            IIPS Academics
+          </div>
         </Link>
 
         {/* Desktop Menu */}
@@ -41,7 +43,7 @@ export default function Navbar() {
             "Academics",
             "Placements",
             "Events",
-            "About",
+            "Contact",
             "Contributors",
           ].map((item) => (
             <Link
@@ -56,7 +58,6 @@ export default function Navbar() {
               {item}
             </Link>
           ))}
-
         </div>
 
         {/* Desktop Auth */}
@@ -64,11 +65,11 @@ export default function Navbar() {
           {session ? (
             <>
               <Link to="/dashboard">
-                <UserIcon className="h-10 w-10 cursor-pointer text-[#2B3333] hover:bg-[#C79745] p-2 rounded-full" />
+                <UserIcon className="h-10 w-10 cursor-pointer text-[#2B3333] hover:bg-black p-2 rounded-full" />
               </Link>
               <button
                 onClick={handleLogout}
-                className="bg-[#2B3333] text-[#F3F6F2] px-6 py-2 rounded-lg text-sm hover:bg-[#C79745] transition-colors"
+                className="bg-[#2B3333] text-[#F3F6F2] px-6 py-2 rounded-lg text-sm hover:bg-black transition-colors"
               >
                 Logout
               </button>
@@ -76,7 +77,7 @@ export default function Navbar() {
           ) : (
             <Link
               to="/signin"
-              className="bg-[#2B3333] text-[#F3F6F2] px-6 py-2 rounded-lg text-sm hover:bg-[#C79745] transition-colors"
+              className="bg-[#2B3333] text-[#F3F6F2] px-6 py-2 rounded-lg text-sm hover:bg-black transition-colors"
             >
               Login
             </Link>
@@ -104,7 +105,7 @@ export default function Navbar() {
             "Academics",
             "Placements",
             "Events",
-            "About",
+            "Contact us",
             "Contributors",
           ].map((item) => (
             <Link
@@ -137,7 +138,7 @@ export default function Navbar() {
                     handleLogout();
                     setMenuOpen(false);
                   }}
-                  className="bg-[#2B3333] text-[#F3F6F2] px-4 py-2 rounded text-sm w-full"
+                  className="bg-[#2B3333] text-[#F3F6F2] hover:bg-black px-4 py-2 rounded text-sm w-full"
                 >
                   Logout
                 </button>
@@ -145,7 +146,7 @@ export default function Navbar() {
             ) : (
               <Link
                 to="/signin"
-                className="block bg-[#2B3333] text-[#F3F6F2] px-4 py-2 rounded text-sm text-center"
+                className="block bg-[#2B3333] text-[#F3F6F2] hover:bg-black px-4 py-2 rounded text-sm text-center"
                 onClick={() => setMenuOpen(false)}
               >
                 Login
@@ -157,4 +158,3 @@ export default function Navbar() {
     </nav>
   );
 }
-
