@@ -14,7 +14,7 @@ function FilterPanel({
   const hasActiveFilters = searchFilter || semesterFilter || departmentFilter;
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 mb-6">
+    <div className="bg-[#F3F6F2] p-6 rounded-xl shadow-lg border border-gray-100 mb-6 ">
       <div className="flex items-center justify-between mb-6">
         {hasActiveFilters && (
           <button
@@ -28,7 +28,7 @@ function FilterPanel({
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 ">
         {/* Search input with icon */}
         <div className="relative">
           <label className="block text-sm font-medium text-gray-700 mb-2">
