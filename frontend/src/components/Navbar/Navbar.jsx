@@ -105,7 +105,7 @@ export default function Navbar() {
             "Academics",
             "Placements",
             "Events",
-            "Contact us",
+            "Contact",
             "Contributors",
           ].map((item) => (
             <Link
