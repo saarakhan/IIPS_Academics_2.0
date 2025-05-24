@@ -33,16 +33,7 @@ export const router = createBrowserRouter([
       },
     ],
   },
-  { path: "/signup", element: <SignUp /> },
-  { path: "/signin", element: <SignIn /> },
-  {
-    path: "/dashboard",
-    element: (
-      <PrivateRoute>
-        <Dashboard />
-      </PrivateRoute>
-    ),
-  },
+ 
 ]);
 
 export default router;
