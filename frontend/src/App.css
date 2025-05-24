@@ -4,6 +4,10 @@
     padding: 2rem;
     text-align: center;
 }
+body {
+  font-family: 'Arvo', serif;
+}
+
 
 .arvo-regular {
     font-family: "Arvo", serif;
