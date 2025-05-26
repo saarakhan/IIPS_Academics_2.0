@@ -74,7 +74,7 @@ const SignIn = () => {
             Sign in
           </h2>
           <button
-            // onClick={() => navigate("/")}
+            onClick={() => navigate("/")}
             className="absolute right-0 top-0 p-1"
           >
             <XMarkIcon className="h-8 w-8 p-1 text-[#2B3333] hover:bg-[#C79745] rounded-full" />

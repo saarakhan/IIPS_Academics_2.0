@@ -6,9 +6,7 @@ import Syllabus from "./Syllabus";
 const Contributions = () => {
   const [activeTab, setActiveTab] = useState("Notes");
 
-  const [uploadCounter, setUploadCounter] = useState(0); 
-
-  
+  const [uploadCounter, setUploadCounter] = useState(0);
 
   // tabs
   const tabs = [
@@ -26,8 +24,10 @@ const Contributions = () => {
           <button
             key={tab.name}
             onClick={() => setActiveTab(tab.name)}
-            className={`px-4 py-1 rounded border  cursor-pointer ${
-              activeTab === tab.name ? "bg-black text-white" : "bg-gray-200"
+            className={`px-4 py-1 rounded-md font-medium transition-colors ${
+              activeTab === tab.name
+                ? "bg-black text-white"
+                : "bg-gray-100 text-gray-700"
             }`}
           >
             {tab.name}
@@ -35,13 +35,12 @@ const Contributions = () => {
         ))}
       </div>
       {activeTab === "Notes" ? (
-        <Notes key={`notes-${uploadCounter}`} /> 
+        <Notes key={`notes-${uploadCounter}`} />
       ) : activeTab === "PYQs" ? (
         <PYQs key={`pyqs-${uploadCounter}`} />
       ) : activeTab === "Syllabus" ? (
         <Syllabus key={`syllabus-${uploadCounter}`} />
       ) : null}
-      
     </div>
   );
 };
