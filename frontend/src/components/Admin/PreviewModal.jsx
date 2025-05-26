@@ -26,7 +26,7 @@ export default function PreviewModal({ filePath, onClose }) {
           ✕
         </button>
         {error && <p className='text-red-600'>{error}</p>}
-        {!url && !error && <p>Loading preview...</p>} // Loader
+        {!url && !error && <p>Loading preview...</p>}
         {url && <iframe src={url} className='w-full h-full' title='PDF Preview' frameBorder='0' />}
       </div>
     </div>

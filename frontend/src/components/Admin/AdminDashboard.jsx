@@ -3,12 +3,12 @@ import { supabase } from '../../supabaseClient';
 import ResourceCard from './ResourceCard';
 import StatusSummary from './StatusSummary';
 import FilterBar from './FilterBar';
-
+import Heading from './Heading';
 export default function AdminDashboard() {
   const [resources, setResources] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [counts, setCounts] = useState({ total: 0, approved: 0, rejected: 0, pending: 0 });
-  const [filters, setFilters] = useState({ status: 'ALL', subject: '' });
+  const [filters, setFilters] = useState({ status: 'PENDING', subject: '' });
 
   useEffect(() => {
     fetchResources();
@@ -56,6 +56,7 @@ export default function AdminDashboard() {
   };
   return (
     <div className='p-6 space-y-4'>
+      <Heading />
       <StatusSummary counts={counts} />
       <FilterBar filters={filters} onChange={handleFilterChange} />
       <div className='grid gap-4'>
