@@ -65,7 +65,7 @@ export default function Navbar() {
           {session ? (
             <>
               <Link to="/dashboard">
-                <UserIcon className="h-10 w-10 cursor-pointer text-[#2B3333] hover:bg-black p-2 rounded-full" />
+                <UserIcon className="h-10 w-10 cursor-pointer text-[#2B3333] hover:bg-[#C79745] p-2 rounded-full" />
               </Link>
               <button
                 onClick={handleLogout}
