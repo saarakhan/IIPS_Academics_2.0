@@ -1,4 +1,3 @@
-
 import { UserIcon } from "../../../Icons";
 
 function SubjectCard({ subject, onClick }) {
@@ -8,64 +7,116 @@ function SubjectCard({ subject, onClick }) {
 
   return (
     <div
-      className="relative group bg-white rounded-md overflow-hidden 
-  transition-transform duration-300 hover:-translate-y-1 w-full hover:shadow-2xl shadow-black/20"
+      className="relative group bg-white rounded-xl overflow-hidden 
+        transition-all duration-300 hover:-translate-y-2 w-full border border-gray-100"
+      style={{
+        boxShadow: '14px 11px 8px rgba(0, 0, 0, 0.1)',
+        transition: 'all 0.3s ease, box-shadow 0.3s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow = '18px 15px 12px rgba(0, 0, 0, 0.15)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = '14px 11px 8px rgba(0, 0, 0, 0.1)';
+      }}
     >
-      {/* <div
-        className="absolute top-0 right-0 w-24 h-24 -mr-10 -mt-10 bg-gradient-to-br from-[#77B0CF]/20 to-[#5a9db7]/20
-       rounded-full blur-xl group-hover:blur-2xl transition-all duration-500"
-      ></div> */}
 
-      <div className="relative px-4 py-8 bg-gradient-to-r bg-[#F4F9FF] border-2 rounded-md">
+      <div className="relative px-6 py-6 bg-gradient-to-r bg-[#F4F9FF] border-b border-gray-100/50">
         <div className="absolute inset-0 bg-grid-white/[0.05] bg-[length:20px_20px]"></div>
-
-        <div className="relative z-10">
-          <span className="inline-block text-xs font-semibold bg-white/20 rounded-full px-2 py-0.5 mb-1">
-            {subject.code}
-          </span>
-          <h2 className="text-lg font-bold truncate mb-1">{subject.name}</h2>
-          <p className="text-sm italic opacity-90 truncate">
-            {subject.description}
-          </p>
+        
+        <div className="relative z-10 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="inline-block text-xs font-bold bg-white/60 backdrop-blur-sm rounded-full px-3 py-1 text-gray-700 border border-white/20">
+              {subject.code}
+            </span>
+            <div className="w-2 h-2 bg-[#C79745]/30 rounded-full group-hover:bg-[#C79745]/50 transition-colors"></div>
+          </div>
+          
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 leading-tight mb-2 line-clamp-2">
+              {subject.name}
+            </h2>
+            <p className="text-sm text-gray-600 leading-relaxed line-clamp-2">
+              {subject.description}
+            </p>
+          </div>
         </div>
       </div>
 
-      <div className="p-4">
-        <div className="flex justify-between gap-2 mb-2">
-          <div className="flex-1 bg-gray-50 rounded-md p-1.5 text-center group-hover:bg-gray-100 transition">
-            <div className="text-[9px] font-bold uppercase text-[#C79745]/90 mb-0.5">
+
+      <div className="p-6 space-y-4">
+        {/* Academic Info Grid */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="bg-gray-50 rounded-lg p-3 text-center group-hover:bg-gray-100/80 transition-colors border border-gray-100">
+            <div className="text-xs font-bold uppercase text-[#C79745] mb-1 tracking-wide">
               Semester
             </div>
-            <div className="text-xs font-semibold text-gray-800">
+            <div className="text-sm font-semibold text-gray-900">
               {subject.semester}
             </div>
           </div>
-          <div className="flex-1 bg-gray-50 rounded-md p-1.5 text-center group-hover:bg-gray-100 transition">
-            <div className="text-[9px] font-bold uppercase text-[#C79745]/90 mb-0.5">
+          
+          <div className="bg-gray-50 rounded-lg p-3 text-center group-hover:bg-gray-100/80 transition-colors border border-gray-100">
+            <div className="text-xs font-bold uppercase text-[#C79745] mb-1 tracking-wide">
               Department
             </div>
-            <div className="text-xs font-medium text-gray-800 truncate">
+            <div className="text-sm font-medium text-gray-900 line-clamp-1">
               {subject.department}
             </div>
           </div>
         </div>
 
-        <div className="flex items-center text-xs text-gray-700 bg-gray-50 rounded-lg px-3 py-2 mb-4 group-hover:bg-gray-100/80 transition-colors">
-          <UserIcon className="h-4 w-4 mr-2 text-[#C79745]" />
-          <span className="truncate">
-            <span className="text-[#C79745] font-semibold">Instructor:</span>{" "}
-            <span className="font-medium text-gray-800">
-              {subject.teacher || "TBA"}
-            </span>
-          </span>
+
+        <div className="flex items-center bg-gradient-to-r from-gray-50 to-gray-50/50 rounded-lg px-4 py-3 group-hover:from-gray-100/80 group-hover:to-gray-100/50 transition-all border border-gray-100">
+          <div className="flex-shrink-0 w-8 h-8 bg-[#C79745]/10 rounded-full flex items-center justify-center mr-3">
+            <UserIcon className="h-4 w-4 text-[#C79745]" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-xs font-medium text-[#C79745] uppercase tracking-wide mb-0.5">
+              Instructor
+            </div>
+            <div className="text-sm font-semibold text-gray-900 truncate">
+              {subject.teacher || "To Be Announced"}
+            </div>
+          </div>
         </div>
 
         <button
           onClick={handleCardClick}
-          className="cursor-pointer w-full bg-gradient-to-r bg-[#2b3333] hover:bg-black
-            text-white font-semibold text-sm py-2 rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
+          className="relative w-full bg-[#2b3333] text-white font-semibold text-sm py-3 px-4 rounded-xl 
+            overflow-hidden flex items-center justify-center space-x-2 group/button
+            transform transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+          style={{
+            boxShadow: '0 4px 15px rgba(43, 51, 51, 0.3)'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.boxShadow = '0 8px 25px rgba(43, 51, 51, 0.4)';
+            e.currentTarget.style.backgroundColor = '#000000';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.boxShadow = '0 4px 15px rgba(43, 51, 51, 0.3)';
+            e.currentTarget.style.backgroundColor = '#2b3333';
+          }}
         >
-          Click to View Resource
+
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent 
+            transform -skew-x-12 -translate-x-full group-hover/button:translate-x-full transition-transform duration-700 ease-out"></div>
+          
+
+          <div className="absolute inset-0 overflow-hidden rounded-xl">
+            <div className="absolute inset-0 bg-white/0 group-active/button:bg-white/20 
+              transition-colors duration-150 rounded-xl"></div>
+          </div>
+          
+          <span className="relative z-10 transition-all duration-300">View Resources</span>
+          <svg 
+            className="relative z-10 w-4 h-4 transition-all duration-300 group-hover/button:translate-x-1 group-hover/button:scale-110" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
         </button>
       </div>
     </div>

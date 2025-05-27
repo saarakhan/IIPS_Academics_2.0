@@ -14,7 +14,7 @@ function FilterPanel({
   const hasActiveFilters = searchFilter || semesterFilter || departmentFilter;
 
   return (
-    <div className="bg-[#FFFEFE] p-6 shadow-md border border-gray-100 mb-6 ">
+    <div className="py-6"> {/* Removed bg-white and shadow here */}
       <div className="flex items-center justify-between mb-6">
         {hasActiveFilters && (
           <button
@@ -28,8 +28,9 @@ function FilterPanel({
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 ">
-        {/* Search input with icon */}
+      {/* Rest of your FilterPanel content remains the same */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Search input */}
         <div className="relative">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Search Subject
@@ -43,8 +44,7 @@ function FilterPanel({
               value={searchFilter}
               onChange={(e) => setSearchFilter(e.target.value)}
               placeholder="Search subjects or instructors..."
-              className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg
-               shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#EFBF04] focus:border-[#EFBF04] transition-all duration-200 sm:text-sm"
+              className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C79745] focus:border-[#C79745] transition-all duration-200 sm:text-sm"
             />
           </div>
         </div>
@@ -57,8 +57,7 @@ function FilterPanel({
           <select
             value={semesterFilter}
             onChange={(e) => setSemesterFilter(e.target.value)}
-            className="block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none
-             focus:ring-2 focus:ring-[#EFBF04] focus:border-[#EFBF04] transition-all duration-200 sm:text-sm bg-white cursor-pointer"
+            className="block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#C79745] focus:border-[#C79745] transition-all duration-200 sm:text-sm bg-white cursor-pointer"
           >
             <option value="">All Semesters</option>
             {semesters.map((sem) => (
@@ -72,13 +71,12 @@ function FilterPanel({
         {/* Department dropdown */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Course
+            Programs
           </label>
           <select
             value={departmentFilter}
             onChange={(e) => setDepartmentFilter(e.target.value)}
-            className="block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none 
-            focus:ring-2 focus:ring-[#EFBF04] focus:border-[#EFBF04] transition-all duration-200 sm:text-sm bg-white cursor-pointer"
+            className="block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#C79745] focus:border-[#C79745] transition-all duration-200 sm:text-sm bg-white cursor-pointer"
           >
             <option value="">All Courses</option>
             {departments.map((dept) => (
