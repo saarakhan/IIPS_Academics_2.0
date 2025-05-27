@@ -61,13 +61,11 @@ export default function ResourceCard({ resource, onAction }) {
               onClick={approve}
               className='inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500'>
               <MdCheck className='w-4 h-4 mr-1' />
-              Approve
             </button>
             <button
               onClick={() => setShowReject(true)}
               className='inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500'>
               <MdClose className='w-4 h-4 mr-1' />
-              Reject
             </button>
           </div>
         );
@@ -83,7 +81,6 @@ export default function ResourceCard({ resource, onAction }) {
               onClick={() => setShowReject(true)}
               className='inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500'>
               <MdClose className='w-4 h-4 mr-1' />
-              Reject
             </button>
           </div>
         );
@@ -101,22 +98,33 @@ export default function ResourceCard({ resource, onAction }) {
   };
 
   return (
-    <div className='border border-gray-200 rounded-lg p-4 shadow-sm'>
-      <div className='flex items-center justify-between'>
-        <div className='flex items-center gap-4'>
-          <MdDescription className='w-5 h-5 text-gray-500' />
+    <div className='border border-gray-200 rounded-lg p-4 shadow-sm overflow-hidden'>
+      <div className='flex flex-col md:flex-row md:items-center md:justify-between gap-4'>
+        <div className='flex gap-3 md:gap-4'>
+          <MdDescription className='w-6 h-6 text-gray-500 shrink-0' />
           <div>
-            <div className='flex items-center gap-2 mb-1'>
-              <h4 className='font-medium text-gray-900'>{resource.title}</h4>
-              {getStatusBadge(resource.status)}
+            <div className='flex flex-col sm:flex-row sm:items-center sm:gap-2 mb-1'>
+              {/* Mobile view: Title + Actions inline */}
+              <div className='flex justify-between md:hidden'>
+                <h4 className='font-medium text-gray-900'>{resource.title}</h4>
+                <div>{getActionButtons(resource.status)}</div>
+              </div>
+
+              {/* Desktop view: Title only */}
+              <div className='hidden md:block'>
+                <h4 className='font-medium text-gray-900'>{resource.title}</h4>
+              </div>
+
+              <span> {getStatusBadge(resource.status)}</span>
             </div>
-            <div className='flex items-center gap-4 text-sm text-gray-600'>
+
+            <div className='flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-600'>
               <span className='flex items-center gap-1'>
-                <MdPerson className='w-3 h-3' />
+                <MdPerson className='w-4 h-4' />
                 {resource.profiles?.first_name} {resource.profiles?.last_name}
               </span>
               <span className='flex items-center gap-1'>
-                <MdCalendarToday className='w-3 h-3' />
+                <MdCalendarToday className='w-4 h-4' />
                 {new Date(resource.uploaded_at).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'short',
@@ -124,14 +132,15 @@ export default function ResourceCard({ resource, onAction }) {
                 })}
               </span>
               <span>
-                Course: {resource.profiles?.course || 'N/A'} | Semester: {resource.profiles?.semester || 'N/A'}
+                {resource.profiles?.course || 'N/A'} | Semester: {resource.profiles?.semester || 'N/A'}
               </span>
               <span>Size: {(resource.file_size_bytes / (1024 * 1024)).toFixed(1)} MB</span>
             </div>
           </div>
         </div>
-
-        <div>{getActionButtons(resource.status)}</div>
+        <div className='hidden md:block'>
+          <div className='flex justify-start md:justify-end h-[30px]'>{getActionButtons(resource.status)}</div>
+        </div>
       </div>
 
       {showPreview && <PreviewModal filePath={resource.file_path} onClose={() => setShowPreview(false)} />}

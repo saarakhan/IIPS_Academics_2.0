@@ -15,9 +15,9 @@ export default function StatusSummary({ counts }) {
   };
 
   return (
-    <div className='grid grid-cols-2 md:grid-cols-4 gap-6 my-6'>
+    <div className='grid grid-cols-2 md:grid-cols-4 gap-6 my-6 mr-2 sm:gap-6'>
       {Object.entries(counts).map(([key, value]) => (
-        <div key={key} className='bg-white rounded-lg border-2 border-black shadow-[2px_2px_0px_#00000030] p-4 w-[300px] h-[65px] flex flex-col items-center justify-center text-center'>
+        <div key={key} className='bg-white rounded-lg border-2 border-black shadow-[2px_2px_0px_#00000030] p-4   flex flex-col items-center justify-center text-center'>
           <div className={`text-2xl font-bold ${getColor(key)}`}>{value}</div>
           <div className='text-md text-gray-600 uppercase tracking-wide'>{key}</div>
         </div>
