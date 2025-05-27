@@ -1,3 +1,4 @@
+
 import { UserIcon } from "../../../Icons";
 
 function SubjectCard({ subject, onClick }) {
@@ -7,16 +8,15 @@ function SubjectCard({ subject, onClick }) {
 
   return (
     <div
-      className="relative group bg-white rounded-2xl overflow-hidden 
-  transition-transform duration-300 hover:-translate-y-1 w-full border 
-  shadow-lg hover:shadow-2xl shadow-black/20 border-2 border-[#C79745]"
+      className="relative group bg-white rounded-md overflow-hidden 
+  transition-transform duration-300 hover:-translate-y-1 w-full hover:shadow-2xl shadow-black/20"
     >
       {/* <div
         className="absolute top-0 right-0 w-24 h-24 -mr-10 -mt-10 bg-gradient-to-br from-[#77B0CF]/20 to-[#5a9db7]/20
        rounded-full blur-xl group-hover:blur-2xl transition-all duration-500"
       ></div> */}
 
-      <div className="relative px-4 py-4 bg-gradient-to-r bg-[#F3F6F2] ">
+      <div className="relative px-4 py-8 bg-gradient-to-r bg-[#F4F9FF] border-2 rounded-md">
         <div className="absolute inset-0 bg-grid-white/[0.05] bg-[length:20px_20px]"></div>
 
         <div className="relative z-10">

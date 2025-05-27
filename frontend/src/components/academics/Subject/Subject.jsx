@@ -61,7 +61,7 @@ function Subject() {
           }}
         />
 
-        <div className="mb-6 ml-4">
+        <div className="mb-6 px-4">
           <p className="text-sm text-gray-500">
             Showing{" "}
             <span className="font-medium text-[#003366]">

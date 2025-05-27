@@ -14,7 +14,7 @@ function FilterPanel({
   const hasActiveFilters = searchFilter || semesterFilter || departmentFilter;
 
   return (
-    <div className="bg-[#F3F6F2] p-6 rounded-xl shadow-lg border border-gray-100 mb-6 ">
+    <div className="bg-[#FFFEFE] p-6 shadow-md border border-gray-100 mb-6 ">
       <div className="flex items-center justify-between mb-6">
         {hasActiveFilters && (
           <button
@@ -44,7 +44,7 @@ function FilterPanel({
               onChange={(e) => setSearchFilter(e.target.value)}
               placeholder="Search subjects or instructors..."
               className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg
-               shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C79745] focus:border-[#C79745] transition-all duration-200 sm:text-sm"
+               shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#EFBF04] focus:border-[#EFBF04] transition-all duration-200 sm:text-sm"
             />
           </div>
         </div>
@@ -58,7 +58,7 @@ function FilterPanel({
             value={semesterFilter}
             onChange={(e) => setSemesterFilter(e.target.value)}
             className="block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none
-             focus:ring-2 focus:ring-[#C79745] focus:border-[#C79745] transition-all duration-200 sm:text-sm bg-white cursor-pointer"
+             focus:ring-2 focus:ring-[#EFBF04] focus:border-[#EFBF04] transition-all duration-200 sm:text-sm bg-white cursor-pointer"
           >
             <option value="">All Semesters</option>
             {semesters.map((sem) => (
@@ -78,7 +78,7 @@ function FilterPanel({
             value={departmentFilter}
             onChange={(e) => setDepartmentFilter(e.target.value)}
             className="block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none 
-            focus:ring-2 focus:ring-[#C79745] focus:border-[#C79745] transition-all duration-200 sm:text-sm bg-white cursor-pointer"
+            focus:ring-2 focus:ring-[#EFBF04] focus:border-[#EFBF04] transition-all duration-200 sm:text-sm bg-white cursor-pointer"
           >
             <option value="">All Courses</option>
             {departments.map((dept) => (
