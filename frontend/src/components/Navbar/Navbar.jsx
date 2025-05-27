@@ -36,7 +36,7 @@ export default function Navbar() {
         boxShadow: "0px 4px 16px 20px rgba(0, 0, 0, 0.05)",
       }}
     >
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
+      <div className="max-w-7xl mx-auto flex justify-around items-center">
         {/* Logo */}
         <Link to="/">
           <div className="text-2xl font-bold text-[#C79745]">
