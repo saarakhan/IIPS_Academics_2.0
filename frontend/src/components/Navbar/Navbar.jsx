@@ -1,18 +1,32 @@
 import { UserAuth } from "../../Context/AuthContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { UserIcon } from "@heroicons/react/24/solid";
+import Toast from "../Toast/Toast";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { SignOut, session } = UserAuth();
+
+  const [name, setName] = useState("");
+
+  useEffect(() => {
+    if (session?.user?.user_metadata?.full_name) {
+      setName(session.user.user_metadata.full_name);
+    }
+  }, [session]);
+
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleLogout = async () => {
     await SignOut();
     navigate("/");
+    Toast.show({
+    message: 'Logged out successfully!',
+    type: 'success',
+  });
   };
 
   const pathMatch = (item) =>
@@ -64,12 +78,13 @@ export default function Navbar() {
         <div className="hidden md:flex items-center space-x-4">
           {session ? (
             <>
-              <Link to="/dashboard">
-                <UserIcon className="h-10 w-10 cursor-pointer text-[#2B3333] hover:bg-[#C79745] p-2 rounded-full" />
+              <Link to="/dashboard" className="flex items-center">
+                <UserIcon className="h-10 w-10 cursor-pointer text-[#2B3333]  p-2 rounded-full" />
+                {name}
               </Link>
               <button
                 onClick={handleLogout}
-                className="bg-[#2B3333] text-[#F3F6F2] px-6 py-2 rounded-lg text-sm hover:bg-black transition-colors"
+                className="bg-[#2B3333] text-[#F3F6F2] px-6 py-2 rounded-lg text-sm hover:bg-black transition-colors ml-2"
               >
                 Logout
               </button>
@@ -105,7 +120,7 @@ export default function Navbar() {
             "Academics",
             "Placements",
             "Events",
-            "Contact us",
+            "Contact",
             "Contributors",
           ].map((item) => (
             <Link
@@ -131,7 +146,7 @@ export default function Navbar() {
                   onClick={() => setMenuOpen(false)}
                 >
                   <UserIcon className="h-5 w-5" />
-                  <span>Dashboard</span>
+                  <span> {name}</span>
                 </Link>
                 <button
                   onClick={() => {

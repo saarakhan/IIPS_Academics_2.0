@@ -1,5 +1,4 @@
-import React from "react";
-import { BookOpenIcon, UserIcon, BuildingIcon } from "../../../Icons";
+import { UserIcon } from "../../../Icons";
 
 function SubjectCard({ subject, onClick }) {
   const handleCardClick = () => {
@@ -9,12 +8,13 @@ function SubjectCard({ subject, onClick }) {
   return (
     <div
       className="relative group bg-white rounded-2xl overflow-hidden 
-    shadow-md hover:shadow-lg transition-transform duration-300 hover:-translate-y-1 w-full border"
+  transition-transform duration-300 hover:-translate-y-1 w-full border 
+  shadow-lg hover:shadow-2xl shadow-black/20 border-2 border-[#C79745]"
     >
-      <div
+      {/* <div
         className="absolute top-0 right-0 w-24 h-24 -mr-10 -mt-10 bg-gradient-to-br from-[#77B0CF]/20 to-[#5a9db7]/20
        rounded-full blur-xl group-hover:blur-2xl transition-all duration-500"
-      ></div>
+      ></div> */}
 
       <div className="relative px-4 py-4 bg-gradient-to-r bg-[#F3F6F2] ">
         <div className="absolute inset-0 bg-grid-white/[0.05] bg-[length:20px_20px]"></div>

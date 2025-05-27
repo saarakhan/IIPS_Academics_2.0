@@ -16,7 +16,8 @@ export default function ContactPage() {
             <img
               src={Image}
               alt="Customer support representative"
-              className="rounded-md -mt-3 shadow-2xl w-full max-w-[24rem] object-cover transition-transform duration-500 hover:scale-105"
+              className="rounded-md -mt-3 shadow-2xl w-full max-w-[24rem] object-cover"
+              loading="lazy"
             />
           </div>
           <div className="order-2 md:order-1 md:-mt-7">

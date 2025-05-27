@@ -137,7 +137,7 @@ export const AuthContextProvider = ({ children }) => {
             full_name:
               user.user_metadata?.full_name || user.user_metadata?.name || "",
             avatar_url: user.user_metadata?.avatar_url || "",
-            // Add more fields as needed
+            
           });
         }
       }
