@@ -1,154 +1,114 @@
-import React, { useState } from "react";
-import { DownloadIcon, EyeIcon, XIcon } from "../../../Icons";
+import React, { useState, useEffect } from 'react';
+import { DownloadIcon, EyeIcon, XIcon } from '../../../Icons';
+import { supabase } from '../../../supabaseClient'; 
 
-const badgeStyles = {
-  Syllabus: 'bg-orange-200 text-orange-800',
-  'Subject Notes': 'bg-blue-200 text-blue-800',
-  Assignment: 'bg-green-200 text-green-800',
-  Exam: 'bg-yellow-200 text-yellow-800',
-};
-
-function ResourceItem({
-  id,
-  title,
-  file,
-  folder,
-  type,
-  uploaded_at,
-  file_size_bytes,
-  rating_average,
-}) {
-  console.log(id, title, file, folder, type, uploaded_at, file_size_bytes, rating_average)
+function ResourceItem({ title, file, originalFileName }) { 
   const [showPreview, setShowPreview] = useState(false);
-  const fileUrl = `/${folder}/${file}`;
-  const [rating, setRating] = useState(rating_average || 0);
-  const [hoverRating, setHoverRating] = useState(0);
+  const [fileUrl, setFileUrl] = useState('');
+  const [isLoadingUrl, setIsLoadingUrl] = useState(true); 
 
-  const handleRating = async (newRating) => {
-    try {
-      const { data: resource, error: fetchError } = await supabase
-        .from("resources")
-        .select("rating_average, rating_count")
-        .eq("id", id)
-        .single();
+  useEffect(() => {
+    const generateFileAccessUrl = async () => {
+      if (file) { 
+        setIsLoadingUrl(true);
+        setFileUrl(''); 
 
-      if (fetchError) throw fetchError;
+        const BUCKET_NAME = 'uploads'; 
+        try {
+          const { data, error } = await supabase.storage
+            .from(BUCKET_NAME) 
+            .createSignedUrl(file, 3600); 
 
-      const prevTotal =
-        (resource.rating_average || 0) * (resource.rating_count || 0);
-      const updatedCount = (resource.rating_count || 0) + 1;
-      const newAverage = (prevTotal + newRating) / updatedCount;
+          if (error) {
+            console.error('Error creating signed URL:', error);
+            throw error; 
+          }
+          
+          if (data && data.signedUrl) {
+            setFileUrl(data.signedUrl);
+          } else {
+            console.error('No signed URL returned for:', file);
+            setFileUrl('');
+          }
+        } catch (err) {
+          console.error('Failed to get signed URL:', err);
+          setFileUrl(''); 
+        } finally {
+          setIsLoadingUrl(false);
+        }
 
-      const { error: updateError } = await supabase
-        .from("resources")
-        .update({
-          rating_average: newAverage,
-          rating_count: updatedCount,
-        })
-        .eq("id", id);
+      } else {
+        
+        setFileUrl('');
+        setIsLoadingUrl(false);
+      }
+    };
+    generateFileAccessUrl();
+  }, [file]); 
 
-      if (updateError) throw updateError;
-
-      setRating(newAverage);
-    } catch (err) {
-      console.error("Failed to update rating:", err.message);
+  const handleDownload = () => {
+    if (fileUrl) {
+      const link = document.createElement('a');
+      link.href = fileUrl;
+      
+      link.setAttribute('download', originalFileName || `${title}.pdf`); 
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      alert("File URL is not available for download.");
     }
   };
 
   return (
     <>
-      <li className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition">
-        {/* Title and Tags */}
-        <div className="flex justify-between items-start mb-2">
-          <div>
-            <h4 className="font-semibold text-lg text-gray-800">{title}</h4>
-            {/* <div className="flex flex-wrap gap-2 mt-1 border">
-              {type && (
-                <span
-                  className={`text-xs font-medium px-2 py-1 rounded-full ${
-                    badgeStyles[type] || "bg-gray-100 text-gray-700"
-                  }`}
-                >
-                  
-                  {type}
-                </span>
-              )}
-            </div> */}
-          </div>
-
-          <div className="flex flex-col ">
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowPreview(true)}
-                className="flex items-center px-3 py-1.5 text-sm font-medium text-gray-800 hover:text-blue-600 border rounded shadow-sm"
+      <li className='bg-[#f8f9fa] p-3 rounded hover:bg-[#e9f0f8] transition flex justify-between items-center'>
+        <span className='text-sm text-[#2b3333] truncate' title={title}>{title}</span>
+        <div className='flex items-center gap-3 flex-shrink-0'>
+          {isLoadingUrl ? (
+            <span className="text-xs text-gray-400">Loading link...</span>
+          ) : fileUrl ? (
+            <>
+              <button 
+                onClick={() => setShowPreview(true)} 
+                className='text-sm text-[#0077cc] hover:underline flex items-center cursor-pointer'
+                title="Preview File"
               >
-                <EyeIcon className="w-4 h-4 mr-1" />
+                <EyeIcon className='h-4 w-4 mr-1' />
                 Preview
               </button>
-              <a
-                href={fileUrl}
-                download
-                className="flex items-center px-3 py-1.5 text-sm font-medium bg-yellow-400 hover:bg-yellow-500 text-black rounded shadow-sm"
+              <button 
+                onClick={handleDownload} 
+                className='text-sm text-[#003366] hover:underline flex items-center'
+                title="Download File"
               >
-                <DownloadIcon className="w-4 h-4 mr-1" />
+                <DownloadIcon className='h-4 w-4 mr-1' />
                 Download
-              </a>
-            </div>
-
-            <div className="flex gap-1 mt-2">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  onClick={() => handleRating(star)}
-                  onMouseEnter={() => setHoverRating(star)}
-                  onMouseLeave={() => setHoverRating(0)}
-                  className={`text-lg ${
-                    (hoverRating || rating) >= star
-                      ? "text-yellow-400"
-                      : "text-gray-300"
-                  }`}
-                >
-                  ★
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Metadata Footer */}
-        {/*dynamically aaega  */}
-        <div className="flex flex-wrap items-center gap-4 text-xs text-gray-600 pt-2 -mt-2">
-          <span>
-            📅 {uploaded_at ? new Date(uploaded_at).toDateString() : "N/A"}
-          </span>
-          <span>📄 {(file_size_bytes / 1024 / 1024).toFixed(1)} MB</span>
-          <span>⬇️ 19 Downloads</span>
-          <span className="flex items-center">⭐ {rating.toFixed(1)}/5.0</span>
+              </button>
+            </>
+          ) : (
+            <span className="text-xs text-red-500">File Link Not Available</span>
+          )}
         </div>
       </li>
 
-      {/* PDF Preview Modal */}
-      {showPreview && (
-        <div
-          onClick={() => setShowPreview(false)}
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-5xl max-h-full rounded-lg shadow-lg bg-white overflow-hidden"
-          >
-            <button
-              onClick={() => setShowPreview(false)}
-              className="absolute top-2 right-2 text-gray-600 hover:text-red-600 bg-white rounded-full p-1 shadow-md z-50 cursor-pointer"
-            >
-              <XIcon className="w-6 h-6" />
-            </button>
-            <iframe
-              src={fileUrl}
-              title="PDF Preview"
-              className="w-full h-[80vh] rounded-b-lg"
-              frameBorder="0"
-            />
+      {showPreview && fileUrl && (
+        <div onClick={() => setShowPreview(false)} className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4'> {/* Changed bg-opacity-70 to bg-opacity-50 */}
+          {/* Increased max-width and iframe height */}
+          <div onClick={e => e.stopPropagation()} className='relative w-full max-w-6xl h-[90vh] rounded-lg shadow-lg bg-white overflow-hidden flex flex-col'>
+            {/* Modal Header */}
+            <div className="flex justify-between items-center p-3 border-b bg-gray-50 flex-shrink-0">
+              <h5 className="text-lg font-semibold text-gray-700 truncate" title={title}>{title}</h5>
+              <button
+                onClick={() => setShowPreview(false)}
+                className="text-gray-500 hover:text-red-600 bg-transparent hover:bg-gray-200 rounded-full p-1.5"
+                title="Close Preview"
+              >
+                <XIcon className="w-5 h-5" />
+              </button>
+            </div>
+            {/* Iframe for PDF preview */}
+            <iframe src={fileUrl} title={`PDF Preview: ${title}`} className='w-full h-full flex-grow rounded-b-lg' frameBorder='0' /> {/* Use h-full to fill the parent's new height */}
           </div>
         </div>
       )}
