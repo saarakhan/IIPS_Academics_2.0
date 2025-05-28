@@ -1,70 +1,56 @@
 import React, { useState, useEffect } from 'react';
 import { DownloadIcon, EyeIcon, XIcon } from '../../../Icons';
-import { supabase } from '../../../supabaseClient'; // Make sure this path is correct
+import { supabase } from '../../../supabaseClient'; 
 
-// Props for this component, based on what SubjectDetail prepares:
-// { id (resource_id), title, file (file_path from storage), originalFileName }
 function ResourceItem({ title, file, originalFileName }) { 
   const [showPreview, setShowPreview] = useState(false);
   const [fileUrl, setFileUrl] = useState('');
-  const [isLoadingUrl, setIsLoadingUrl] = useState(true); // To show loading state for URL generation
+  const [isLoadingUrl, setIsLoadingUrl] = useState(true); 
 
   useEffect(() => {
     const generateFileAccessUrl = async () => {
-      if (file) { // 'file' is the file_path from the 'resources' table
+      if (file) { 
         setIsLoadingUrl(true);
-        setFileUrl(''); // Reset while fetching/generating new URL
+        setFileUrl(''); 
 
-        // OPTION A: If your bucket ('academic_resources') is PUBLIC
-        const BUCKET_NAME = 'academic_resources'; // Your actual bucket name
-        const { data: publicUrlData } = supabase.storage.from(BUCKET_NAME).getPublicUrl(file);
-        if (publicUrlData?.publicUrl) {
-          setFileUrl(publicUrlData.publicUrl);
-        } else {
-          console.error('Could not get public URL for:', file);
-          setFileUrl(''); // Indicate URL is not available
-        }
-        setIsLoadingUrl(false);
+        const BUCKET_NAME = 'uploads'; 
+        try {
+          const { data, error } = await supabase.storage
+            .from(BUCKET_NAME) 
+            .createSignedUrl(file, 3600); 
 
-        // OPTION B: If your bucket is PRIVATE and you need SIGNED URLs (as in your original bbc24d68 commit)
-        // const BUCKET_NAME = 'uploads'; // YOUR ACTUAL PRIVATE BUCKET NAME
-        // try {
-        //   const { data, error } = await supabase.storage
-        //     .from(BUCKET_NAME) 
-        //     .createSignedUrl(file, 3600); // 3600 seconds = 1 hour validity
-
-        //   if (error) {
-        //     console.error('Error creating signed URL:', error);
-        //     throw error; 
-        //   }
+          if (error) {
+            console.error('Error creating signed URL:', error);
+            throw error; 
+          }
           
-        //   if (data && data.signedUrl) {
-        //     setFileUrl(data.signedUrl);
-        //   } else {
-        //     console.error('No signed URL returned for:', file);
-        //     setFileUrl('');
-        //   }
-        // } catch (err) {
-        //   console.error('Failed to get signed URL:', err);
-        //   setFileUrl(''); 
-        // } finally {
-        //   setIsLoadingUrl(false);
-        // }
+          if (data && data.signedUrl) {
+            setFileUrl(data.signedUrl);
+          } else {
+            console.error('No signed URL returned for:', file);
+            setFileUrl('');
+          }
+        } catch (err) {
+          console.error('Failed to get signed URL:', err);
+          setFileUrl(''); 
+        } finally {
+          setIsLoadingUrl(false);
+        }
 
       } else {
-        // console.warn('No file path provided to ResourceItem.');
+        
         setFileUrl('');
         setIsLoadingUrl(false);
       }
     };
     generateFileAccessUrl();
-  }, [file]); // Re-run if the file prop changes
+  }, [file]); 
 
   const handleDownload = () => {
     if (fileUrl) {
       const link = document.createElement('a');
       link.href = fileUrl;
-      // Use the originalFileName prop for the download attribute
+      
       link.setAttribute('download', originalFileName || `${title}.pdf`); 
       document.body.appendChild(link);
       link.click();
@@ -107,10 +93,11 @@ function ResourceItem({ title, file, originalFileName }) {
       </li>
 
       {showPreview && fileUrl && (
-        <div onClick={() => setShowPreview(false)} className='fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4'>
-          <div onClick={e => e.stopPropagation()} className='relative w-full max-w-5xl max-h-full rounded-lg shadow-lg bg-white overflow-hidden flex flex-col'>
+        <div onClick={() => setShowPreview(false)} className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4'> {/* Changed bg-opacity-70 to bg-opacity-50 */}
+          {/* Increased max-width and iframe height */}
+          <div onClick={e => e.stopPropagation()} className='relative w-full max-w-6xl h-[90vh] rounded-lg shadow-lg bg-white overflow-hidden flex flex-col'>
             {/* Modal Header */}
-            <div className="flex justify-between items-center p-3 border-b bg-gray-50">
+            <div className="flex justify-between items-center p-3 border-b bg-gray-50 flex-shrink-0">
               <h5 className="text-lg font-semibold text-gray-700 truncate" title={title}>{title}</h5>
               <button
                 onClick={() => setShowPreview(false)}
@@ -121,7 +108,7 @@ function ResourceItem({ title, file, originalFileName }) {
               </button>
             </div>
             {/* Iframe for PDF preview */}
-            <iframe src={fileUrl} title={`PDF Preview: ${title}`} className='w-full flex-grow rounded-b-lg' frameBorder='0' />
+            <iframe src={fileUrl} title={`PDF Preview: ${title}`} className='w-full h-full flex-grow rounded-b-lg' frameBorder='0' /> {/* Use h-full to fill the parent's new height */}
           </div>
         </div>
       )}
