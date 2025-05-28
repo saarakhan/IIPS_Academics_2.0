@@ -1,4 +1,3 @@
-import React from 'react';
 import { CalendarIcon, UserIcon, BuildingIcon, BookOpenIcon } from '../../../Icons';
 const SubjectInfo = ({ subject }) => {
   return (

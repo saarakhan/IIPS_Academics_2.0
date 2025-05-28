@@ -5,14 +5,14 @@ const resources = [
         semester: "6",
         instructor: "Yasmin",
         notes: [
-            { title: "Unit 1 - Signals", file: "unit1.pdf" },
+            { title: "Unit 1 - Signals",type: "Subject Notes", tags: ["Synchronization", "Semaphores", "Critical Section"], file: "unit1.pdf" },
             { title: "Unit 2 - Circuits", file: "ic-circuits.pdf" }
         ],
         pyqs: [
-            { title: "2023 Midterm", file: "ic-midterm-2023.pdf" }
+            { title: "2023 Midterm", type: "PYQ", file: "ic-midterm-2023.pdf" }
         ],
         syllabus: [
-            { title: "IC Syllabus", file: "ic-syllabus.pdf" }
+            { title: "IC Syllabus", type: "Syllabus", tags: ["Learning Outcome", "syllabus"], file: "ic-syllabus.pdf" }
         ]
     },
     {

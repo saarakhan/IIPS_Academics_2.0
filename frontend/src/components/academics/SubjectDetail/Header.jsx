@@ -3,32 +3,39 @@ import { Link, useNavigate } from "react-router-dom";
 const Header = ({ subject }) => {
   const navigate = useNavigate();
   return (
-    <div>
-      <header className="bg-[#F3F6F2] shadow-md">
-        <div className="container mx-auto py-5 px-6">
-          <div className="flex justify-between items-center mb-1">
-            <button
-              onClick={() => navigate(-1)}
-              className="cursor-pointer inline-flex items-center  text-sm bg-[#2b3333] hover:bg-black transition-colors  text-white px-3 py-1 rounded-full"
-            >
-              <ArrowLeftIcon className="h-4 w-4 mr-1" />
-              Back
-            </button>
-          </div>
-          <h1 className="text-2xl font-bold">{subject.name}</h1>
-          <div className="flex items-center mt-1 text-sm">
-            <BuildingIcon className="h-3.5 w-3.5 mr-1.5 text-black" />
-            {subject.department || "Department"}
-            {subject.code && (
-              <>
-                <span className="mx-2">•</span>
-                <span className="font-medium">{subject.code}</span>
-              </>
-            )}
-          </div>
+   <div>
+  <header className="">
+    <div className="container mx-auto px-6 py-6">
+      <div className="flex justify-between items-center mb-3">
+        <button
+          onClick={() => navigate(-1)}
+          className="inline-flex items-center text-sm font-medium text-white bg-[#2b3333] hover:bg-black transition-colors duration-200 px-4 py-2 rounded-full shadow-sm"
+        >
+          <ArrowLeftIcon className="h-4 w-4 mr-2" />
+          Back to Academics
+        </button>
+      </div>
+
+      <div className="space-y-1">
+        <h1 className="text-3xl font-extrabold text-[#1c1f23] tracking-tight">{subject.name}</h1>
+        <div className="flex items-center text-sm text-gray-700 font-medium">
+          <BuildingIcon className="h-4 w-4 mr-2 text-gray-800" />
+          {subject.department || "Department"}
+
+          {subject.code && (
+            <>
+              <span className="mx-2 text-gray-400">•</span>
+              <span className="bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full text-xs font-semibold">
+                {subject.code}
+              </span>
+            </>
+          )}
         </div>
-      </header>
+      </div>
     </div>
+  </header>
+</div>
+
   );
 };
 
