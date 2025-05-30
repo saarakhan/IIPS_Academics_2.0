@@ -1,18 +1,15 @@
-import React, { useState } from "react"; 
+import React, { useState } from "react";
 import PYQs from "./PYQs";
 import Syllabus from "./Syllabus";
+import Notes from "./Notes";
 
 const Contributions = () => {
   const [activeTab, setActiveTab] = useState("Notes");
 
-  const [uploadCounter, setUploadCounter] = useState(0);
+  // const [uploadCounter, setUploadCounter] = useState(0);
 
   // tabs
-  const tabs = [
-    { name: "Notes", path: "/" },
-    { name: "PYQs", path: "/academics" },
-    { name: "Syllabus", path: "/placements" },
-  ];
+  const tabs = [{ name: "Notes" }, { name: "PYQs" }, { name: "Syllabus" }];
   return (
     <div>
       {" "}
@@ -34,11 +31,11 @@ const Contributions = () => {
         ))}
       </div>
       {activeTab === "Notes" ? (
-        <Notes key={`notes-${uploadCounter}`} />
+        <Notes />
       ) : activeTab === "PYQs" ? (
-        <PYQs key={`pyqs-${uploadCounter}`} />
+        <PYQs />
       ) : activeTab === "Syllabus" ? (
-        <Syllabus key={`syllabus-${uploadCounter}`} />
+        <Syllabus />
       ) : null}
     </div>
   );

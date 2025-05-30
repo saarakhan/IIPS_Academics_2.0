@@ -50,13 +50,15 @@ export default function PYQs() {
       try {
         const { data, error: fetchError } = await supabase
           .from("resources")
-          .select(`
+          .select(
+            `
             id, title, uploaded_at, rating_average, status,
             subject:subject_id (
               semester_number,
               course:course_id (name)
             )
-          `)
+          `
+          )
           .eq("uploader_profile_id", session.user.id)
           .eq("resource_type", "PYQ")
           .order("uploaded_at", { ascending: false });
@@ -67,10 +69,14 @@ export default function PYQs() {
           data.map((pyq) => ({
             id: pyq.id,
             title: pyq.title,
-            semester: `${pyq.subject?.course?.name || ""} Semester ${pyq.subject?.semester_number || ""}`,
-            date: pyq.uploaded_at ? new Date(pyq.uploaded_at).toLocaleDateString() : "N/A",
+            semester: `${pyq.subject?.course?.name || ""} Semester ${
+              pyq.subject?.semester_number || ""
+            }`,
+            date: pyq.uploaded_at
+              ? new Date(pyq.uploaded_at).toLocaleDateString()
+              : "N/A",
             status: pyq.status,
-            rating: pyq.rating_average || 0, 
+            rating: pyq.rating_average || 0,
           }))
         );
       } catch (err) {
@@ -83,7 +89,7 @@ export default function PYQs() {
     };
 
     fetchUserPYQs();
-  }, [session, fetchTrigger]); 
+  }, [fetchTrigger, session?.user?.id]); 
   const getStatusColor = (status) => {
     switch (status) {
       case 'PENDING': return 'bg-yellow-100 text-yellow-800';

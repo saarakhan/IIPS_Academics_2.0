@@ -50,16 +50,18 @@ export default function Syllabus() {
       try {
         const { data, error: fetchError } = await supabase
           .from("resources")
-          .select(`
+          .select(
+            `
             id, title, uploaded_at, status,
             subject:subject_id (
               semester_number,
               course:course_id (name)
             )
-          `)
+          `
+          )
           .eq("uploader_profile_id", session.user.id)
           .eq("resource_type", "SYLLABUS")
-         
+
           .order("uploaded_at", { ascending: false });
 
         if (fetchError) throw fetchError;
@@ -68,9 +70,13 @@ export default function Syllabus() {
           data.map((syllabus) => ({
             id: syllabus.id,
             title: syllabus.title,
-            semester: `${syllabus.subject?.course?.name || ""} Semester ${syllabus.subject?.semester_number || ""}`,
-            date: syllabus.uploaded_at ? new Date(syllabus.uploaded_at).toLocaleDateString() : "N/A",
-           
+            semester: `${syllabus.subject?.course?.name || ""} Semester ${
+              syllabus.subject?.semester_number || ""
+            }`,
+            date: syllabus.uploaded_at
+              ? new Date(syllabus.uploaded_at).toLocaleDateString()
+              : "N/A",
+
             status: syllabus.status,
           }))
         );
@@ -84,7 +90,7 @@ export default function Syllabus() {
     };
 
     fetchUserSyllabus();
-  }, [session, fetchTrigger]); 
+  }, [session?.user?.id, fetchTrigger]); 
 
   const getStatusColor = (status) => {
     switch (status) {

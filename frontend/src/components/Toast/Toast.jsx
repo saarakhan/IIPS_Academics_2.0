@@ -1,4 +1,3 @@
-// components/Toast.jsx
 import { toast } from 'react-hot-toast';
 import {
   FaCheckCircle,

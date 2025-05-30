@@ -56,7 +56,6 @@ export default function Navbar() {
             "Home",
             "Academics",
             "Placements",
-            "Events",
             "Contact",
             "Contributors",
           ].map((item) => (
@@ -119,7 +118,6 @@ export default function Navbar() {
             "Home",
             "Academics",
             "Placements",
-            "Events",
             "Contact",
             "Contributors",
           ].map((item) => (

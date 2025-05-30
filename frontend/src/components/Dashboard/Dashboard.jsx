@@ -12,24 +12,32 @@ const Dashboard = () => {
   const [active, setActive] = useState("Contributions");
   const { session } = UserAuth();
   const [profileData, setProfileData] = useState(null);
-  const [stats, setStats] = useState({ uploads: 0, downloads: 0, avgRating: 0 });
+  const [stats, setStats] = useState({
+    uploads: 0,
+    downloads: 0,
+    avgRating: 0,
+  });
   const [profileCompletion, setProfileCompletion] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     if (session?.user?.id) {
+      console.log("error");
       const userId = session.user.id;
+
       const fetchDashboardData = async () => {
         setLoading(true);
         setError(null);
+
         try {
-          // 1. Fetch Profile
+          // 1. Fetch Profile with course join and total_uploads field
           const { data: profile, error: profileError } = await supabase
-            .from('profiles')
-            .select('*, course:course_id(name, duration_years)') // Join with courses
-            .eq('id', userId)
+            .from("profiles")
+            .select("*, course:course_id(name, duration_years), total_uploads")
+            .eq("id", userId)
             .single();
+
           if (profileError) throw profileError;
           setProfileData(profile);
 
@@ -41,47 +49,50 @@ const Dashboard = () => {
           if (profile.enrollment_number) completedFields++;
           if (profile.course_id) completedFields++;
           if (profile.semester) completedFields++;
-          setProfileCompletion(Math.round((completedFields / totalFields) * 100));
+          setProfileCompletion(
+            Math.round((completedFields / totalFields) * 100)
+          );
 
-          // 3. Fetch Upload Count
-          const { count: uploadCount, error: uploadError } = await supabase
-            .from('resources')
-            .select('*', { count: 'exact', head: true })
-            .eq('uploader_profile_id', userId)
-            .eq('status', 'APPROVED');
-          if (uploadError) throw uploadError;
+          // 3. Get total_uploads from profiles table (directly from profile)
+          const uploadCount = profile.total_uploads || 0;
 
-          // 4. Fetch Download Count (assuming user_download_log table exists)
+          // 4. Fetch Download Count (user_download_log table)
           let downloadCount = 0;
           const { count: dlCount, error: dlError } = await supabase
-            .from('user_download_log')
-            .select('*', { count: 'exact', head: true })
-            .eq('profile_id', userId);
+            .from("user_download_log")
+            .select("*", { count: "exact", head: true })
+            .eq("profile_id", userId);
+
           if (dlError) {
-            console.warn("Error fetching download count (user_download_log might not exist or RLS issue):", dlError.message);
-            // If the table doesn't exist or access is denied, dlCount might be null or an error thrown.
-            // We'll proceed with 0 for now if there's an error.
+            console.warn("Error fetching download count:", dlError.message);
           } else {
             downloadCount = dlCount || 0;
           }
 
           // 5. Fetch Average Rating of User's Contributions
           const { data: avgRatingData, error: avgRatingError } = await supabase
-            .from('resources')
-            .select('rating_average')
-            .eq('uploader_profile_id', userId)
-            .eq('status', 'APPROVED')
-            .gt('rating_count', 0); // Only consider rated resources
+            .from("resources")
+            .select("rating_average")
+            .eq("uploader_profile_id", userId)
+            .eq("status", "APPROVED")
+            .gt("rating_count", 0);
+
           if (avgRatingError) throw avgRatingError;
-          
+
           let avgRating = 0;
           if (avgRatingData && avgRatingData.length > 0) {
-            const sum = avgRatingData.reduce((acc, r) => acc + (r.rating_average || 0), 0);
+            const sum = avgRatingData.reduce(
+              (acc, r) => acc + (r.rating_average || 0),
+              0
+            );
             avgRating = (sum / avgRatingData.length).toFixed(1);
           }
 
-          setStats({ uploads: uploadCount || 0, downloads: downloadCount, avgRating: parseFloat(avgRating) || 0 });
-
+          setStats({
+            uploads: uploadCount,
+            downloads: downloadCount,
+            avgRating: parseFloat(avgRating) || 0,
+          });
         } catch (error) {
           console.error("Error fetching dashboard data:", error);
           setError(error.message || "Failed to fetch dashboard data.");
@@ -89,11 +100,12 @@ const Dashboard = () => {
           setLoading(false);
         }
       };
+
       fetchDashboardData();
     } else {
-      setLoading(false); // Not logged in, so not loading
+      setLoading(false);
     }
-  }, [session]);
+  }, [session?.user?.id]);
 
   // buttons array
   const menuItems = [
@@ -124,19 +136,37 @@ const Dashboard = () => {
           />{" "}
           {/* user name  */}
           <p className="font-bold text-lg sm:text-2xl mt-2 ">
-            {loading ? 'Loading...' : error ? 'Error' : profileData ? `${profileData.first_name || ''} ${profileData.last_name || ''}`.trim() || 'User Name' : 'User Name'}
+            {loading
+              ? "Loading..."
+              : error
+              ? "Error"
+              : profileData
+              ? `${profileData.first_name || ""} ${
+                  profileData.last_name || ""
+                }`.trim() || "User Name"
+              : "User Name"}
           </p>
           {/* user course  */}
           <p className="text-[#3B3838] text-sm sm:text-lg">
-            {loading ? '...' : error ? 'N/A' : profileData && profileData.course && profileData.semester ? 
-              `${profileData.course.name} ${profileData.course.duration_years ? `Year ${Math.ceil(profileData.semester / 2)}` : ''} Semester ${profileData.semester}`.trim() : 
-              'Course Info N/A'}
+            {loading
+              ? "..."
+              : error
+              ? "N/A"
+              : profileData && profileData.course && profileData.semester
+              ? `${profileData.course.name} ${
+                  profileData.course.duration_years
+                    ? `Year ${Math.ceil(profileData.semester / 2)}`
+                    : ""
+                } Semester ${profileData.semester}`.trim()
+              : "Course Info N/A"}
           </p>
           {/* profile completion  */}
           <div className="w-full flex flex-col items-center mt-3">
             <div className="flex justify-between w-[90%] mb-1 text-sm sm:text-base">
               <span>Profile Completion</span>
-              <span>{loading ? '...' : error ? 'N/A' : `${profileCompletion}%`}</span>
+              <span>
+                {loading ? "..." : error ? "N/A" : `${profileCompletion}%`}
+              </span>
             </div>
             <Line
               percent={loading || error ? 0 : profileCompletion}
@@ -204,7 +234,6 @@ const Dashboard = () => {
             <Downloads></Downloads>
           ) : null}
         </div>
-
       </div>
     </div>
   );

@@ -20,59 +20,63 @@ const SignIn = () => {
     console.log("Not Sign");
   }
 
- const handleSignIn = async (e) => {
-  e.preventDefault();
-  const { success, data, error } = await SignInUser(email, password);
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    const { success, data, error } = await SignInUser(email, password);
 
-  if (!success) {
-    setError(error);
-    Toast.show({ message: error || 'Login failed', type: 'error' });
+    if (!success) {
+      setError(error);
+      Toast.show({ message: error || "Login failed", type: "error" });
 
-    setTimeout(() => {
-      setError('');
-    }, 3000);
-  } else {
-    Toast.show({ message: 'Logged in successfully!', type: 'success' });
-    navigate('/');
-  }
-};
+      setTimeout(() => {
+        setError("");
+      }, 3000);
+    } else {
+      Toast.show({ message: "Logged in successfully!", type: "success" });
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+    }
+  };
 
+  const handleSignInByGoogle = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    const { success, error } = await signInWithGoogle();
+    setLoading(false);
 
-const handleSignInByGoogle = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError(null);
-  const { success, error } = await signInWithGoogle();
-  setLoading(false);
+    if (!success) {
+      setError(error);
+      Toast.show({ message: error || "Google sign-in failed", type: "error" });
+      setTimeout(() => setError(""), 3000);
+    } else {
+      Toast.show({ message: "Signed in with Google!", type: "success" });
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+    }
+  };
 
-  if (!success) {
-    setError(error);
-    Toast.show({ message: error || 'Google sign-in failed', type: 'error' });
+  const handleSignInByGitHub = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    const { success, error } = await signInWithGitHub();
+    setLoading(false);
 
-    setTimeout(() => setError(''), 3000);
-  } else {
-    Toast.show({ message: 'Signed in with Google!', type: 'success' });
-    navigate('/');
-  }
-};
+    if (!success) {
+      setError(error);
+      Toast.show({ message: error || "GitHub sign-in failed", type: "error" });
 
- const handleSignInByGitHub = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError(null);
-  const { success, error } = await signInWithGitHub();
-  setLoading(false);
-
-  if (!success) {
-    setError(error);
-    Toast.show({ message: error || 'GitHub sign-in failed', type: 'error' });
-
-    setTimeout(() => setError(''), 3000);
-  } else {
-    Toast.show({ message: 'Signed in with GitHub!', type: 'success' });
-    navigate('/');
-  }
-};
+      setTimeout(() => setError(""), 3000);
+    } else {
+      Toast.show({ message: "Signed in with GitHub!", type: "success" });
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center  bg-transparent backdrop-blur-sm">

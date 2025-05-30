@@ -101,7 +101,7 @@ const Downloads = () => {
     };
 
     fetchDownloads();
-  }, [session]);
+  }, [session?.user?.id]);
 
   if (loading) {
     return (
@@ -121,10 +121,8 @@ const Downloads = () => {
         downloadHistory.map((log) => (
           <div className="bg-white shadow-sm border-b-2 cursor-pointer">
             <div className="p-4 flex flex-col gap-4">
-             {/* top section  */}
+              {/* top section  */}
               <div className="flex flex-col sm:flex-row sm:items-start gap-4 w-full">
-              
-
                 <div className="h-fit p-2 bg-gray-200 rounded-full w-fit">
                   <CiFileOn className="w-6 h-6" />
                 </div>
@@ -149,7 +147,6 @@ const Downloads = () => {
                     </span>
                   </div>
                 </div>
-
               </div>
 
               {/* Action buttons */}

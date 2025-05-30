@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { BookIcon, CalendarIcon, StarIcon, PlusIcon } from "../../../Icons"; 
+import { BookIcon, CalendarIcon, StarIcon, PlusIcon } from "../../../Icons";
 import { FaAngleRight } from "react-icons/fa6";
 import noData from "../../../assets/noData.svg";
 import { UserAuth } from "../../../Context/AuthContext";
 import { supabase } from "../../../supabaseClient";
-import ResourceUploadModal from "./ResourceUploadModal"; 
+import ResourceUploadModal from "./ResourceUploadModal";
 
 function Card({ children }) {
   return (
@@ -19,51 +19,50 @@ function CardContent({ children }) {
     <div className="p-4 flex items-center justify-between  ">{children}</div>
   );
 }
-const contributions = [
-  {
-    title: "Data Structures and Algorithms",
-    semester: "MCA III Semester",
-    date: "May 10, 2025",
-    rating: 4.5,
-    reward: "+2 Gold",
-  },
-  {
-    title: "Calculus II: Integration Techniques",
-    semester: "MCA II Semester",
-    date: "April 15, 2025",
-    rating: 4.1,
-    reward: "+2 Gold",
-  },
-  {
-    title: "Calculus II: Integration Techniques",
-    semester: "MCA II Semester",
-    date: "April 15, 2025",
-    rating: 4.1,
-    reward: "+2 Gold",
-  },
-  {
-    title: "Calculus II: Integration Techniques",
-    semester: "MCA II Semester",
-    date: "April 15, 2025",
-    rating: 4.1,
-    reward: "+2 Gold",
-  },
-];
+// const contributions = [
+//   {
+//     title: "Data Structures and Algorithms",
+//     semester: "MCA III Semester",
+//     date: "May 10, 2025",
+//     rating: 4.5,
+//     reward: "+2 Gold",
+//   },
+//   {
+//     title: "Calculus II: Integration Techniques",
+//     semester: "MCA II Semester",
+//     date: "April 15, 2025",
+//     rating: 4.1,
+//     reward: "+2 Gold",
+//   },
+//   {
+//     title: "Calculus II: Integration Techniques",
+//     semester: "MCA II Semester",
+//     date: "April 15, 2025",
+//     rating: 4.1,
+//     reward: "+2 Gold",
+//   },
+//   {
+//     title: "Calculus II: Integration Techniques",
+//     semester: "MCA II Semester",
+//     date: "April 15, 2025",
+//     rating: 4.1,
+//     reward: "+2 Gold",
+//   },
+// ];
 
 export default function Notes() {
-
   const { session } = UserAuth();
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [fetchTrigger, setFetchTrigger] = useState(0); 
+  const [fetchTrigger, setFetchTrigger] = useState(0);
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
   const handleUploadSuccess = useCallback(() => {
-    setFetchTrigger((prev) => prev + 1); 
+    setFetchTrigger((prev) => prev + 1);
     setTimeout(() => {
       handleCloseModal();
     }, 1500);
@@ -92,14 +91,14 @@ export default function Notes() {
           )
           .eq("uploader_profile_id", session.user.id)
           .eq("resource_type", "NOTE")
-         
+
           .order("uploaded_at", { ascending: false });
 
         if (fetchError) throw fetchError;
 
         setNotes(
           data.map((note) => ({
-            id: note.id, 
+            id: note.id,
             title: note.title,
             semester: `${note.subject?.course?.name || ""} Semester ${
               note.subject?.semester_number || ""
@@ -108,7 +107,7 @@ export default function Notes() {
               ? new Date(note.uploaded_at).toLocaleDateString()
               : "N/A",
             rating: note.rating_average || 0,
-           
+
             status: note.status,
           }))
         );
@@ -122,7 +121,7 @@ export default function Notes() {
     };
 
     fetchUserNotes();
-  }, [session, fetchTrigger]); 
+  }, [session?.user?.id]);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -188,12 +187,18 @@ export default function Notes() {
                           </span>
                         </span>
                         <span className="flex items-center gap-1 sm:ml-4">
-                          <span>
-                            <StarIcon className="w-4 h-4 text-[#C79745]" />
-                          </span>
-                          <span className="text-xs sm:text-sm">
-                            {item.rating}/5.0
-                          </span>
+                          {item?.rating > 0 ? (
+                            <>
+                              <span>
+                                <StarIcon className="w-4 h-4 text-[#C79745]" />
+                              </span>
+                              <span className="text-xs sm:text-sm">
+                                {item?.rating}/5.0
+                              </span>
+                            </>
+                          ) : (
+                            " no ratings"
+                          )}
                         </span>
                       </div>
                     </div>
