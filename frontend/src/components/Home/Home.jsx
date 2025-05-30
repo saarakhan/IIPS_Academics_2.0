@@ -6,7 +6,7 @@ import Footer from "./Footer.jsx";
 
 function HeroSection() {
   return (
-    <section className="bg-[#F3F6F2] relative overflow-hidden">
+    <section className="bg-[#F4F9FF] relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 py-20 md:py-28 flex flex-col md:flex-row items-center gap-8">
         <div className="md:w-1/2 space-y-6">
           <h1 className="text-4xl md:text-5xl font-bold leading-tight">

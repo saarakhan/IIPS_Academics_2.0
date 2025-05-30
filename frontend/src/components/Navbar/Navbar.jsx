@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { UserIcon } from "@heroicons/react/24/solid";
+import Toast from "../Toast/Toast";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -22,6 +23,10 @@ export default function Navbar() {
   const handleLogout = async () => {
     await SignOut();
     navigate("/");
+    Toast.show({
+    message: 'Logged out successfully!',
+    type: 'success',
+  });
   };
 
   const pathMatch = (item) =>
@@ -36,7 +41,7 @@ export default function Navbar() {
         boxShadow: "0px 4px 16px 20px rgba(0, 0, 0, 0.05)",
       }}
     >
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
+      <div className="max-w-7xl mx-auto flex justify-around items-center">
         {/* Logo */}
         <Link to="/">
           <div className="text-2xl font-bold text-[#C79745]">

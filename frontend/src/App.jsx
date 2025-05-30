@@ -3,11 +3,13 @@ import { motion } from "framer-motion"
 import { Outlet } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import Welcom from "../src/assets/welcome.mov";
+import { Toaster } from "react-hot-toast";
 
 
 function App() {
   // return (
   //   <>
+          // <Toaster position="top-right" reverseOrder={false} />
   //     <Navbar />
   //     <Outlet />
   //   </>
@@ -38,6 +40,7 @@ function App() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 3 }}
         >
+          <Toaster position="top-right" reverseOrder={false} />
           <Navbar />
           <Outlet />
         </motion.div>

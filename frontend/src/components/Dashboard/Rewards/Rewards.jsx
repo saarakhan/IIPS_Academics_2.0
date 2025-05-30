@@ -1,14 +1,49 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { UserAuth } from "../../../Context/AuthContext";
 import { supabase } from "../../../supabaseClient";
 import { StarIcon, CalendarIcon } from "../../../Icons"; // Assuming you'll use these
 import noData from "../../../assets/noData.svg"; // For empty state
+import { FaTrophy } from "react-icons/fa";
 
 const Rewards = () => {
   const { session } = UserAuth();
-  const [rewardsLog, setRewardsLog] = useState([]);
+  const [activeTab, setActiveTab] = useState("Overview");
+  // const [rewardsLog, setRewardsLog] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const rewardsLog = [
+    {
+      id: 1,
+      reward_type: "Gold",
+      description: "Uploaded a study material",
+      points_awarded: 10,
+      awarded_at: "2025-05-20T10:30:00Z",
+      resource: {
+        title: "Introduction to Algorithms - Notes",
+      },
+    },
+    {
+      id: 2,
+      reward_type: "Gold",
+      description: "Helped classmates in discussion forum",
+      points_awarded: 15,
+      awarded_at: "2025-05-22T14:45:00Z",
+      resource: {
+        title: "Discussion: DBMS Normal Forms",
+      },
+    },
+    {
+      id: 3,
+      reward_type: "Gold",
+      description: null,
+      points_awarded: 5,
+      awarded_at: "2025-05-25T09:00:00Z",
+      resource: null,
+    },
+  ];
+
+  const tabs = [{ name: "Overview" }, { name: "Achievements" }];
 
   useEffect(() => {
     if (!session?.user?.id) {
@@ -51,44 +86,91 @@ const Rewards = () => {
   }
 
   return (
-    <div className="mt-3 flex flex-col gap-3 h-[450px] overflow-y-auto pr-2 custom-scrollbar p-4">
-      {rewardsLog.length > 0 ? (
-        rewardsLog.map((log) => (
-          <div
-            key={log.id}
-            className="bg-white shadow-md rounded-lg p-4 border border-gray-200 hover:shadow-lg transition-shadow"
+    <div className="flex flex-col gap-3 h-[450px] overflow-y-auto pr-2 custom-scrollbar">
+      <div>
+        <p className="text-3xl font-bold">Rewards</p>
+        <p className="text-base text-gray-600">Rewards you have earned</p>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex gap-2 border rounded-lg sm:w-fit w-full p-1">
+        {tabs.map((tab) => (
+          <button
+            key={tab.name}
+            onClick={() => setActiveTab(tab.name)}
+            className={`px-4 py-1 rounded-md font-medium transition-colors ${
+              activeTab === tab.name
+                ? "bg-black text-white"
+                : "bg-gray-100 text-gray-700"
+            }`}
           >
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="font-semibold text-lg text-gray-800">
-                {log.reward_type} - {log.description || "Reward"}
-              </h3>
-              <span className="px-3 py-1 text-sm rounded-full font-medium bg-yellow-400 text-yellow-800">
-                +{log.points_awarded} Points
-              </span>
-            </div>
-            {log.resource?.title && (
-              <p className="text-sm text-gray-600 mb-1">
-                Related to: <span className="font-medium">{log.resource.title}</span>
-              </p>
-            )}
-            <div className="flex items-center text-xs text-gray-500">
-              <CalendarIcon className="w-4 h-4 mr-1" />
-              <span>
-                Awarded on: {new Date(log.awarded_at).toLocaleDateString()}
-              </span>
-            </div>
-          </div>
-        ))
-      ) : (
-        <div className="w-full justify-center flex flex-col items-center text-center">
-          <img src={noData} className="w-[250px] md:w-[300px]" alt="No rewards yet" />
-          <p className="mt-4 text-xl text-gray-700">
-            No rewards earned yet.
-          </p>
-          <p className="text-sm text-gray-500">
-            Keep contributing to earn points!
-          </p>
+            {tab.name}
+          </button>
+        ))}
+      </div>
+
+      {/* Summary */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-2 text-center">
+        <div className="border rounded-lg p-3">
+          <p className="text-yellow-400 font-bold text-2xl">1250</p>
+          <p className="text-xl text-gray-600">Total Points</p>
         </div>
+      </div>
+
+      {/* Rewards */}
+      {activeTab === "Overview" ? (
+        <div className="mt-2 flex flex-col gap-2">
+          {rewardsLog.length > 0 ? (
+            rewardsLog.map((log) => (
+              <div
+                key={log.id}
+                className="flex justify-between items-center bg-white shadow-sm  px-4 py-3 border-b-2"
+              >
+                <div className="flex gap-3 items-start ">
+                  <div className="bg-gray-200 rounded-2xl p-3">
+                    {" "}
+                    <FaTrophy className="text-orange-300 text-xl" />
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold">
+                      {log.resource?.title || "Untitled Reward"}
+                    </h4>
+                    <div className="flex items-center gap-4 text-xs text-gray-500 mt-1 ">
+                      <span className="flex gap-2 font-semibold ">
+                        <CalendarIcon className="w-4 h-4" />
+                        {new Date(log.awarded_at).toLocaleDateString()} &nbsp;
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <span
+                  className={`px-3 py-1 text-xs font-semibold rounded-full bg-amber-300 ${
+                    log.reward_type === "Gold"
+                  }`}
+                >
+                  +{log.points_awarded} {log.reward_type}
+                </span>
+              </div>
+            ))
+          ) : (
+            <div className="w-full justify-center flex flex-col items-center text-center py-8">
+              <img
+                src={noData}
+                className="w-[250px] md:w-[300px]"
+                alt="No rewards yet"
+              />
+              <p className="mt-4 text-xl text-gray-700">
+                No rewards earned yet.
+              </p>
+              <p className="text-sm text-gray-500">
+                Keep contributing to earn points!
+              </p>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div>Achievements</div>
       )}
     </div>
   );

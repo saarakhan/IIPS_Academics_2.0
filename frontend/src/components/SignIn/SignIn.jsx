@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserAuth } from "../../Context/AuthContext";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import Toast from "../Toast/Toast";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -19,49 +20,59 @@ const SignIn = () => {
     console.log("Not Sign");
   }
 
-  const handleSignIn = async (e) => {
-    e.preventDefault();
-    const { success, data, error } = await SignInUser(email, password);
+ const handleSignIn = async (e) => {
+  e.preventDefault();
+  const { success, data, error } = await SignInUser(email, password);
 
-    if (!success) {
-      setError(error);
-      setTimeout(() => {
-        setError("");
-      }, 3000);
-    } else {
-      navigate("/");
-    }
-  };
+  if (!success) {
+    setError(error);
+    Toast.show({ message: error || 'Login failed', type: 'error' });
 
-  const handleSignInByGoogle = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    const { success, error } = await signInWithGoogle();
-    setLoading(false);
+    setTimeout(() => {
+      setError('');
+    }, 3000);
+  } else {
+    Toast.show({ message: 'Logged in successfully!', type: 'success' });
+    navigate('/');
+  }
+};
 
-    if (!success) {
-      setError(error);
-      setTimeout(() => setError(""), 3000);
-    } else {
-      navigate("/");
-    }
-  };
 
-  const handleSignInByGitHub = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    const { success, error } = await signInWithGitHub();
-    setLoading(false);
+const handleSignInByGoogle = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setError(null);
+  const { success, error } = await signInWithGoogle();
+  setLoading(false);
 
-    if (!success) {
-      setError(error);
-      setTimeout(() => setError(""), 3000);
-    } else {
-      navigate("/");
-    }
-  };
+  if (!success) {
+    setError(error);
+    Toast.show({ message: error || 'Google sign-in failed', type: 'error' });
+
+    setTimeout(() => setError(''), 3000);
+  } else {
+    Toast.show({ message: 'Signed in with Google!', type: 'success' });
+    navigate('/');
+  }
+};
+
+ const handleSignInByGitHub = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setError(null);
+  const { success, error } = await signInWithGitHub();
+  setLoading(false);
+
+  if (!success) {
+    setError(error);
+    Toast.show({ message: error || 'GitHub sign-in failed', type: 'error' });
+
+    setTimeout(() => setError(''), 3000);
+  } else {
+    Toast.show({ message: 'Signed in with GitHub!', type: 'success' });
+    navigate('/');
+  }
+};
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center  bg-transparent backdrop-blur-sm">
@@ -74,7 +85,7 @@ const SignIn = () => {
             Sign in
           </h2>
           <button
-            // onClick={() => navigate("/")}
+            onClick={() => navigate("/")}
             className="absolute right-0 top-0 p-1"
           >
             <XMarkIcon className="h-8 w-8 p-1 text-[#2B3333] hover:bg-[#C79745] rounded-full" />

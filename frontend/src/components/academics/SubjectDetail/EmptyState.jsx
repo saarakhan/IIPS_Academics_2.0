@@ -17,8 +17,8 @@ const EmptyState = () => {
           </div>
           <h2 className='text-xl font-bold text-[#2b3333] mb-2'>Subject Not Found</h2>
           <p className='text-gray-500 mb-5'>The subject you're looking for doesn't exist or has been removed.</p>
-          <Link to='/'>
-            <button className='bg-[#003366] hover:bg-[#002855] text-white py-2 px-6 rounded-lg transition duration-200 font-medium shadow-sm'>Back to Subjects</button>
+          <Link to='/academics'>
+            <button className='bg-[#2B3333] hover:bg-[#002855] text-white py-2 px-6 rounded-lg transition duration-200 font-medium shadow-sm'>Back to Subjects</button>
           </Link>
         </div>
       </div>
