@@ -15,7 +15,7 @@ const ProfileCompletionModal = ({ isOpen, onClose, userId, onSave }) => {
     enrollment_number: '',
   });
 
-  const courses = ['MTech', 'MCA', 'MBA'];
+  const courses = ['MTech Integrated', 'MCA Integrated', 'MBA MS (5years) Integrated', 'MBA MS (2years)', 'MBA  (Tourism Managment) Integrated  ', 'Bcom', 'BCom(Hons)', ''];
   const semesters = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th'];
 
   const fetchProfile = async () => {
