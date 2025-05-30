@@ -7,6 +7,7 @@ import { StarIcon, DownloadIcon, ChevronUpIcon } from "../../Icons";
 import Contributions from "./Contributions/Contributions";
 import Rewards from "./Rewards/Rewards";
 import Downloads from "./Downloads/Downloads";
+import ProfileCompletionModal from "./ProfileCompletion/ProfileCompletionModal";
 
 const Dashboard = () => {
   const [active, setActive] = useState("Contributions");
@@ -20,6 +21,39 @@ const Dashboard = () => {
   const [profileCompletion, setProfileCompletion] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    const getUserProfileStatus = async () => {
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        setUserId(user.id);
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("first_name, last_name, course, semester, enrollment_number")
+          .eq("id", user.id)
+          .single();
+
+        if (data) {
+          const isIncomplete =
+            !data.first_name ||
+            !data.last_name ||
+            !data.course ||
+            !data.semester ||
+            !data.enrollment_number;
+          if (isIncomplete) {
+            setIsModalOpen(true);
+          }
+        }
+      }
+    };
+
+    getUserProfileStatus();
+  }, []);
 
   useEffect(() => {
     if (session?.user?.id) {
@@ -163,7 +197,14 @@ const Dashboard = () => {
           {/* profile completion  */}
           <div className="w-full flex flex-col items-center mt-3">
             <div className="flex justify-between w-[90%] mb-1 text-sm sm:text-base">
-              <span>Profile Completion</span>
+              <span
+                onClick={() => {
+                  setIsModalOpen(true);
+                }}
+                className="cursor-pointer text-blue-400"
+              >
+                Profile Completion
+              </span>
               <span>
                 {loading ? "..." : error ? "N/A" : `${profileCompletion}%`}
               </span>
@@ -234,6 +275,12 @@ const Dashboard = () => {
             <Downloads></Downloads>
           ) : null}
         </div>
+
+        <ProfileCompletionModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          initialData={profileData ?? undefined}
+        />
       </div>
     </div>
   );

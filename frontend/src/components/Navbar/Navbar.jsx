@@ -4,7 +4,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { UserIcon } from '@heroicons/react/24/solid';
 import Toast from '../Toast/Toast';
-import UserProfileIcon from '../Dashboard/UserProfileIcon/UserProfileIcon';
+// import UserProfileIcon from '../Dashboard/UserProfileIcon/UserProfileIcon';
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { SignOut, session } = UserAuth();
@@ -61,7 +61,7 @@ export default function Navbar() {
               <Link to='/dashboard' className='flex items-center space-x-2'>
                 {/* User Icon with no padding, visible color and size */}
                 <UserIcon className='h-10 w-10 cursor-pointer text-[#2B3333] rounded-full border border-gray-300' />
-                <UserProfileIcon />
+                
                 <span>{name}</span>
               </Link>
 
@@ -99,8 +99,8 @@ export default function Navbar() {
             {session ? (
               <div className='flex flex-col items-start space-y-2'>
                 <Link to='/dashboard' className='flex items-center space-x-2 px-4 py-2 text-[#2B3333] hover:bg-[#C79745] rounded-md w-full' onClick={() => setMenuOpen(false)}>
-                  {/* <UserIcon className='h-5 w-5' /> */}
-                  <UserProfileIcon />
+                  <UserIcon className='h-5 w-5' />
+                  
                   <span> {name}</span>
                 </Link>
                 <button
