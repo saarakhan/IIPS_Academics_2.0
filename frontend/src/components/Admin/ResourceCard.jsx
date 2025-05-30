@@ -5,16 +5,11 @@ import { MdVisibility, MdCheck, MdClose, MdDescription, MdPerson, MdCalendarToda
 import PreviewModal from './PreviewModal';
 import RejectModal from './RejectModal';
 import { supabase } from '../../supabaseClient';
+import toast from 'react-hot-toast';
 
 export default function ResourceCard({ resource, onAction }) {
   const [showPreview, setShowPreview] = useState(false);
   const [showReject, setShowReject] = useState(false);
-  const [popupMessage, setPopupMessage] = useState('');
-
-  const showPopup = msg => {
-    setPopupMessage(msg);
-    setTimeout(() => setPopupMessage(''), 3000);
-  };
 
   const approve = async () => {
     const { error } = await supabase
@@ -27,10 +22,10 @@ export default function ResourceCard({ resource, onAction }) {
       .eq('id', resource.id);
 
     if (!error) {
-      showPopup('Resource approved!');
+      toast.success('Resource approved!');
       onAction();
     } else {
-      showPopup('Failed to approve resource.');
+      toast.error('Failed to approve resource.');
     }
   };
 
@@ -152,15 +147,6 @@ export default function ResourceCard({ resource, onAction }) {
 
       {showPreview && <PreviewModal filePath={resource.file_path} onClose={() => setShowPreview(false)} />}
       {showReject && <RejectModal resourceId={resource.id} onClose={() => setShowReject(false)} onAction={onAction} />}
-
-      {popupMessage && (
-        <div className='fixed top-4 right-4 bg-gray-900 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-fade-in-down' role='alert'>
-          <div className='flex items-center gap-2'>
-            {popupMessage.includes('approved') ? <MdCheck className='w-5 h-5 text-emerald-400' /> : <MdClose className='w-5 h-5 text-rose-400' />}
-            {popupMessage}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

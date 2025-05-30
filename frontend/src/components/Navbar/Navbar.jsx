@@ -60,7 +60,7 @@ export default function Navbar() {
             <>
               <Link to='/dashboard' className='flex items-center space-x-2'>
                 {/* User Icon with no padding, visible color and size */}
-                {/* <UserIcon className='h-10 w-10 cursor-pointer text-[#2B3333] rounded-full border border-gray-300' /> */}
+                <UserIcon className='h-10 w-10 cursor-pointer text-[#2B3333] rounded-full border border-gray-300' />
                 <UserProfileIcon />
                 <span>{name}</span>
               </Link>
