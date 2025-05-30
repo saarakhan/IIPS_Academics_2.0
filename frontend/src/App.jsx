@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Outlet } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
@@ -8,15 +8,30 @@ import { Toaster } from "react-hot-toast";
 function App() {
   const [videoEnded, setVideoEnded] = useState(false);
   const [videoAnimationDone, setVideoAnimationDone] = useState(false);
+  const [shouldShowVideo, setShouldShowVideo] = useState(false);
+
+  // play video only once
+  useEffect(() => {
+    const hasSeenVideo = sessionStorage.getItem("hasSeenWelcomeVideo");
+
+    if (!hasSeenVideo) {
+      setShouldShowVideo(true);
+    } else {
+      setVideoEnded(true);
+      setVideoAnimationDone(true);
+    }
+  }, []);
 
   const handleVideoEnd = () => {
+    sessionStorage.setItem("hasSeenWelcomeVideo", "true");
     setVideoEnded(true);
   };
+  
 
   return (
-    <div >
+    <div>
       <AnimatePresence>
-        {!videoAnimationDone && (
+        {shouldShowVideo && !videoAnimationDone && (
           <motion.div
             key="video-wrapper"
             className="absolute top-0 left-0 w-full h-full z-50"
@@ -24,7 +39,7 @@ function App() {
             animate={videoEnded ? { scaleY: 0 } : { scaleY: 1 }}
             exit={{ scaleY: 0 }}
             transition={{ duration: 1.5, ease: "easeInOut" }}
-            style={{ transformOrigin: "top" }} // ⬅️ shrink from bottom
+            style={{ transformOrigin: "top" }}
             onAnimationComplete={() => {
               if (videoEnded) setVideoAnimationDone(true);
             }}
@@ -42,7 +57,7 @@ function App() {
         )}
       </AnimatePresence>
 
-      {/* Main App Content (static) */}
+      {/* Main App Content */}
       <div className="relative z-0 w-full h-full">
         <Toaster position="top-right" reverseOrder={false} />
         <Navbar />
