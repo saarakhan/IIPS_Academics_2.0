@@ -9,6 +9,7 @@ import Rewards from "./Rewards/Rewards";
 import Downloads from "./Downloads/Downloads";
 import ProfileCompletionModal from "./ProfileCompletion/ProfileCompletionModal";
 
+
 const Dashboard = () => {
   const [active, setActive] = useState("Contributions");
   const { session } = UserAuth();
@@ -23,37 +24,36 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
-    const getUserProfileStatus = async () => {
-      const {
-        data: { user },
-        error,
-      } = await supabase.auth.getUser();
+  // useEffect(() => {
+  //   const getUserProfileStatus = async () => {
+  //     const {
+  //       data: { user },
+  //       error,
+  //     } = await supabase.auth.getUser();
 
-      if (user) {
-        setUserId(user.id);
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("first_name, last_name, course, semester, enrollment_number")
-          .eq("id", user.id)
-          .single();
+  //     if (user) {
+  //       const { data, error } = await supabase
+  //         .from("profiles")
+  //         .select("first_name, last_name, course, semester, enrollment_number")
+  //         .eq("id", user.id)
+  //         .single();
 
-        if (data) {
-          const isIncomplete =
-            !data.first_name ||
-            !data.last_name ||
-            !data.course ||
-            !data.semester ||
-            !data.enrollment_number;
-          if (isIncomplete) {
-            setIsModalOpen(true);
-          }
-        }
-      }
-    };
+  //       if (data) {
+  //         const isIncomplete =
+  //           !data.first_name ||
+  //           !data.last_name ||
+  //           !data.course ||
+  //           !data.semester ||
+  //           !data.enrollment_number;
+  //         if (isIncomplete) {
+  //           setIsModalOpen(true);
+  //         }
+  //       }
+  //     }
+  //   };
 
-    getUserProfileStatus();
-  }, []);
+  //   getUserProfileStatus();
+  // }, []);
 
   useEffect(() => {
     if (session?.user?.id) {

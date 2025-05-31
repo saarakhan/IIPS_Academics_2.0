@@ -4,18 +4,16 @@ import {
   FaGraduationCap,
   FaCalendarAlt,
   FaHashtag,
-  FaSave,
-  FaTimes,
-  FaStar,
-  FaSun,
 } from "react-icons/fa";
-import { HiSparkles } from "react-icons/hi2";
 import "./ProfileCompletionModal.css";
 import toast from "react-hot-toast";
 import { supabase } from "../../../supabaseClient";
+import { RxCross1 } from "react-icons/rx";
+import { UserAuth } from "../../../Context/AuthContext";
 
 const ProfileCompletionModal = ({ isOpen, onClose, initialData }) => {
   const [loading, setLoading] = useState(false);
+  const { session } = UserAuth();
 
   const [formData, setFormData] = useState({
     first_name: "",
@@ -61,38 +59,6 @@ const ProfileCompletionModal = ({ isOpen, onClose, initialData }) => {
       });
     }
   }, [initialData]);
-  // const fetchProfile = async () => {
-  //   if (!userId) return;
-  //   setLoading(true);
-  //   try {
-  //     const { data, error } = await supabase
-  //       .from("profiles")
-  //       .select("first_name, last_name, course, semester, enrollment_number")
-  //       .eq("id", userId)
-  //       .single();
-
-  //     if (error) throw error;
-  //     if (data) {
-  //       setFormData({
-  //         first_name: data.first_name || "",
-  //         last_name: data.last_name || "",
-  //         course: data.course || "",
-  //         semester: data.semester || "",
-  //         enrollment_number: data.enrollment_number || "",
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching profile:", error.message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (isOpen && userId) {
-  //     fetchProfile();
-  //   }
-  // }, [isOpen, userId]);
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -109,16 +75,16 @@ const ProfileCompletionModal = ({ isOpen, onClose, initialData }) => {
           ...formData,
           updated_at: new Date().toISOString(),
         })
-        .eq("id", userId);
+        .eq("id", session?.user?.id);
 
       if (error) throw error;
 
-      onSave?.(formData);
-      toast.success("Profile Updated Successfully! ✨");
+      // onSave?.(formData);
+      toast.success("Profile Updated Successfully!");
       onClose();
     } catch (error) {
-      console.error("Error updating profile:", error.message);
-      alert("Failed to update profile. Please try again.");
+      console.log(error);
+      toast.error("Failed to update profile. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -129,23 +95,18 @@ const ProfileCompletionModal = ({ isOpen, onClose, initialData }) => {
   return (
     <div className="modal-overlay">
       <div className="modal-container">
-        <button className="close-button" onClick={onClose}>
-          <FaTimes />
-        </button>
-
+        <RxCross1
+          className="absolute right-5 top-3 cursor-pointer z-10"
+          onClick={() => {
+            onClose();
+          }}
+        />
         <div className="modal-content">
           <div className="modal-header">
-            <div className="header-icon">
-              <div className="icon-background">
-                <FaSun className="sun-icon" />
-                <div className="icon-badge">
-                  <HiSparkles />
-                </div>
-              </div>
-            </div>
+            <div className="header-icon"></div>
             <h2 className="modal-title">Complete Your Profile</h2>
             <p className="modal-description">
-              ✨ Let's create something amazing together!
+              This enables you to upload resources !
             </p>
           </div>
 
@@ -271,14 +232,6 @@ const ProfileCompletionModal = ({ isOpen, onClose, initialData }) => {
               )}
             </button>
           </form>
-
-          <div className="progress-indicator">
-            <div className="progress-badge">
-              <FaStar className="progress-icon" />
-              <span>Almost there! Complete your profile</span>
-              <HiSparkles className="progress-sparkle" />
-            </div>
-          </div>
         </div>
       </div>
     </div>

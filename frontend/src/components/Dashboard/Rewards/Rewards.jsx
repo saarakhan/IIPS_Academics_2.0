@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { UserAuth } from "../../../Context/AuthContext";
 import { supabase } from "../../../supabaseClient";
-import { CalendarIcon } from "../../../Icons"; // Assuming you'll use these
-import noData from "../../../assets/noData.svg"; // For empty state
+import { CalendarIcon } from "../../../Icons";
+import noData from "../../../assets/noData.svg";
 import { FaTrophy } from "react-icons/fa";
 
 const Rewards = () => {
@@ -11,6 +11,7 @@ const Rewards = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [total_rewards, SetTotal_rewards] = useState(0);
+
   // const rewardsLog = [
   //   {
   //     id: 1,
@@ -52,7 +53,6 @@ const Rewards = () => {
       setLoading(true);
       setError(null);
       try {
-       
         const { data: rewardData, error: rewardError } = await supabase
           .from("profiles")
           .select("rewards_points")
@@ -83,7 +83,6 @@ const Rewards = () => {
         setLoading(false);
       }
     };
-    
 
     fetchRewards();
   }, [session?.user?.id]);
