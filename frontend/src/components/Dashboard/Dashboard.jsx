@@ -9,11 +9,12 @@ import Rewards from "./Rewards/Rewards";
 import Downloads from "./Downloads/Downloads";
 import ProfileCompletionModal from "./ProfileCompletion/ProfileCompletionModal";
 
-
 const Dashboard = () => {
   const [active, setActive] = useState("Contributions");
   const { session } = UserAuth();
   const [profileData, setProfileData] = useState(null);
+  const [canUpload, SetCanUpload] = useState(false);
+
   const [stats, setStats] = useState({
     uploads: 0,
     downloads: 0,
@@ -23,37 +24,6 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // useEffect(() => {
-  //   const getUserProfileStatus = async () => {
-  //     const {
-  //       data: { user },
-  //       error,
-  //     } = await supabase.auth.getUser();
-
-  //     if (user) {
-  //       const { data, error } = await supabase
-  //         .from("profiles")
-  //         .select("first_name, last_name, course, semester, enrollment_number")
-  //         .eq("id", user.id)
-  //         .single();
-
-  //       if (data) {
-  //         const isIncomplete =
-  //           !data.first_name ||
-  //           !data.last_name ||
-  //           !data.course ||
-  //           !data.semester ||
-  //           !data.enrollment_number;
-  //         if (isIncomplete) {
-  //           setIsModalOpen(true);
-  //         }
-  //       }
-  //     }
-  //   };
-
-  //   getUserProfileStatus();
-  // }, []);
 
   useEffect(() => {
     if (session?.user?.id) {
@@ -86,6 +56,9 @@ const Dashboard = () => {
           setProfileCompletion(
             Math.round((completedFields / totalFields) * 100)
           );
+          if (profileCompletion == 100) {
+            SetCanUpload(true);
+          }
 
           // 3. Get total_uploads from profiles table (directly from profile)
           const uploadCount = profile.total_uploads || 0;
@@ -268,7 +241,7 @@ const Dashboard = () => {
 
         <div className="flex flex-col border-2 rounded-2xl p-3 lg:w-[60%] w-[90%] h-[500px]">
           {active == "Contributions" ? (
-            <Contributions></Contributions>
+            <Contributions canUpload={canUpload}></Contributions>
           ) : active == "Rewards" ? (
             <Rewards></Rewards>
           ) : active == "Downloads" ? (

@@ -5,6 +5,7 @@ import noData from "../../../assets/noData.svg";
 import { UserAuth } from "../../../Context/AuthContext";
 import { supabase } from "../../../supabaseClient";
 import ResourceUploadModal from "./ResourceUploadModal";
+import toast from "react-hot-toast";
 
 function Card({ children }) {
   return (
@@ -50,7 +51,7 @@ function CardContent({ children }) {
 //   },
 // ];
 
-export default function Notes() {
+export default function Notes({ canUpload }) {
   const { session } = UserAuth();
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -58,7 +59,13 @@ export default function Notes() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [fetchTrigger, setFetchTrigger] = useState(0);
 
-  const handleOpenModal = () => setIsModalOpen(true);
+  function handleOpenModal() {
+    if (!canUpload) {
+      toast.error("complete your profile to upload resource");
+      return
+    }
+    setIsModalOpen(true);
+  }
   const handleCloseModal = () => setIsModalOpen(false);
 
   const handleUploadSuccess = useCallback(() => {
@@ -75,6 +82,7 @@ export default function Notes() {
     }
 
     const fetchUserNotes = async () => {
+      console.log("canUplaod ", canUpload);
       setLoading(true);
       setError(null);
       try {
@@ -149,10 +157,12 @@ export default function Notes() {
       <div className="flex justify-end mb-4">
         <button
           onClick={handleOpenModal}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-[#C79745] text-white rounded-md cursor-pointer hover:bg-[#b3863c] text-sm font-medium shadow-sm hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#b3863c]"
+          className="flex items-center justify-center gap-2 px-4 py-2 
+          bg-[#2b3333] text-white rounded-md cursor-pointer  text-sm  hover:bg-[black]
+          font-medium shadow-sm "
         >
           <PlusIcon className="w-4 h-4" />
-          Upload New Note
+          Upload New Notes
         </button>
       </div>
       <div className="flex flex-col gap-2 h-[calc(350px-50px)] overflow-y-auto pr-2 custom-scrollbar">

@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 
 const PrivateRoute = ({ children }) => {
   const { session } = UserAuth();
-    console.log("PrivateRoute user:", session);
+    // console.log("PrivateRoute user:", session);
 
    // Better: Ensure session is present AND contains a valid token or user object
   if (!session || !session.access_token) {
