@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Outlet } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
-import Welcom from "./assets/welcome_video.mov";
+import Welcom from "./assets/welcome_video.MOV"
 import { Toaster } from "react-hot-toast";
 
 function App() {
