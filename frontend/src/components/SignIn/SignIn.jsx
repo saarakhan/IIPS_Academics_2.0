@@ -13,13 +13,7 @@ const SignIn = () => {
   const { SignInUser, signInWithGoogle, signInWithGitHub } = UserAuth();
   const navigate = useNavigate();
 
-  // checking
-  const auth = UserAuth();
-  const SignIn = auth?.SignIn;
-  if (!SignIn) {
-    console.log("Not Sign");
-  }
-
+  
   const handleSignIn = async (e) => {
     e.preventDefault();
     const { success, data, error } = await SignInUser(email, password);

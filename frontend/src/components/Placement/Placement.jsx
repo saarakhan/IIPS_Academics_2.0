@@ -20,6 +20,7 @@ import Cognam from "../../assets/Company Logs/cognam.jpg";
 import Incedo from "../../assets/Company Logs/incedo.jpg";
 import LTI from "../../assets/Company Logs/lti.jpg";
 import DICE from "../../assets/Company Logs/DICE.png";
+import topStudentImg from '../../assets/placement.jpg';
 
 const HeroSection = () => {
   return (
@@ -100,6 +101,7 @@ const TopStudents = () => {
       package: "₹45 LPA",
       role: "Software Engineer",
       location: "Bengaluru",
+      Image: topStudentImg
     
     },
     {
@@ -108,6 +110,7 @@ const TopStudents = () => {
       package: "₹42 LPA",
       role: "Product Manager",
       location: "Hyderabad",
+      Image: topStudentImg
     
     },
     {
@@ -116,6 +119,7 @@ const TopStudents = () => {
       package: "₹38 LPA",
       role: "Data Scientist",
       location: "Bengaluru",
+      Image: topStudentImg
     
     },
     {
@@ -124,6 +128,7 @@ const TopStudents = () => {
       package: "₹36 LPA",
       role: "Frontend Developer",
       location: "Gurugram",
+      Image: topStudentImg
     
     },
   ];
@@ -147,7 +152,7 @@ const TopStudents = () => {
               <div className="mb-5">
                 <div className="relative inline-block mb-4">
                   <img
-                    src="/placeholder.svg?height=120&width=120"
+                    src={student.Image}
                     alt={student.name}
                     className="w-30 h-30 rounded-full border-2 border-[#c79745]"
                   />
