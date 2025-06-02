@@ -1,23 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { supabase } from "../../../supabaseClient";
-import { UserAuth } from "../../../Context/AuthContext";
-import { XIcon, PlusIcon } from "../../../Icons";
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../../../supabaseClient';
+import { UserAuth } from '../../../Context/AuthContext';
+import { XIcon, PlusIcon } from '../../../Icons';
 
-const ResourceUploadModal = ({
-  isOpen,
-  onClose,
-  onUploadSuccess,
-  defaultResourceType,
-}) => {
+const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResourceType }) => {
   const { session } = UserAuth();
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [selectedCourseId, setSelectedCourseId] = useState("");
-  const [selectedSemester, setSelectedSemester] = useState("");
-  const [subjectId, setSubjectId] = useState("");
-  const [resourceType, setResourceType] = useState(
-    defaultResourceType || "NOTE"
-  );
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [selectedCourseId, setSelectedCourseId] = useState('');
+  const [selectedSemester, setSelectedSemester] = useState('');
+  const [subjectId, setSubjectId] = useState('');
+  const [resourceType, setResourceType] = useState(defaultResourceType || 'NOTE');
   const [file, setFile] = useState(null);
 
   const [coursesList, setCoursesList] = useState([]);
@@ -34,30 +27,27 @@ const ResourceUploadModal = ({
       setIsLoading(true);
       setError(null);
 
-      setTitle("");
-      setDescription("");
-      setSelectedCourseId("");
-      setSelectedSemester("");
-      setSubjectId("");
-      setResourceType(defaultResourceType || "NOTE");
+      setTitle('');
+      setDescription('');
+      setSelectedCourseId('');
+      setSelectedSemester('');
+      setSubjectId('');
+      setResourceType(defaultResourceType || 'NOTE');
       setFile(null);
       setAvailableSemesters([]);
       setSubjectsList([]);
       setSuccessMessage(null);
-      if (document.getElementById("file-upload-input")) {
-        document.getElementById("file-upload-input").value = "";
+      if (document.getElementById('file-upload-input')) {
+        document.getElementById('file-upload-input').value = '';
       }
 
       try {
-        const { data, error: coursesError } = await supabase
-          .from("courses")
-          .select("id, name, duration_years")
-          .order("name", { ascending: true });
+        const { data, error: coursesError } = await supabase.from('courses').select('id, name, duration_years').order('name', { ascending: true });
         if (coursesError) throw coursesError;
         setCoursesList(data || []);
       } catch (err) {
-        console.error("Error fetching courses:", err);
-        setError("Failed to load courses.");
+        console.error('Error fetching courses:', err);
+        setError('Failed to load courses.');
       } finally {
         setIsLoading(false);
       }
@@ -67,21 +57,19 @@ const ResourceUploadModal = ({
 
   useEffect(() => {
     if (selectedCourseId) {
-      const course = coursesList.find((c) => c.id === selectedCourseId);
+      const course = coursesList.find(c => c.id === selectedCourseId);
       if (course && course.duration_years) {
         const numSemesters = course.duration_years * 2;
-        setAvailableSemesters(
-          Array.from({ length: numSemesters }, (_, i) => i + 1)
-        );
+        setAvailableSemesters(Array.from({ length: numSemesters }, (_, i) => i + 1));
       } else {
         setAvailableSemesters([]);
       }
     } else {
       setAvailableSemesters([]);
     }
-    setSelectedSemester("");
+    setSelectedSemester('');
     setSubjectsList([]);
-    setSubjectId("");
+    setSubjectId('');
   }, [selectedCourseId, coursesList]);
 
   useEffect(() => {
@@ -91,16 +79,16 @@ const ResourceUploadModal = ({
         setError(null);
         try {
           const { data, error: subjectsError } = await supabase
-            .from("subjects")
-            .select("id, name")
-            .eq("course_id", selectedCourseId)
-            .eq("semester_number", parseInt(selectedSemester, 10))
-            .order("name", { ascending: true });
+            .from('subjects')
+            .select('id, name')
+            .eq('course_id', selectedCourseId)
+            .eq('semester_number', parseInt(selectedSemester, 10))
+            .order('name', { ascending: true });
           if (subjectsError) throw subjectsError;
           setSubjectsList(data || []);
         } catch (err) {
-          console.error("Error fetching subjects:", err);
-          setError("Failed to load subjects for the selected course/semester.");
+          console.error('Error fetching subjects:', err);
+          setError('Failed to load subjects for the selected course/semester.');
           setSubjectsList([]);
         } finally {
           setIsLoading(false);
@@ -110,20 +98,20 @@ const ResourceUploadModal = ({
       }
     };
     fetchSubjects();
-    setSubjectId("");
+    setSubjectId('');
   }, [selectedCourseId, selectedSemester]);
 
-  const handleFileChange = (e) => {
+  const handleFileChange = e => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
-      if (selectedFile.type !== "application/pdf") {
-        setError("Invalid file type. Only PDF files are allowed.");
+      if (selectedFile.type !== 'application/pdf') {
+        setError('Invalid file type. Only PDF files are allowed.');
         setFile(null);
         return;
       }
       if (selectedFile.size > 5 * 1024 * 1024) {
         // 5MB
-        setError("File is too large. Maximum size is 5MB.");
+        setError('File is too large. Maximum size is 5MB.');
         setFile(null);
         return;
       }
@@ -132,11 +120,11 @@ const ResourceUploadModal = ({
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
 
     if (!file || !title || !subjectId || !resourceType || !session?.user?.id) {
-      setError("Please fill all required fields and select a file.");
+      setError('Please fill all required fields and select a file.');
       return;
     }
 
@@ -145,18 +133,14 @@ const ResourceUploadModal = ({
     setIsLoading(true);
 
     try {
-      const fileExt = file.name.split(".").pop();
-      const uniqueFileName = `${
-        session.user.id
-      }/${resourceType}/${Date.now()}.${fileExt}`;
+      const fileExt = file.name.split('.').pop();
+      const uniqueFileName = `${session.user.id}/${resourceType}/${Date.now()}.${fileExt}`;
 
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from("uploads")
-        .upload(uniqueFileName, file, {
-          cacheControl: "3600",
-          upsert: false,
-          contentType: file.type,
-        });
+      const { data: uploadData, error: uploadError } = await supabase.storage.from('uploads').upload(uniqueFileName, file, {
+        cacheControl: '3600',
+        upsert: false,
+        contentType: file.type,
+      });
 
       if (uploadError) throw uploadError;
 
@@ -170,57 +154,48 @@ const ResourceUploadModal = ({
         file_path: uploadData.path,
         file_size_bytes: file.size,
         mime_type: file.type,
-        status: "PENDING",
+        status: 'PENDING',
       };
 
-      const { error: insertError } = await supabase
-        .from("resources")
-        .insert([resourceData]);
+      const { error: insertError } = await supabase.from('resources').insert([resourceData]);
 
       if (insertError) {
-        await supabase.storage.from("uploads").remove([uploadData.path]);
+        await supabase.storage.from('uploads').remove([uploadData.path]);
         throw insertError;
       }
 
       // Increment total_uploads
-      const { data, error: fetchError } = await supabase
-        .from("profiles")
-        .select("total_uploads")
-        .eq("id", session.user.id)
-        .single();
+      const { data, error: fetchError } = await supabase.from('profiles').select('total_uploads').eq('id', session.user.id).single();
 
       if (fetchError) {
-        console.error("Failed to fetch total_uploads:", fetchError.message);
+        console.error('Failed to fetch total_uploads:', fetchError.message);
       } else {
         const currentUploads = data?.total_uploads || 0;
 
         const { error: updateError } = await supabase
-          .from("profiles")
+          .from('profiles')
           .update({ total_uploads: currentUploads + 1 })
-          .eq("id", session.user.id);
+          .eq('id', session.user.id);
 
         if (updateError) {
-          console.error("Failed to update total_uploads:", updateError.message);
+          console.error('Failed to update total_uploads:', updateError.message);
         }
       }
 
-
-      setSuccessMessage(
-        "File uploaded successfully! It is now pending approval."
-      );
-      setTitle("");
-      setDescription("");
-      setSubjectId("");
-      setResourceType("NOTE");
+      setSuccessMessage('File uploaded successfully! It is now pending approval.');
+      setTitle('');
+      setDescription('');
+      setSubjectId('');
+      setResourceType('NOTE');
       setFile(null);
 
-      if (document.getElementById("file-upload-input")) {
-        document.getElementById("file-upload-input").value = "";
+      if (document.getElementById('file-upload-input')) {
+        document.getElementById('file-upload-input').value = '';
       }
 
       if (onUploadSuccess) onUploadSuccess();
     } catch (err) {
-      console.error("Upload failed:", err);
+      console.error('Upload failed:', err);
       setError(`Upload failed: ${err.message}`);
     } finally {
       setIsLoading(false);
@@ -230,81 +205,61 @@ const ResourceUploadModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold">Upload New Resource</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
-          >
+    <div className='fixed inset-0 bg-white/10 backdrop-blur-md flex items-center justify-center z-50 p-4'>
+      <div className='bg-white p-6 rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto'>
+        <div className='flex justify-between items-center mb-4'>
+          <h2 className='text-2xl font-semibold'>Upload New Resource</h2>
+          <button onClick={onClose} className='text-gray-500 hover:text-gray-700'>
             <XIcon size={24} />
           </button>
         </div>
 
-        {error && (
-          <p className="text-red-500 bg-red-100 p-3 rounded mb-4">{error}</p>
-        )}
-        {successMessage && (
-          <p className="text-green-500 bg-green-100 p-3 rounded mb-4">
-            {successMessage}
-          </p>
-        )}
+        {error && <p className='text-red-500 bg-red-100 p-3 rounded mb-4'>{error}</p>}
+        {successMessage && <p className='text-green-500 bg-green-100 p-3 rounded mb-4'>{successMessage}</p>}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className='space-y-4'>
           <div>
-            <label
-              htmlFor="title"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Title <span className="text-red-500">*</span>
+            <label htmlFor='title' className='block text-sm font-medium text-gray-700'>
+              Title <span className='text-red-500'>*</span>
             </label>
             <input
-              type="text"
-              id="title"
+              type='text'
+              id='title'
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={e => setTitle(e.target.value)}
               required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#C79745] focus:border-[#C79745] sm:text-sm"
+              className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#C79745] focus:border-[#C79745] sm:text-sm'
             />
           </div>
 
           <div>
-            <label
-              htmlFor="resourceType"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Resource Type <span className="text-red-500">*</span>
+            <label htmlFor='resourceType' className='block text-sm font-medium text-gray-700'>
+              Resource Type <span className='text-red-500'>*</span>
             </label>
             <select
-              id="resourceType"
+              id='resourceType'
               value={resourceType}
-              onChange={(e) => setResourceType(e.target.value)}
+              onChange={e => setResourceType(e.target.value)}
               required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#C79745] focus:border-[#C79745] sm:text-sm"
-            >
-              <option value="NOTE">Note</option>
-              <option value="PYQ">PYQ (Previous Year Question)</option>
-              <option value="SYLLABUS">Syllabus</option>
+              className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#C79745] focus:border-[#C79745] sm:text-sm'>
+              <option value='NOTE'>Note</option>
+              <option value='PYQ'>PYQ (Previous Year Question)</option>
+              <option value='SYLLABUS'>Syllabus</option>
             </select>
           </div>
 
           <div>
-            <label
-              htmlFor="courseId"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Course/Department <span className="text-red-500">*</span>
+            <label htmlFor='courseId' className='block text-sm font-medium text-gray-700'>
+              Course/Department <span className='text-red-500'>*</span>
             </label>
             <select
-              id="courseId"
+              id='courseId'
               value={selectedCourseId}
-              onChange={(e) => setSelectedCourseId(e.target.value)}
+              onChange={e => setSelectedCourseId(e.target.value)}
               required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#C79745] focus:border-[#C79745] sm:text-sm"
-            >
-              <option value="">Select a course/department</option>
-              {coursesList.map((course) => (
+              className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#C79745] focus:border-[#C79745] sm:text-sm'>
+              <option value=''>Select a course/department</option>
+              {coursesList.map(course => (
                 <option key={course.id} value={course.id}>
                   {course.name}
                 </option>
@@ -313,22 +268,18 @@ const ResourceUploadModal = ({
           </div>
 
           <div>
-            <label
-              htmlFor="semester"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Semester <span className="text-red-500">*</span>
+            <label htmlFor='semester' className='block text-sm font-medium text-gray-700'>
+              Semester <span className='text-red-500'>*</span>
             </label>
             <select
-              id="semester"
+              id='semester'
               value={selectedSemester}
-              onChange={(e) => setSelectedSemester(e.target.value)}
+              onChange={e => setSelectedSemester(e.target.value)}
               required
               disabled={!selectedCourseId || availableSemesters.length === 0}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#C79745] focus:border-[#C79745] sm:text-sm disabled:bg-gray-50"
-            >
-              <option value="">Select a semester</option>
-              {availableSemesters.map((sem) => (
+              className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#C79745] focus:border-[#C79745] sm:text-sm disabled:bg-gray-50'>
+              <option value=''>Select a semester</option>
+              {availableSemesters.map(sem => (
                 <option key={sem} value={sem}>
                   Semester {sem}
                 </option>
@@ -337,22 +288,18 @@ const ResourceUploadModal = ({
           </div>
 
           <div>
-            <label
-              htmlFor="subjectId"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Subject <span className="text-red-500">*</span>
+            <label htmlFor='subjectId' className='block text-sm font-medium text-gray-700'>
+              Subject <span className='text-red-500'>*</span>
             </label>
             <select
-              id="subjectId"
+              id='subjectId'
               value={subjectId}
-              onChange={(e) => setSubjectId(e.target.value)}
+              onChange={e => setSubjectId(e.target.value)}
               required
               disabled={!selectedSemester || subjectsList.length === 0}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#C79745] focus:border-[#C79745] sm:text-sm disabled:bg-gray-50"
-            >
-              <option value="">Select a subject</option>
-              {subjectsList.map((subject) => (
+              className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#C79745] focus:border-[#C79745] sm:text-sm disabled:bg-gray-50'>
+              <option value=''>Select a subject</option>
+              {subjectsList.map(subject => (
                 <option key={subject.id} value={subject.id}>
                   {subject.name}
                 </option>
@@ -361,58 +308,49 @@ const ResourceUploadModal = ({
           </div>
 
           <div>
-            <label
-              htmlFor="description"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor='description' className='block text-sm font-medium text-gray-700'>
               Description (Optional)
             </label>
             <textarea
-              id="description"
+              id='description'
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows="3"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#C79745] focus:border-[#C79745] sm:text-sm"
-            ></textarea>
+              onChange={e => setDescription(e.target.value)}
+              rows='3'
+              className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#C79745] focus:border-[#C79745] sm:text-sm'></textarea>
           </div>
 
           <div>
-            <label
-              htmlFor="file-upload-input"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Upload PDF (Max 5MB) <span className="text-red-500">*</span>
+            <label htmlFor='file-upload-input' className='block text-sm font-medium text-gray-700'>
+              Upload PDF (Max 5MB) <span className='text-red-500'>*</span>
             </label>
             <input
-              id="file-upload-input"
-              type="file"
-              accept=".pdf"
+              id='file-upload-input'
+              type='file'
+              accept='.pdf'
               onChange={handleFileChange}
               required
-              className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#EADDC5] file:text-[#C79745] hover:file:bg-[#F0E6D5]" // Adjusted file input style
+              className='mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#EADDC5] file:text-[#C79745] hover:file:bg-[#F0E6D5]' // Adjusted file input style
             />
             {file && (
-              <p className="text-xs text-gray-500 mt-1">
+              <p className='text-xs text-gray-500 mt-1'>
                 {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
               </p>
             )}
           </div>
 
-          <div className="flex justify-end space-x-3 pt-2">
+          <div className='flex justify-end space-x-3 pt-2'>
             <button
-              type="button"
+              type='button'
               onClick={onClose}
               disabled={isLoading}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#C79745] disabled:opacity-50"
-            >
+              className='px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#C79745] disabled:opacity-50'>
               Cancel
             </button>
             <button
-              type="submit"
+              type='submit'
               disabled={isLoading || !file}
-              className="px-4 py-2 text-sm font-medium text-white bg-[#C79745] border border-transparent rounded-md shadow-sm hover:bg-[#b3863c] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#b3863c] disabled:opacity-50"
-            >
-              {isLoading ? "Uploading..." : "Upload Resource"}
+              className='px-4 py-2 text-sm font-medium text-white bg-[#C79745] border border-transparent rounded-md shadow-sm hover:bg-[#b3863c] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#b3863c] disabled:opacity-50'>
+              {isLoading ? 'Uploading...' : 'Upload Resource'}
             </button>
           </div>
         </form>
