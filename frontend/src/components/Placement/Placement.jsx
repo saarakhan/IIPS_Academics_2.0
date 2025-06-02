@@ -20,7 +20,12 @@ import Cognam from "../../assets/Company Logs/cognam.jpg";
 import Incedo from "../../assets/Company Logs/incedo.jpg";
 import LTI from "../../assets/Company Logs/lti.jpg";
 import DICE from "../../assets/Company Logs/DICE.png";
-import topStudentImg from '../../assets/placement.jpg';
+// import topStudentImg from '../../assets/placement.jpg';
+
+import Aadiya_Bansal_img from '../../assets/Top Students image/Aaditya_Bansal.jpeg';
+import Rashi_Dashore_img from '../../assets/Top Students image/Rashi Dashore.jpeg';
+import Riya_Kathiari_img from '../../assets/Top Students image/Riya Kathiari.jpeg';
+import Saloni_Vishwakarma_img from '../../assets/Top Students image/Saloni Vishwakarma.jpeg';
 
 const HeroSection = () => {
   return (
@@ -96,40 +101,39 @@ const PlacementStats = () => {
 const TopStudents = () => {
   const students = [
     {
-      name: "Arjun Sharma",
-      company: "Google",
-      package: "₹45 LPA",
-      role: "Software Engineer",
+      name: "Aaditya Bansal",
+      company: "Twitter",
+      package: "₹72 LPA",
+      role: "AI Turur",
+      location: "Work from home",
+      Image: Aadiya_Bansal_img
+    
+    },
+    {
+      name: "Riya Kothari",
+      company: "Lumber",
+      package: "₹15 LPA",
+      role: "Quality Assurance Engineer",
       location: "Bengaluru",
-      Image: topStudentImg
+      Image: Riya_Kathiari_img
     
     },
     {
-      name: "Priya Patel",
-      company: "Microsoft",
-      package: "₹42 LPA",
-      role: "Product Manager",
-      location: "Hyderabad",
-      Image: topStudentImg
+      name: "Rashi Dashore",
+      company: "Dice",
+      package: "₹12 LPA",
+      role: "Software Development Engineer",
+      location: "Pune",
+      Image: Rashi_Dashore_img
     
     },
     {
-      name: "Rahul Kumar",
-      company: "Amazon",
-      package: "₹38 LPA",
-      role: "Data Scientist",
-      location: "Bengaluru",
-      Image: topStudentImg
-    
-    },
-    {
-      name: "Sneha Gupta",
-      company: "Meta",
-      package: "₹36 LPA",
-      role: "Frontend Developer",
-      location: "Gurugram",
-      Image: topStudentImg
-    
+      name: "Saloni Vishwakarma",
+      company: "Dice",
+      package: "₹10 LPA",
+      role: "Business Analyst",
+      location: "Pune",
+      Image: Saloni_Vishwakarma_img
     },
   ];
 
