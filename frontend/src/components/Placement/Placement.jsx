@@ -121,7 +121,7 @@ const TopStudents = () => {
     {
       name: "Rashi Dashore",
       company: "Dice",
-      package: "₹12 LPA",
+      package: "₹16 LPA",
       role: "Software Development Engineer",
       location: "Pune",
       Image: Rashi_Dashore_img
