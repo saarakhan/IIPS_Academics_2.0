@@ -1,4 +1,3 @@
-// Icons.js - A collection of all icons relevant for the Academic Resource Portal
 
 export function SearchIcon({ className }) {
   return (

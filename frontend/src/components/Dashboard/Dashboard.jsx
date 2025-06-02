@@ -7,11 +7,14 @@ import { StarIcon, DownloadIcon, ChevronUpIcon } from "../../Icons";
 import Contributions from "./Contributions/Contributions";
 import Rewards from "./Rewards/Rewards";
 import Downloads from "./Downloads/Downloads";
+import ProfileCompletionModal from "./ProfileCompletion/ProfileCompletionModal";
 
 const Dashboard = () => {
   const [active, setActive] = useState("Contributions");
   const { session } = UserAuth();
   const [profileData, setProfileData] = useState(null);
+  const [canUpload, SetCanUpload] = useState(false);
+
   const [stats, setStats] = useState({
     uploads: 0,
     downloads: 0,
@@ -20,6 +23,7 @@ const Dashboard = () => {
   const [profileCompletion, setProfileCompletion] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     if (session?.user?.id) {
@@ -52,6 +56,9 @@ const Dashboard = () => {
           setProfileCompletion(
             Math.round((completedFields / totalFields) * 100)
           );
+          if (profileCompletion == 100) {
+            SetCanUpload(true);
+          }
 
           // 3. Get total_uploads from profiles table (directly from profile)
           const uploadCount = profile.total_uploads || 0;
@@ -163,7 +170,14 @@ const Dashboard = () => {
           {/* profile completion  */}
           <div className="w-full flex flex-col items-center mt-3">
             <div className="flex justify-between w-[90%] mb-1 text-sm sm:text-base">
-              <span>Profile Completion</span>
+              <span
+                onClick={() => {
+                  setIsModalOpen(true);
+                }}
+                className="cursor-pointer text-blue-400"
+              >
+                Profile Completion
+              </span>
               <span>
                 {loading ? "..." : error ? "N/A" : `${profileCompletion}%`}
               </span>
@@ -227,13 +241,19 @@ const Dashboard = () => {
 
         <div className="flex flex-col border-2 rounded-2xl p-3 lg:w-[60%] w-[90%] h-[500px]">
           {active == "Contributions" ? (
-            <Contributions></Contributions>
+            <Contributions canUpload={canUpload}></Contributions>
           ) : active == "Rewards" ? (
             <Rewards></Rewards>
           ) : active == "Downloads" ? (
             <Downloads></Downloads>
           ) : null}
         </div>
+
+        <ProfileCompletionModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          initialData={profileData ?? undefined}
+        />
       </div>
     </div>
   );

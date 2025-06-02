@@ -13,7 +13,6 @@ import AdminDashboard from "./components/Admin/AdminDashboard.jsx";
 import Placement from "./components/Placement/Placement";
 import AdminRoute from "./components/PrivateRoute/AdminRoute.jsx";
 
-
 export const router = createBrowserRouter([
   {
     path: "/",
