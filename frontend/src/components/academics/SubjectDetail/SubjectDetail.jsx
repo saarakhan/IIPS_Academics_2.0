@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react'; 
-import { useParams } from 'react-router-dom'; 
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { supabase } from '../../../supabaseClient';
 import { BookOpenIcon, DocumentTextIcon, ClipboardListIcon } from '../../../Icons';
 import Header from './Header';
 import EmptyState from './EmptyState';
 import SubjectInfo from './SubjectInfo';
 import ResourceSection from './ResourceSection';
-import Footer from '../../Home/Footer'; 
+import Footer from '../../Home/Footer';
 
 function SubjectDetail() {
   const { id: subjectId } = useParams();
@@ -17,10 +17,15 @@ function SubjectDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // To automatically loaded from top.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   useEffect(() => {
     const fetchSubjectDetails = async () => {
       if (!subjectId) {
-        setError("Subject ID is missing.");
+        setError('Subject ID is missing.');
         setLoading(false);
         return;
       }
@@ -29,10 +34,10 @@ function SubjectDetail() {
       setError(null);
 
       try {
-       
         const { data: subjectData, error: subjectError } = await supabase
           .from('subjects')
-          .select(`
+          .select(
+            `
             id,
             name,
             code,
@@ -40,36 +45,36 @@ function SubjectDetail() {
             semester_number,
             teacher_name,
             course:course_id (name) 
-          `)
+          `
+          )
           .eq('id', subjectId)
-          .single(); 
+          .single();
         if (subjectError) {
-            if (subjectError.code === 'PGRST116') { 
-                setError("Subject not found.");
-            } else {
-                throw subjectError;
-            }
-            setLoading(false);
-            return;
+          if (subjectError.code === 'PGRST116') {
+            setError('Subject not found.');
+          } else {
+            throw subjectError;
+          }
+          setLoading(false);
+          return;
         }
-     
 
         const mappedSubject = {
           id: subjectData.id,
           name: subjectData.name,
-          code: subjectData.code || "N/A",
-          description: subjectData.description || "No description available.",
-          about: subjectData.description || "No description available.", // For SubjectInfo
+          code: subjectData.code || 'N/A',
+          description: subjectData.description || 'No description available.',
+          about: subjectData.description || 'No description available.', // For SubjectInfo
           semester: `Semester ${subjectData.semester_number}`,
-          department: subjectData.course?.name || "N/A", // Department becomes course name
-          teacher: subjectData.teacher_name || "To Be Announced",
+          department: subjectData.course?.name || 'N/A', // Department becomes course name
+          teacher: subjectData.teacher_name || 'To Be Announced',
         };
         setSubject(mappedSubject);
- 
+
         const { data: resourcesData, error: resourcesError } = await supabase
           .from('resources')
           .select('id, title, resource_type, file_path, file_name')
-          .eq('subject_id', subjectData.id) 
+          .eq('subject_id', subjectData.id)
           .eq('status', 'APPROVED');
 
         if (resourcesError) throw resourcesError;
@@ -81,47 +86,44 @@ function SubjectDetail() {
           const resourceItemData = {
             id: res.id,
             title: res.title,
-            file: res.file_path, 
-            originalFileName: res.file_name 
+            file: res.file_path,
+            originalFileName: res.file_name,
           };
           if (res.resource_type === 'NOTE') notesArray.push(resourceItemData);
           else if (res.resource_type === 'PYQ') pyqsArray.push(resourceItemData);
           else if (res.resource_type === 'SYLLABUS') syllabusArray.push(resourceItemData);
-         
         });
 
         setNotes(notesArray);
         setPyqs(pyqsArray);
         setSyllabus(syllabusArray);
         // setOther(otherArray);
-
       } catch (err) {
         console.error('Error fetching subject details:', err);
-        if (!error && err.message !== "Subject not found.") { 
-            setError(err.message || 'Failed to load subject details.');
+        if (!error && err.message !== 'Subject not found.') {
+          setError(err.message || 'Failed to load subject details.');
         }
-        setSubject(null); 
+        setSubject(null);
       } finally {
         setLoading(false);
       }
     };
 
     fetchSubjectDetails();
-  }, [subjectId, error]); 
+  }, [subjectId, error]);
   if (loading) {
     return (
       <div className='min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#f5f7fa] to-[#f0f4f8]'>
         {/* Replace with your LoadingSpinner component if you have one */}
-        <p className="text-gray-500">Loading subject details...</p>
+        <p className='text-gray-500'>Loading subject details...</p>
       </div>
     );
   }
 
   if (error || !subject) {
-   
     return <EmptyState />;
   }
-  
+
   const totalItems = notes.length + pyqs.length + syllabus.length; // + other.length
 
   return (
@@ -129,7 +131,7 @@ function SubjectDetail() {
       <Header subject={subject} />
       <div className='container mx-auto py-6 px-6 flex-grow'>
         <SubjectInfo subject={subject} />
-        
+
         {totalItems > 0 ? (
           <>
             <div className='mb-4 flex justify-between items-center mt-6'>
@@ -138,19 +140,32 @@ function SubjectDetail() {
             </div>
             <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
               {/* Pass the bucket name as the folder prop for ResourceItem to construct URL */}
-              <ResourceSection title='Lecture Notes' IconComponent={BookOpenIcon} resources={notes} folder='academic_resources' />
-              <ResourceSection title='Previous Year Questions' IconComponent={ClipboardListIcon} resources={pyqs} folder='academic_resources' />
-              <ResourceSection title='Course Syllabus' IconComponent={DocumentTextIcon} resources={syllabus} folder='academic_resources' />
+              <ResourceSection
+                title='Lecture Notes'
+                IconComponent={BookOpenIcon}
+                resources={notes}
+                folder='academic_resources'
+              />
+              <ResourceSection
+                title='Previous Year Questions'
+                IconComponent={ClipboardListIcon}
+                resources={pyqs}
+                folder='academic_resources'
+              />
+              <ResourceSection
+                title='Course Syllabus'
+                IconComponent={DocumentTextIcon}
+                resources={syllabus}
+                folder='academic_resources'
+              />
               {}
             </div>
           </>
         ) : (
-          <div className="text-center py-10 mt-6 bg-white rounded-lg shadow-sm border border-[#e0e5ec]">
-            <BookOpenIcon className="mx-auto h-12 w-12 text-gray-400" /> {/* Or a more generic "no content" icon */}
-            <h3 className="mt-2 text-lg font-medium text-gray-900">No Resources Available</h3>
-            <p className="mt-1 text-sm text-gray-500">
-              There are currently no approved resources (Notes, PYQs, Syllabus) for this subject.
-            </p>
+          <div className='text-center py-10 mt-6 bg-white rounded-lg shadow-sm border border-[#e0e5ec]'>
+            <BookOpenIcon className='mx-auto h-12 w-12 text-gray-400' /> {/* Or a more generic "no content" icon */}
+            <h3 className='mt-2 text-lg font-medium text-gray-900'>No Resources Available</h3>
+            <p className='mt-1 text-sm text-gray-500'>There are currently no approved resources (Notes, PYQs, Syllabus) for this subject.</p>
           </div>
         )}
       </div>
