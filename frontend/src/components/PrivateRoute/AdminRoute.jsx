@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { UserAuth } from "../../Context/AuthContext";
 import { supabase } from "../../supabaseClient";
+import { toast } from "react-hot-toast";
 
 const AdminRoute = ({ children }) => {
   const { session } = UserAuth();
@@ -31,7 +32,6 @@ const AdminRoute = ({ children }) => {
     checkRole();
   }, [session]);
 
-
   if (isAuthorized === null) {
     return (
       <div className="flex justify-center items-center h-screen text-3xl font-bold">
@@ -44,7 +44,11 @@ const AdminRoute = ({ children }) => {
   }
 
   if (!isAuthorized) {
-    return <Navigate to="/" replace />;
+    return (
+      <>
+        <Navigate to="/" replace />;{toast.error("Unauthorized access")}
+      </>
+    );
   }
 
   return children;

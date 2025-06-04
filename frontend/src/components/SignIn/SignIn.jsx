@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserAuth } from "../../Context/AuthContext";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import Toast from "../Toast/Toast";
+import toast from "react-hot-toast";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -13,20 +13,19 @@ const SignIn = () => {
   const { SignInUser, signInWithGoogle, signInWithGitHub } = UserAuth();
   const navigate = useNavigate();
 
-  
   const handleSignIn = async (e) => {
     e.preventDefault();
     const { success, data, error } = await SignInUser(email, password);
 
     if (!success) {
       setError(error);
-      Toast.show({ message: error || "Login failed", type: "error" });
+      toast.error("Login failed");
 
       setTimeout(() => {
         setError("");
       }, 3000);
     } else {
-      Toast.show({ message: "Logged in successfully!", type: "success" });
+      toast.success("Logged in successfully!");
       setTimeout(() => {
         navigate("/");
       }, 2000);
@@ -42,10 +41,10 @@ const SignIn = () => {
 
     if (!success) {
       setError(error);
-      Toast.show({ message: error || "Google sign-in failed", type: "error" });
+      toast.error("Google sign-in failed");
       setTimeout(() => setError(""), 3000);
     } else {
-      Toast.show({ message: "Signed in with Google!", type: "success" });
+      toast.success("Signed in with Google!");
       setTimeout(() => {
         navigate("/");
       }, 2000);
@@ -61,11 +60,11 @@ const SignIn = () => {
 
     if (!success) {
       setError(error);
-      Toast.show({ message: error || "GitHub sign-in failed", type: "error" });
+      toast.show("GitHub sign-in failed");
 
       setTimeout(() => setError(""), 3000);
     } else {
-      Toast.show({ message: "Signed in with GitHub!", type: "success" });
+      toast.show("Signed in with GitHub!");
       setTimeout(() => {
         navigate("/");
       }, 2000);

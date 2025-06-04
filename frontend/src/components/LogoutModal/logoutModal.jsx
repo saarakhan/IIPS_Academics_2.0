@@ -32,6 +32,7 @@ const LogoutModal = React.memo(function LogoutModal({
     await SignOut();
     navigate("/");
     toast.success("Logout successfull!");
+    handleClose();
   }
 
   return (
