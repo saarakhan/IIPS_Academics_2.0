@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export default function Footer() {
   return (
-    <footer className="bg-white border-t border-[#C79745]">
+    <footer className="w-full bg-white border-t border-[#C79745]">
       <div className="max-w-7xl mx-auto px-4 py-8 grid md:grid-cols-3 gap-8">
         <div>
           <h3 className="text-lg font-bold mb-4">IIPS Academics</h3>
@@ -50,3 +50,4 @@ export default function Footer() {
     </footer>
   );
 }
+

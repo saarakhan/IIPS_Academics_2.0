@@ -15,7 +15,7 @@ import Contributions from "./Contributions/Contributions";
 import Rewards from "./Rewards/Rewards";
 import Downloads from "./Downloads/Downloads";
 import ProfileCompletionModal from "./ProfileCompletion/ProfileCompletionModal";
-
+import Footer from "../Home/Footer";
 const Dashboard = () => {
   const [active, setActive] = useState("Contributions");
   const { session } = UserAuth();
@@ -37,7 +37,6 @@ const Dashboard = () => {
   const [avatarError, setAvatarError] = useState(null);
 
   const fetchDashboardData = async () => {
-    // Made this a standalone function
     if (!session?.user?.id) {
       setLoading(false);
       return;
@@ -123,7 +122,7 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    fetchDashboardData(); // Call the standalone function
+    fetchDashboardData();
   }, [session?.user?.id]);
 
   const handleAvatarChange = async (event) => {
@@ -212,26 +211,26 @@ const Dashboard = () => {
     }
   };
 
-  // buttons array
   const menuItems = [
     { label: "Contributions", icon: <ChevronUpIcon /> },
     { label: "Rewards", icon: <StarIcon size={16} /> },
     { label: "Downloads", icon: <DownloadIcon size={16} /> },
   ];
+
   return (
-    <div className="flex flex-col items-center gap-2 mb-4">
-      {/* text  */}
-      <div>
+    <div className="flex flex-col items-center gap-2 mt-8 w-full">
+      {/* Header */}
+      <div className="w-full max-w-7xl">
         <p className="text-center mt-5 text-2xl font-bold">Profile</p>
         <p className="text-center text-[#3B3838] mt-1">
           Manage your profile and see your contributions
         </p>
       </div>
 
-      <div className="flex w-full justify-center gap-15 flex-col items-center lg:items-start lg:flex-row">
-        {/* profile overview  */}
-
-        <div className="border-2 w-[90%] md:w-1/2 lg:w-[30%] xl:w-[22%] flex flex-col items-center py-4 px-6 rounded-2xl relative">
+      {/* Main Content */}
+      <div className="flex w-full max-w-7xl justify-center gap-4 lg:gap-8 mt-8 flex-col lg:flex-row">
+        {/* Profile Overview Sidebar */}
+        <div className="border-2 w-full lg:w-72 xl:w-80 flex flex-col items-center py-6 px-6 rounded-xl h-fit lg:h-[650px] bg-white shadow-2xl shadow-[5px_7px_8px_rgba(0,0,0,0.25)]">
           {/* Hidden file input */}
           <input
             type="file"
@@ -241,13 +240,13 @@ const Dashboard = () => {
             style={{ display: "none" }}
           />
 
-          {/* User image and upload button container */}
-          <div className="relative group">
+          {/* User Avatar Section */}
+          <div className="relative group mb-4">
             <img
               src={profileData?.avatar_url || demo}
               alt="user image"
               loading="lazy"
-              className={`w-[100px] h-[100px] rounded-full object-cover border-2 ${
+              className={`w-24 h-24 lg:w-28 lg:h-28 rounded-full object-cover border-2 ${
                 uploadingAvatar ? "opacity-50" : "opacity-100"
               } transition-opacity`}
             />
@@ -266,132 +265,139 @@ const Dashboard = () => {
               </button>
             )}
           </div>
+
+          {/* Avatar Error */}
           {avatarError && (
-            <p className="text-xs text-red-500 mt-1 text-center">
+            <p className="text-xs text-red-500 mb-2 text-center max-w-full break-words">
               {avatarError}
             </p>
           )}
 
-          {/* user name  */}
-          <p className="font-bold text-lg sm:text-2xl mt-2 ">
-            {loading
-              ? "Loading..."
-              : error
-              ? "Error"
-              : profileData
-              ? `${profileData.first_name || ""} ${
-                  profileData.last_name || ""
-                }`.trim() || "User Name"
-              : "User Name"}
-          </p>
-          {/* user course  */}
-          <p className="text-[#3B3838] text-sm sm:text-lg">
-            {loading ? (
-              "..."
-            ) : error ? (
-              "N/A"
-            ) : profileData && profileData.course && profileData.semester ? (
-              <>
-                {profileData.course.name} {profileData.semester}
-                <sup>th</sup> Semester
-              </>
-            ) : (
-              "Course Info N/A"
-            )}
-          </p>
+          {/* User Info */}
+          <div className="text-center mb-6 w-full">
+            <p className="font-bold text-lg lg:text-xl mb-2 break-words">
+              {loading
+                ? "Loading..."
+                : error
+                ? "Error"
+                : profileData
+                ? `${profileData.first_name || ""} ${
+                    profileData.last_name || ""
+                  }`.trim() || "User Name"
+                : "User Name"}
+            </p>
+            <p className="text-[#3B3838] text-sm lg:text-base break-words">
+              {loading ? (
+                "..."
+              ) : error ? (
+                "N/A"
+              ) : profileData && profileData.course && profileData.semester ? (
+                <>
+                  {profileData.course.name} {profileData.semester}
+                  <sup>th</sup> Semester
+                </>
+              ) : (
+                "Course Info N/A"
+              )}
+            </p>
+          </div>
 
-          {/* profile completion section - styled like a button */}
-          <div className="w-full mt-4 mb-4">
+          {/* Profile Completion */}
+          <div className="w-full mb-4">
             <div
               onClick={() => setIsModalOpen(true)}
-              className="flex items-center justify-between gap-4 border rounded-xl px-4 py-2 text-sm cursor-pointer bg-white hover:bg-gray-50 transition-colors w-full"
+              className="flex items-center justify-between gap-4 border rounded-lg px-4 py-3 text-sm cursor-pointer bg-white hover:bg-gray-50 transition-colors w-full"
               title="View or update profile details"
             >
               <div className="flex items-center gap-2">
-                <UserIcon className="w-5 h-5 text-gray-600" />
+                <UserIcon className="w-5 h-5 text-gray-600 flex-shrink-0" />
                 <span className="text-gray-700 font-medium">
                   Profile Completion
                 </span>
               </div>
-              <span className="text-[#C79745] font-semibold">
+              <span className="text-[#C79745] font-semibold flex-shrink-0">
                 {loading ? "..." : error ? "N/A" : `${profileCompletion}%`}
               </span>
             </div>
           </div>
-          <Line
-            percent={loading || error ? 0 : profileCompletion}
-            strokeWidth={4}
-            strokeColor="#c79745"
-            className="w-[95%] border-2 rounded-2xl"
-          />
 
-          {/* user activity details */}
-          <div className="w-full">
-            {" "}
-            <hr className="border-1  mt-5 mb-2 text" />
-            {/* data  */}
+          {/* Progress Bar */}
+          <div className="w-full mb-6">
+            <Line
+              percent={loading || error ? 0 : profileCompletion}
+              strokeWidth={4}
+              strokeColor="#c79745"
+              className="w-full border-2 rounded-2xl"
+            />
+          </div>
+
+          {/* Stats Section */}
+          <div className="w-full mb-6 flex-1 flex flex-col justify-center">
+            <hr className="border-1 mb-4" />
             {loading ? (
-              <p className="text-center">Loading stats...</p>
+              <p className="text-center text-sm">Loading stats...</p>
             ) : error ? (
-              <p className="text-center text-red-500">Error loading stats.</p>
+              <p className="text-center text-red-500 text-sm">Error loading stats.</p>
             ) : (
-              <div className="flex justify-around mt-0 text-sm sm:text-base">
+              <div className="flex justify-around text-center">
                 <div className="flex flex-col items-center">
-                  <p className="text-xl">{stats.uploads}</p>
-                  <p className="text-[#C79745] ">Uploads</p>
+                  <p className="text-xl lg:text-2xl font-bold">{stats.uploads}</p>
+                  <p className="text-[#C79745] text-xs lg:text-sm">Uploads</p>
                 </div>
                 <div className="flex flex-col items-center">
-                  <p className="text-xl">{stats.downloads}</p>
-                  <p className="text-[#C79745]">Downloads</p>
+                  <p className="text-xl lg:text-2xl font-bold">{stats.downloads}</p>
+                  <p className="text-[#C79745] text-xs lg:text-sm">Downloads</p>
                 </div>
                 <div className="flex flex-col items-center">
-                  <p className="text-xl">{stats.avgRating}</p>
-                  <p className="text-[#C79745]">Ratings</p>
+                  <p className="text-xl lg:text-2xl font-bold">{stats.avgRating}</p>
+                  <p className="text-[#C79745] text-xs lg:text-sm">Ratings</p>
                 </div>
               </div>
             )}
-            <hr className="border-1  mt-2 mb-5" />
+            <hr className="border-1 mt-4" />
           </div>
-          {/* buttons  */}
+
+          {/* Navigation Buttons */}
           <div className="w-full flex flex-col gap-3">
             {menuItems.map((item) => (
               <button
                 key={item.label}
                 onClick={() => setActive(item.label)}
-                className={`flex items-center gap-4 border rounded-xl px-4 py-2 text-sm  cursor-pointer
-                 transition-colors w-full
-            ${
-              active === item.label
-                ? "bg-gray-100 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]"
-                : "bg-white hover:bg-gray-50"
-            }`}
+                className={`flex items-center gap-4 border-2 rounded-lg px-4 py-3 text-sm cursor-pointer transition-colors w-full ${
+                  active === item.label
+                    ? "bg-gray-100 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]"
+                    : "bg-white hover:bg-gray-50"
+                }`}
               >
-                {item.icon}
-                {item.label}
+                <span className="flex-shrink-0">{item.icon}</span>
+                <span>{item.label}</span>
               </button>
             ))}
           </div>
         </div>
 
-        {/* user history  */}
-
-        <div className="flex flex-col border-2 rounded-2xl p-3 lg:w-[60%] w-[90%] h-[500px]">
-          {active == "Contributions" ? (
-            <Contributions canUpload={canUpload}></Contributions>
-          ) : active == "Rewards" ? (
-            <Rewards></Rewards>
-          ) : active == "Downloads" ? (
-            <Downloads></Downloads>
-          ) : null}
+        {/* Main Content Area */}
+        <div className="flex mb-10 flex-col border-2 rounded-xl w-full lg:flex-1 h-[650px] bg-white shadow-2xl shadow-[5px_7px_8px_rgba(0,0,0,0.25)]">
+          <div className="p-6 h-full overflow-y-auto">
+            {active === "Contributions" ? (
+              <Contributions canUpload={canUpload} />
+            ) : active === "Rewards" ? (
+              <Rewards />
+            ) : active === "Downloads" ? (
+              <Downloads />
+            ) : null}
+          </div>
         </div>
-
-        <ProfileCompletionModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          initialData={profileData ?? undefined}
-          onProfileUpdate={fetchDashboardData} // Pass the fetchDashboardData function as callback
-        />
       </div>
+
+      {/* Profile Completion Modal */}
+      <ProfileCompletionModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        initialData={profileData ?? undefined}
+        onProfileUpdate={fetchDashboardData}
+      />
+      <Footer/>
     </div>
   );
 };
