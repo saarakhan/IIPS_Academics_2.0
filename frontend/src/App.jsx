@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import Welcom from "../src/assets/welcome_video.mov";
 import { Toaster } from "react-hot-toast";
-
+import Footer from './components/Home/Footer'
 function App() {
   const [videoEnded, setVideoEnded] = useState(false);
   const [videoAnimationDone, setVideoAnimationDone] = useState(false);
@@ -15,7 +15,7 @@ function App() {
 
   return (
     <div >
-      <AnimatePresence>
+      {/* <AnimatePresence>
         {!videoAnimationDone && (
           <motion.div
             key="video-wrapper"
@@ -40,13 +40,14 @@ function App() {
             />
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
 
       {/* Main App Content (static) */}
       <div className="relative z-0 w-full h-full">
         <Toaster position="top-right" reverseOrder={false} />
         <Navbar />
         <Outlet />
+        <Footer/>
       </div>
     </div>
   );

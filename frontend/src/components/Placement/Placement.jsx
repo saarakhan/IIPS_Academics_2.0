@@ -240,7 +240,6 @@ const Placement = () => {
       <PlacementStats />
       <TopStudents />
       <TopRecruiters />
-      <Footer />
     </div>
   );
 };
