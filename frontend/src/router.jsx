@@ -28,11 +28,8 @@ export const router = createBrowserRouter([
       { path: "placements", element: <Placement /> },
       {
         path: "dashboard",
-        element: (
-          <PrivateRoute>
-            <Dashboard />
-          </PrivateRoute>
-        ),
+        element: <Dashboard />
+    
       },
 
       {
