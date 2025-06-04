@@ -5,13 +5,15 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { UserIcon } from "@heroicons/react/24/solid";
 // import UserProfileIcon from '../Dashboard/UserProfileIcon/UserProfileIcon';
 import LogoutModal from "../LogoutModal/logoutModal";
+import Avatar from "@mui/material/Avatar";
+import { supabase } from "../../supabaseClient";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { session } = UserAuth();
   const [name, setName] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState(null);
   const [OpenLogoutModal, SetOpenLogoutModal] = useState(false);
-
   const handleClose = useCallback(() => {
     SetOpenLogoutModal(false);
   }, []);
@@ -21,6 +23,36 @@ export default function Navbar() {
       setName(session.user.user_metadata.full_name);
     }
   }, [session]);
+
+  useEffect(() => {
+    const cachedAvatar = localStorage.getItem("avatarUrl");
+    if (cachedAvatar) {
+      setAvatarUrl(cachedAvatar);
+      return;
+    }
+
+    const fetchAvatar = async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("avatar_url")
+        .eq("id", session?.user?.id)
+        .single();
+
+      if (error) {
+        console.error("Error fetching avatar URL:", error.message);
+        return;
+      }
+
+      if (data?.avatar_url) {
+        setAvatarUrl(data.avatar_url);
+        localStorage.setItem("avatarUrl", data.avatar_url);
+      }
+    };
+
+    if (session?.user?.id) {
+      fetchAvatar();
+    }
+  }, [session?.user?.id]);
 
   const location = useLocation();
 
@@ -71,8 +103,8 @@ export default function Navbar() {
             <>
               <Link to="/dashboard" className="flex items-center space-x-2">
                 {/* User Icon with no padding, visible color and size */}
-                <UserIcon className="h-10 w-10 cursor-pointer text-[#2B3333] rounded-full border border-gray-300" />
-
+                {/* <UserIcon className="h-10 w-10 cursor-pointer text-[#2B3333] rounded-full border border-gray-300" /> */}
+                <Avatar alt={name} src={avatarUrl} />
                 <span>{name}</span>
               </Link>
 

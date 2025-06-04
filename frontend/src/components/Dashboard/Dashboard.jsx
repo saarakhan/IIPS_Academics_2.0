@@ -286,17 +286,18 @@ const Dashboard = () => {
           </p>
           {/* user course  */}
           <p className="text-[#3B3838] text-sm sm:text-lg">
-            {loading
-              ? "..."
-              : error
-              ? "N/A"
-              : profileData && profileData.course && profileData.semester
-              ? `${profileData.course.name} ${
-                  profileData.course.duration_years
-                    ? `Year ${Math.ceil(profileData.semester / 2)}`
-                    : ""
-                } Semester ${profileData.semester}`.trim()
-              : "Course Info N/A"}
+            {loading ? (
+              "..."
+            ) : error ? (
+              "N/A"
+            ) : profileData && profileData.course && profileData.semester ? (
+              <>
+                {profileData.course.name} {profileData.semester}
+                <sup>th</sup> Semester
+              </>
+            ) : (
+              "Course Info N/A"
+            )}
           </p>
 
           {/* profile completion section - styled like a button */}
