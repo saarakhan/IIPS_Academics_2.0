@@ -24,7 +24,7 @@ function FilterPanel({ searchFilter, setSearchFilter, semesterFilter, setSemeste
       {}
       <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
         {/* Search input */}
-        <div>
+        <div className=''>
           <label className='block text-sm font-medium text-gray-700 mb-2'>Search Subject</label>
           <Input
             value={searchFilter}
@@ -33,7 +33,7 @@ function FilterPanel({ searchFilter, setSearchFilter, semesterFilter, setSemeste
             placeholder='Search subjects or instructors...'
             prefix={<SearchIcon className='text-gray-400' />}
             size='middle'
-            className='w-full'
+            className='w-full custom-input'
           />
         </div>
 
@@ -46,7 +46,7 @@ function FilterPanel({ searchFilter, setSearchFilter, semesterFilter, setSemeste
             onChange={value => setSemesterFilter(value)}
             allowClear
             placeholder='All Semesters'
-            className='w-full'
+            className='w-full custom-select '
             size='middle'
             popupMatchSelectWidth={false}>
             {semesters.map(sem => (
@@ -68,7 +68,7 @@ function FilterPanel({ searchFilter, setSearchFilter, semesterFilter, setSemeste
             onChange={value => setDepartmentFilter(value)}
             allowClear
             placeholder='All Courses'
-            className='w-full'
+            className='w-full custom-select'
             size='middle'
             popupMatchSelectWidth={false}>
             {(departments || []).map(course => (
