@@ -11,80 +11,95 @@ import { supabase } from "../../../supabaseClient";
 import { RxCross1 } from "react-icons/rx";
 import { UserAuth } from "../../../Context/AuthContext";
 
-const ProfileCompletionModal = ({ isOpen, onClose, initialData }) => {
+const ProfileCompletionModal = ({ isOpen, onClose, initialData, onProfileUpdate }) => {
   const [loading, setLoading] = useState(false);
   const { session } = UserAuth();
+  const [coursesList, setCoursesList] = useState([]);
 
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
-    course: "",
-    semester: "",
+    course_id: "", // Changed from course to course_id
+    semester: "",    // Will store as number
     enrollment_number: "",
   });
 
-  console.log(initialData);
+  // Fetch courses from Supabase
+  useEffect(() => {
+    if (isOpen) {
+      const fetchCourses = async () => {
+        try {
+          const { data, error } = await supabase.from("courses").select("id, name");
+          if (error) throw error;
+          setCoursesList(data || []);
+        } catch (error) {
+          console.error("Error fetching courses:", error);
+          toast.error("Could not load courses.");
+        }
+      };
+      fetchCourses();
+    }
+  }, [isOpen]);
 
-  const courses = [
-    "M.Tech Integrated",
-    "MCA Integrated",
-    "MBA (MS) 5 Years Integrated",
-    "MBA (Management Science) 2 Years",
-    "MBA (Tourism Management) Integrated",
-    "B.Com",
-    "B.Com (Hons)",
-  ];
-
-  const semesters = [
-    "1st",
-    "2nd",
-    "3rd",
-    "4th",
-    "5th",
-    "6th",
-    "7th",
-    "8th",
-    "9th",
-    "10th",
-  ];
+  // Static semesters list (can be dynamic if needed in future)
+  const semesters = Array.from({ length: 10 }, (_, i) => i + 1); // Generates [1, 2, ..., 10]
 
   useEffect(() => {
     if (initialData) {
       setFormData({
         first_name: initialData.first_name || "",
         last_name: initialData.last_name || "",
-        course: initialData.course || "",
-        semester: initialData.semester || "",
+        course_id: initialData.course_id || "", // Expecting course_id (UUID) from initialData
+        semester: initialData.semester ? parseInt(initialData.semester, 10) : "", // Ensure semester is a number
         enrollment_number: initialData.enrollment_number || "",
       });
+    } else { // Reset form if no initial data (e.g., new profile)
+      setFormData({
+        first_name: "",
+        last_name: "",
+        course_id: "",
+        semester: "",
+        enrollment_number: "",
+      });
     }
-  }, [initialData]);
+  }, [initialData, isOpen]); // Re-run if isOpen changes to reset form if needed
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (field === "semester") {
+      setFormData((prev) => ({ ...prev, [field]: value ? parseInt(value, 10) : "" }));
+    } else {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
+    // Ensure semester is a number before sending
+    const dataToUpdate = {
+      ...formData,
+      semester: formData.semester ? parseInt(formData.semester, 10) : null,
+      updated_at: new Date().toISOString(),
+    };
+     // Remove course if it was a string, ensure course_id is used
+    if (dataToUpdate.course) delete dataToUpdate.course;
+
+
     try {
       const { error } = await supabase
         .from("profiles")
-        .update({
-          ...formData,
-          updated_at: new Date().toISOString(),
-        })
+        .update(dataToUpdate)
         .eq("id", session?.user?.id);
 
       if (error) throw error;
 
-      // onSave?.(formData);
       toast.success("Profile Updated Successfully!");
+      onProfileUpdate?.(); // Call the callback to refresh dashboard data
       onClose();
     } catch (error) {
-      console.log(error);
-      toast.error("Failed to update profile. Please try again.");
+      console.error("Error updating profile:", error); // Log the actual error
+      toast.error(error.message || "Failed to update profile. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -111,9 +126,7 @@ const ProfileCompletionModal = ({ isOpen, onClose, initialData }) => {
           </div>
 
           <form
-            onSubmit={(e) => {
-              handleSubmit(e);
-            }}
+            onSubmit={handleSubmit} // Simplified onSubmit
             className="profile-form"
           >
             <div className="form-row">
@@ -154,15 +167,15 @@ const ProfileCompletionModal = ({ isOpen, onClose, initialData }) => {
                 <FaGraduationCap className="label-icon golden" /> Course
               </label>
               <select
-                value={formData.course}
-                onChange={(e) => handleInputChange("course", e.target.value)}
+                value={formData.course_id} // Bind to course_id
+                onChange={(e) => handleInputChange("course_id", e.target.value)}
                 className="form-select"
                 required
               >
                 <option value="">Select your course</option>
-                {courses.map((course) => (
-                  <option key={course} value={course}>
-                    {course}
+                {coursesList.map((course) => (
+                  <option key={course.id} value={course.id}> {/* Use course.id as value */}
+                    {course.name}
                   </option>
                 ))}
               </select>
@@ -183,8 +196,8 @@ const ProfileCompletionModal = ({ isOpen, onClose, initialData }) => {
                 >
                   <option value="">Select semester</option>
                   {semesters.map((sem) => (
-                    <option key={sem} value={sem}>
-                      {sem} Semester
+                    <option key={sem} value={sem}> {/* Value is number */}
+                      {sem}{sem === 1 ? "st" : sem === 2 ? "nd" : sem === 3 ? "rd" : "th"} Semester {/* Display ordinal */}
                     </option>
                   ))}
                 </select>
@@ -210,9 +223,7 @@ const ProfileCompletionModal = ({ isOpen, onClose, initialData }) => {
               type="submit"
               disabled={loading}
               className="submit-button"
-              onClick={(e) => {
-                handleSubmit(e);
-              }}
+              // onClick removed as onSubmit is on form
             >
               <div className="button-shimmer"></div>
               {loading ? (

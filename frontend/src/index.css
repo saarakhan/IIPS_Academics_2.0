@@ -9,6 +9,25 @@
   width: 6px;
 }
 
-button{
-cursor: pointer;
+button {
+  cursor: pointer;
+
+}
+
+/* FilterPanel.jsx  */
+
+/* INPUT */
+.custom-input:hover,
+.custom-input:focus-within {
+  box-shadow: none !important;
+  border: 1px solid #C79745;
+}
+
+/* SELECT */
+.custom-select .ant-select-selector:hover,
+.custom-select .ant-select-selector:focus-within {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border: 1px solid #C79745 !important;
 }

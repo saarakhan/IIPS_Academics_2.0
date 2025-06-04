@@ -1,7 +1,14 @@
+<<<<<<< HEAD
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { supabase } from "../../../supabaseClient";
+=======
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+// import InfiniteScroll from 'react-infinite-scroll-component';
+import { supabase } from '../../../supabaseClient';
+>>>>>>> c5399a0219e7898955599ac415de7095503e122e
 
 import Header from "../Header/Header";
 import Footer from "../../Home/Footer";
@@ -89,7 +96,7 @@ function Subject() {
           semesterFilter
         );
         setSubjects(initialData);
-        if (initialData.length < 20) setHasMore(false);
+        if (initialData.length < 20) setHasMore(false); // No more subjects
       } catch (err) {
         setError("Failed to fetch subjects: " + err.message);
       } finally {
@@ -112,9 +119,17 @@ function Subject() {
       );
       setSubjects((prev) => [...prev, ...newSubjects]);
       setPage(nextPage);
-      if (newSubjects.length < 20) setHasMore(false);
+      if (newSubjects.length < 20) {
+        setHasMore(false);
+      }
     } catch (err) {
+<<<<<<< HEAD
       setError("Error loading more subjects: " + err.message);
+=======
+      setError('Error loading more subjects: ' + err.message);
+    } finally {
+      setLoading(false);
+>>>>>>> c5399a0219e7898955599ac415de7095503e122e
     }
   };
 
@@ -163,6 +178,7 @@ function Subject() {
               </div>
             ) : (
               <>
+<<<<<<< HEAD
                 <InfiniteScroll
                   dataLength={subjects.length}
                   next={loadMoreSubjects}
@@ -190,17 +206,41 @@ function Subject() {
                         department: subject.course?.name || "N/A",
                         teacher: subject.teacher_name || "To Be Announced",
                       };
+=======
+                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8 mb-6'>
+                  {subjects.map(subject => {
+                    const cardData = {
+                      id: subject.id,
+                      code: subject.code || 'N/A',
+                      name: subject.name,
+                      description: subject.description || 'No description available.',
+                      semester: `Semester ${subject.semester_number}`,
+                      department: subject.course?.name || 'N/A',
+                      teacher: subject.teacher_name || 'To Be Announced',
+                    };
+>>>>>>> c5399a0219e7898955599ac415de7095503e122e
 
-                      return (
-                        <SubjectCard
-                          key={subject.id}
-                          subject={cardData}
-                          onClick={handleCardClick}
-                        />
-                      );
-                    })}
+                    return (
+                      <SubjectCard
+                        key={subject.id}
+                        subject={cardData}
+                        onClick={handleCardClick}
+                      />
+                    );
+                  })}
+                </div>
+
+                {/* Load More Button rather than infinite scrolling */}
+                {hasMore && (
+                  <div className='flex justify-center'>
+                    <button
+                      onClick={loadMoreSubjects}
+                      disabled={loading}
+                      className='px-6 py-2 bg-[#C79745] text-white rounded-md hover:bg-[#b77f3a] transition disabled:opacity-50'>
+                      {loading ? 'Loading...' : 'Load More'}
+                    </button>
                   </div>
-                </InfiniteScroll>
+                )}
               </>
             )}
           </>
