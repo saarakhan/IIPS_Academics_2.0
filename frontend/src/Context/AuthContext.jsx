@@ -1,6 +1,6 @@
-import { createContext, useState, useEffect, useContext } from 'react';
+import { createContext, useState, useEffect, useContext } from "react";
 
-import { supabase } from '../supabaseClient';
+import { supabase } from "../supabaseClient";
 
 const AuthContext = createContext();
 
@@ -8,17 +8,17 @@ export const AuthContextProvider = ({ children }) => {
   const [session, setSession] = useState(undefined);
 
   //signup
-  const SignUpNewUser = async (email, password) => {
-    const { data, error } = await supabase.auth.signUp({
-      email: email.toLowerCase(),
-      password,
-    });
-    if (error) {
-      console.error('Error signing up: ', error);
-      return { success: false, error };
-    }
-    return { success: true, data };
-  };
+  // const SignUpNewUser = async (email, password) => {
+  //   const { data, error } = await supabase.auth.signUp({
+  //     email: email.toLowerCase(),
+  //     password,
+  //   });
+  //   if (error) {
+  //     console.error("Error signing up: ", error);
+  //     return { success: false, error };
+  //   }
+  //   return { success: true, data };
+  // };
 
   // Sign in
   const SignInUser = async (email, password) => {
@@ -31,31 +31,32 @@ export const AuthContextProvider = ({ children }) => {
 
       if (error) {
         // If credentials are invalid, try signing up
-        if (error.message === 'Invalid login credentials') {
-          const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-            email: email.toLowerCase(),
-            password,
-          });
+        if (error.message === "Invalid login credentials") {
+          const { data: signUpData, error: signUpError } =
+            await supabase.auth.signUp({
+              email: email.toLowerCase(),
+              password,
+            });
 
           if (signUpError) {
-            console.error('Sign-up error:', signUpError.message);
+            console.error("Sign-up error:", signUpError.message);
             return { success: false, error: signUpError.message };
           }
 
-          console.log('Sign-up success:', signUpData);
+          console.log("Sign-up success:", signUpData);
           return { success: true, data: signUpData };
         } else {
-          console.error('Sign-in error:', error.message);
+          console.error("Sign-in error:", error.message);
           return { success: false, error: error.message };
         }
       }
 
       // Sign-in success
-      console.log('Sign-in success:', data);
+      console.log("Sign-in success:", data);
       return { success: true, data };
     } catch (err) {
-      console.error('Unexpected error:', err.message);
-      return { success: false, error: 'An unexpected error occurred.' };
+      console.error("Unexpected error:", err.message);
+      return { success: false, error: "An unexpected error occurred." };
     }
   };
 
@@ -63,16 +64,16 @@ export const AuthContextProvider = ({ children }) => {
   const signInWithGoogle = async () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
+        provider: "google",
       });
       if (error) {
-        console.error('Google OAuth error:', error.message);
+        console.error("Google OAuth error:", error.message);
         return { success: false, error: error.message };
       }
       return { success: true };
     } catch (err) {
-      console.error('Unexpected Google OAuth error:', err.message);
-      return { success: false, error: 'An unexpected error occurred.' };
+      console.error("Unexpected Google OAuth error:", err.message);
+      return { success: false, error: "An unexpected error occurred." };
     }
   };
 
@@ -80,16 +81,16 @@ export const AuthContextProvider = ({ children }) => {
   const signInWithGitHub = async () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'github',
+        provider: "github",
       });
       if (error) {
-        console.error('GitHub OAuth error:', error.message);
+        console.error("GitHub OAuth error:", error.message);
         return { success: false, error: error.message };
       }
       return { success: true };
     } catch (err) {
-      console.error('Unexpected GitHub OAuth error:', err.message);
-      return { success: false, error: 'An unexpected error occurred.' };
+      console.error("Unexpected GitHub OAuth error:", err.message);
+      return { success: false, error: "An unexpected error occurred." };
     }
   };
 
@@ -97,19 +98,21 @@ export const AuthContextProvider = ({ children }) => {
   async function SignOut() {
     const { error } = await supabase.auth.signOut();
     if (error) {
-      console.error('Error signing out:', error);
+      console.error("Error signing out:", error);
     }
   }
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('Initial session:', session); //for debug
+      // console.log("Initial session:", session); //for debug
       setSession(session);
     });
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log('Auth state changed, session:', session); // ✅ Debug
-      setSession(session);
-    });
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        // console.log('Auth state changed, session:', session); // ✅ Debug
+        setSession(session);
+      }
+    );
     return () => {
       authListener.subscription?.unsubscribe();
     };
@@ -121,14 +124,19 @@ export const AuthContextProvider = ({ children }) => {
       if (session && session.user) {
         const user = session.user;
         // Check if profile exists
-        const { data, error } = await supabase.from('profiles').select('id').eq('id', user.id).single();
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("id")
+          .eq("id", user.id)
+          .single();
         if (!data && !error) {
           // Insert new profile if not found
-          await supabase.from('profiles').insert({
+          await supabase.from("profiles").insert({
             id: user.id,
             email: user.email,
-            full_name: user.user_metadata?.full_name || user.user_metadata?.name || '',
-            avatar_url: user.user_metadata?.avatar_url || '',
+            full_name:
+              user.user_metadata?.full_name || user.user_metadata?.name || "",
+            avatar_url: user.user_metadata?.avatar_url || "",
           });
         }
       }
@@ -144,7 +152,8 @@ export const AuthContextProvider = ({ children }) => {
         SignOut,
         signInWithGoogle,
         signInWithGitHub,
-      }}>
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

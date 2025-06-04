@@ -10,7 +10,8 @@ import SignUp from "./components/SIgnUp/SignUp.jsx";
 import StudentContributions from "./components/StudentContributions/StudentContributions.jsx";
 import ContactPage from "./components/contact/ContactPage.jsx";
 import AdminDashboard from "./components/Admin/AdminDashboard.jsx";
-import Placement from './components/Placement/Placement';
+import Placement from "./components/Placement/Placement";
+import AdminRoute from "./components/PrivateRoute/AdminRoute.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -23,23 +24,20 @@ export const router = createBrowserRouter([
       { path: "academics", element: <Subject /> },
       { path: "subject/:id", element: <SubjectDetail /> },
       { path: "Contributors", element: <StudentContributions /> },
-      { path: "/Contact", element: <ContactPage /> },
-      { path: "/placements", element: <Placement /> },
+      { path: "Contact", element: <ContactPage /> },
+      { path: "placements", element: <Placement /> },
       {
         path: "dashboard",
-        element: (
-          <PrivateRoute>
-            <Dashboard />
-          </PrivateRoute>
-        ),
+        element: <Dashboard />
+    
       },
 
       {
         path: "admin",
         element: (
-          <PrivateRoute>
+          <AdminRoute>
             <AdminDashboard />
-          </PrivateRoute>
+          </AdminRoute>
         ),
       },
     ],

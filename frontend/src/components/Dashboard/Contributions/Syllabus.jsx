@@ -4,8 +4,9 @@ import { FaAngleRight } from "react-icons/fa6";
 import noData from "../../../assets/noData.svg";
 import { UserAuth } from "../../../Context/AuthContext";
 import { supabase } from "../../../supabaseClient";
-import { CalendarIcon, PlusIcon } from "../../../Icons"; 
-import ResourceUploadModal from "./ResourceUploadModal"; 
+import { CalendarIcon, PlusIcon } from "../../../Icons";
+import ResourceUploadModal from "./ResourceUploadModal";
+import toast from "react-hot-toast";
 
 function Card({ children }) {
   return (
@@ -17,10 +18,10 @@ function Card({ children }) {
 
 function CardContent({ children }) {
   return (
-    <div className="p-4 flex items-center justify-between  ">{children}</div>
+    <div className="p-4 flex items-center justify-between ">{children}</div>
   );
 }
-export default function Syllabus() { 
+export default function Syllabus({ canUpload }) {
   const { session } = UserAuth();
   const [syllabusFiles, setSyllabusFiles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,11 +29,17 @@ export default function Syllabus() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [fetchTrigger, setFetchTrigger] = useState(0);
 
-  const handleOpenModal = () => setIsModalOpen(true);
+  function handleOpenModal() {
+    if (!canUpload) {
+      toast.error("complete your profile to upload resource");
+      return;
+    }
+    setIsModalOpen(true);
+  }
   const handleCloseModal = () => setIsModalOpen(false);
 
   const handleUploadSuccess = useCallback(() => {
-    setFetchTrigger(prev => prev + 1);
+    setFetchTrigger((prev) => prev + 1);
     setTimeout(() => {
       handleCloseModal();
     }, 1500);
@@ -90,19 +97,25 @@ export default function Syllabus() {
     };
 
     fetchUserSyllabus();
-  }, [session?.user?.id, fetchTrigger]); 
+  }, [session?.user?.id, fetchTrigger]);
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'PENDING': return 'bg-yellow-100 text-yellow-800';
-      case 'APPROVED': return 'bg-green-100 text-green-800';
-      case 'REJECTED': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "PENDING":
+        return "bg-yellow-100 text-yellow-800";
+      case "APPROVED":
+        return "bg-green-100 text-green-800";
+      case "REJECTED":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   if (loading) {
-    return <div className="text-center py-8">Loading your syllabus files...</div>;
+    return (
+      <div className="text-center py-8">Loading your syllabus files...</div>
+    );
   }
 
   if (error) {
@@ -114,7 +127,9 @@ export default function Syllabus() {
       <div className="flex justify-end mb-4">
         <button
           onClick={handleOpenModal}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-[#C79745] text-white rounded-md cursor-pointer hover:bg-[#b3863c] text-sm font-medium shadow-sm hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#b3863c]"
+          className="flex items-center justify-center gap-2 px-4 py-2 
+          bg-[#2b3333] text-white rounded-md cursor-pointer  text-sm  hover:bg-[black]
+          font-medium shadow-sm "
         >
           <PlusIcon className="w-4 h-4" />
           Upload New Syllabus
@@ -135,7 +150,11 @@ export default function Syllabus() {
                         <h3 className="font-semibold text-sm sm:text-base break-words">
                           {item.title}
                         </h3>
-                        <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${getStatusColor(item.status)}`}>
+                        <span
+                          className={`px-2 py-0.5 text-xs rounded-full font-medium ${getStatusColor(
+                            item.status
+                          )}`}
+                        >
                           {item.status}
                         </span>
                       </div>
@@ -143,7 +162,9 @@ export default function Syllabus() {
                       <div className="flex flex-col sm:flex-row gap-2 mt-2 text-sm text-[#3B3838]">
                         <span className="flex items-center gap-1">
                           <CalendarIcon className="w-4 h-4" />
-                          <span className="text-xs sm:text-sm">{item.date}</span>
+                          <span className="text-xs sm:text-sm">
+                            {item.date}
+                          </span>
                         </span>
                       </div>
                     </div>
@@ -158,7 +179,11 @@ export default function Syllabus() {
           ))
         ) : (
           <div className="w-full justify-center flex flex-col items-center text-center">
-            <img src={noData} className="w-[200px] md:w-[250px]" alt="No syllabus files uploaded" />
+            <img
+              src={noData}
+              className="w-[200px] md:w-[250px]"
+              alt="No syllabus files uploaded"
+            />
             <p className="mt-4 text-lg text-gray-700">
               You haven't uploaded any syllabus files yet.
             </p>

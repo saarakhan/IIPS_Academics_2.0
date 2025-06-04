@@ -4,8 +4,9 @@ import { FaAngleRight } from "react-icons/fa6";
 import { IoNewspaperOutline } from "react-icons/io5";
 import { UserAuth } from "../../../Context/AuthContext";
 import { supabase } from "../../../supabaseClient";
-import { CalendarIcon, StarIcon, PlusIcon } from "../../../Icons"; 
-import ResourceUploadModal from "./ResourceUploadModal"; 
+import { CalendarIcon, StarIcon, PlusIcon } from "../../../Icons";
+import ResourceUploadModal from "./ResourceUploadModal";
+import toast from "react-hot-toast";
 
 function Card({ children }) {
   return (
@@ -20,7 +21,7 @@ function CardContent({ children }) {
     <div className="p-4 flex items-center justify-between  ">{children}</div>
   );
 }
-export default function PYQs() { 
+export default function PYQs({ canUpload }) {
   const { session } = UserAuth();
   const [pyqs, setPyqs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,11 +29,17 @@ export default function PYQs() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [fetchTrigger, setFetchTrigger] = useState(0);
 
-  const handleOpenModal = () => setIsModalOpen(true);
+  function handleOpenModal() {
+    if (!canUpload) {
+      toast.error("complete your profile to upload resource");
+      return;
+    }
+    setIsModalOpen(true);
+  }
   const handleCloseModal = () => setIsModalOpen(false);
 
   const handleUploadSuccess = useCallback(() => {
-    setFetchTrigger(prev => prev + 1);
+    setFetchTrigger((prev) => prev + 1);
     setTimeout(() => {
       handleCloseModal();
     }, 1500);
@@ -89,13 +96,17 @@ export default function PYQs() {
     };
 
     fetchUserPYQs();
-  }, [fetchTrigger, session?.user?.id]); 
+  }, [fetchTrigger, session?.user?.id]);
   const getStatusColor = (status) => {
     switch (status) {
-      case 'PENDING': return 'bg-yellow-100 text-yellow-800';
-      case 'APPROVED': return 'bg-green-100 text-green-800';
-      case 'REJECTED': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "PENDING":
+        return "bg-yellow-100 text-yellow-800";
+      case "APPROVED":
+        return "bg-green-100 text-green-800";
+      case "REJECTED":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -112,7 +123,9 @@ export default function PYQs() {
       <div className="flex justify-end mb-4">
         <button
           onClick={handleOpenModal}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-[#C79745] text-white rounded-md cursor-pointer hover:bg-[#b3863c] text-sm font-medium shadow-sm hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#b3863c]"
+          className="flex items-center justify-center gap-2 px-4 py-2 
+          bg-[#2b3333] text-white rounded-md cursor-pointer  text-sm  hover:bg-[black]
+          font-medium shadow-sm "
         >
           <PlusIcon className="w-4 h-4" />
           Upload New PYQ
@@ -133,7 +146,11 @@ export default function PYQs() {
                         <h3 className="font-semibold text-sm sm:text-base break-words">
                           {item.title}
                         </h3>
-                        <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${getStatusColor(item.status)}`}>
+                        <span
+                          className={`px-2 py-0.5 text-xs rounded-full font-medium ${getStatusColor(
+                            item.status
+                          )}`}
+                        >
                           {item.status}
                         </span>
                       </div>
@@ -141,13 +158,19 @@ export default function PYQs() {
                       <div className="flex flex-col sm:flex-row gap-2 mt-2 text-sm text-[#3B3838]">
                         <span className="flex items-center gap-1">
                           <CalendarIcon className="w-4 h-4" />
-                          <span className="text-xs sm:text-sm">{item.date}</span>
+                          <span className="text-xs sm:text-sm">
+                            {item.date}
+                          </span>
                         </span>
-                         {/* Optionally display rating for PYQs if applicable */}
+                        {/* Optionally display rating for PYQs if applicable */}
                         {item.rating > 0 && (
                           <span className="flex items-center gap-1 sm:ml-4">
-                            <span><StarIcon className="w-4 h-4 text-[#C79745]" /></span>
-                            <span className="text-xs sm:text-sm">{item.rating}/5.0</span>
+                            <span>
+                              <StarIcon className="w-4 h-4 text-[#C79745]" />
+                            </span>
+                            <span className="text-xs sm:text-sm">
+                              {item.rating}/5.0
+                            </span>
                           </span>
                         )}
                       </div>
@@ -163,7 +186,11 @@ export default function PYQs() {
           ))
         ) : (
           <div className="w-full justify-center flex flex-col items-center text-center">
-            <img src={noData} className="w-[200px] md:w-[250px]" alt="No PYQs uploaded" />
+            <img
+              src={noData}
+              className="w-[200px] md:w-[250px]"
+              alt="No PYQs uploaded"
+            />
             <p className="mt-4 text-lg text-gray-700">
               You haven't uploaded any PYQs yet.
             </p>

@@ -3,15 +3,27 @@ import PYQs from "./PYQs";
 import Syllabus from "./Syllabus";
 import Notes from "./Notes";
 
-const Contributions = () => {
+const Contributions = ({canUpload}) => {
   const [activeTab, setActiveTab] = useState("Notes");
 
   // const [uploadCounter, setUploadCounter] = useState(0);
 
   // tabs
+  <style>{`
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+  `}</style>;
+
   const tabs = [{ name: "Notes" }, { name: "PYQs" }, { name: "Syllabus" }];
   return (
-    <div>
+    <div
+      className="overflow-auto no-scrollbar"
+      style={{
+        scrollbarWidth: "none",
+        msOverflowStyle: "none",
+      }}
+    >
       {" "}
       <p className="text-3xl font-bold ">Your Contributions</p>
       <p className="text-base ">Resources you've shared with the community.</p>
@@ -31,11 +43,11 @@ const Contributions = () => {
         ))}
       </div>
       {activeTab === "Notes" ? (
-        <Notes />
+        <Notes canUpload={canUpload} />
       ) : activeTab === "PYQs" ? (
-        <PYQs />
+        <PYQs canUpload={canUpload} />
       ) : activeTab === "Syllabus" ? (
-        <Syllabus />
+        <Syllabus canUpload={canUpload} />
       ) : null}
     </div>
   );

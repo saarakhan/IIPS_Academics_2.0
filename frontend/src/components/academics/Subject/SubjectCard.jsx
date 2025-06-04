@@ -8,7 +8,7 @@ function SubjectCard({ subject, onClick }) {
   return (
     <div
       className="relative group bg-white rounded-xl overflow-hidden 
-        transition-all duration-300 hover:-translate-y-2 w-full border border-gray-100"
+        transition-all duration-300 w-full border border-gray-100"
       style={{
         boxShadow: '14px 11px 8px rgba(0, 0, 0, 0.1)',
         transition: 'all 0.3s ease, box-shadow 0.3s ease'
@@ -89,14 +89,7 @@ function SubjectCard({ subject, onClick }) {
           style={{
             boxShadow: '0 4px 15px rgba(43, 51, 51, 0.3)'
           }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.boxShadow = '0 8px 25px rgba(43, 51, 51, 0.4)';
-            e.currentTarget.style.backgroundColor = '#000000';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.boxShadow = '0 4px 15px rgba(43, 51, 51, 0.3)';
-            e.currentTarget.style.backgroundColor = '#2b3333';
-          }}
+         
         >
 
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent 
