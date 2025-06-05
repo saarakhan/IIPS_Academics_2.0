@@ -336,6 +336,7 @@ const Dashboard = () => {
         initialData={profileData ?? undefined}
         onProfileUpdate={fetchDashboardData}
       />
+
     </div>
   );
 };

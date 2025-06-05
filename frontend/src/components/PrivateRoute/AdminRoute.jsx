@@ -9,8 +9,11 @@ const AdminRoute = ({ children }) => {
   const [isAuthorized, setIsAuthorized] = useState(null); // null = loading
 
   useEffect(() => {
+    if (!session) return;
+    
     const checkRole = async () => {
       if (!session?.user?.id) {
+        console.log("go away");
         setIsAuthorized(false);
         return;
       }

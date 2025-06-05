@@ -1,57 +1,59 @@
-import { useState, useEffect } from "react";
 import demo from "../../assets/demo.png";
 import saara from "../../assets/developer-img/saara.jpg";
 import aarti from "../../assets/developer-img/aarti.jpg";
 import shivi from "../../assets/developer-img/shivi.jpg";
 import ram from "../../assets/developer-img/ram.jpg";
 import anirudh from "../../assets/developer-img/anirudh.jpg";
+import Ayush from "../../assets/developer-img/Ayush.jpg"
+
 import { FaGithub } from "react-icons/fa";
+
 const developers = [
   {
     name: "Ayush Sharma",
-    role: "Mentor",
-    image: demo,
+    role: "Project Mentor & Full Stack Developer",
+    image: Ayush,
     linkedin: "https://www.linkedin.com/in/ayush-sharma-a155a8267/",
     github: "https://github.com/AyushSharma72",
   },
   {
     name: "Saara Khan",
-    role: "Developer",
+    role: "Full Stack Developer",
     image: saara,
     linkedin: "https://www.linkedin.com/in/saarakhan001/",
     github: "https://github.com/saarakhan",
   },
   {
     name: "Shivi Tiwari",
-    role: "Developer",
+    role: "Full Stack Developer",
     image: shivi,
     linkedin: "https://www.linkedin.com/in/shivi-tiwari-7a669b289/",
     github: "https://github.com/shivi028",
   },
   {
     name: "Anirudh Saksena",
-    role: "Developer",
+    role: "UI/UX Designer & Frontend Developer",
     image: anirudh,
     linkedin: "https://www.linkedin.com/in/anirudh-saksena-b41607258/",
     github: "https://github.com/A-Knee09",
   },
   {
     name: "Animesh Mishra",
-    role: "Developer",
+    role: "Backend Developer & Database Administrator",
     image: demo,
     linkedin: "https://www.linkedin.com/in/animesh-mishra-944287256/",
     github: "https://github.com/aniismess",
   },
   {
     name: "Ram Patidar",
-    role: "Developer",
+    role: "Frontend Developer",
     image: ram,
     linkedin: "https://www.linkedin.com/in/ram--patidar/",
     github: "https://github.com/ram40803",
   },
   {
     name: "Aarti Verma",
-    role: "Developer",
+    role: "Frontend Developer",
     image: aarti,
     linkedin: "https://www.linkedin.com/in/aarti-verma-627983267",
     github: "https://github.com/AartiVerma4",
@@ -74,58 +76,33 @@ export default function DevelopersSection() {
             </p>
           </div>
 
-          <div className="space-y-10">
-            {/* First Row - 4 Developers */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-              {developers.slice(0, 4).map((developer, index) => (
-                <div className="text-center" key={index}>
-                  <img
-                    src={developer.image}
-                    alt={developer.name}
-                    className="h-[225px] w-[225px] rounded-full mx-auto mb-4 object-cover"
+          <div className="flex flex-wrap justify-center gap-10 px-4 py-6">
+            {developers.map((developer, index) => (
+              <div
+                key={index}
+                className="w-[250px] bg-white shadow-md rounded-2xl p-4 text-center hover:shadow-lg transition-all duration-300"
+              >
+                <img
+                  src={developer.image}
+                  alt={developer.name}
+                  className="h-[160px] w-[160px] rounded-full mx-auto mb-4 object-cover"
+                  loading="lazy"
+                />
+                <h3
+                  className="text-lg font-semibold text-black cursor-pointer hover:text-[#C79745]"
+                  onClick={() => window.open(developer.linkedin, "_blank")}
+                >
+                  {developer.name}
+                </h3>
+                <p className="text-sm text-gray-600 mt-1">{developer.role}</p>
+                <div className="flex justify-center mt-2">
+                  <FaGithub
+                    className="text-xl text-black hover:text-[#C79745] cursor-pointer"
+                    onClick={() => window.open(developer.github, "_blank")}
                   />
-                  <h3
-                    className="text-[16px] font-semibold text-black cursor-pointer hover:text-[#C79745]"
-                    onClick={() => window.open(developer.linkedin, "_blank")}
-                  >
-                    {developer.name}
-                  </h3>
-                  <div className="flex items-center justify-center gap-2 mt-1">
-                    <p className="text-sm text-gray-600">{developer.role}</p>
-                    <FaGithub
-                      className="text-black hover:text-[#C79745] cursor-pointer"
-                      onClick={() => window.open(developer.github, "_blank")}
-                    />
-                  </div>
                 </div>
-              ))}
-            </div>
-
-            {/* Second Row - 3 Developers Centered */}
-            <div className="flex justify-center gap-6 flex-wrap">
-              {developers.slice(4).map((developer, index) => (
-                <div className="text-center" key={index}>
-                  <img
-                    src={developer.image}
-                    alt={developer.name}
-                    className="h-[225px] w-[225px] rounded-full mx-auto mb-4 object-cover"
-                  />
-                  <h3
-                    className="text-[16px] font-semibold text-black cursor-pointer hover:text-[#C79745]"
-                    onClick={() => window.open(developer.linkedin, "_blank")}
-                  >
-                    {developer.name}
-                  </h3>
-                  <div className="flex items-center justify-center gap-2 mt-1">
-                    <p className="text-sm text-gray-600">{developer.role}</p>
-                    <FaGithub
-                      className="text-black hover:text-[#C79745] cursor-pointer"
-                      onClick={() => window.open(developer.github, "_blank")}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>

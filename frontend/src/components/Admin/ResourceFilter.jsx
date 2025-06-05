@@ -1,11 +1,23 @@
-import { useEffect, useState } from 'react';
+
+"use client";
+
+import { useEffect, useState } from "react";
+import {
+  SearchOutlined,
+  UserOutlined,
+  FilterOutlined,
+  CalendarOutlined,
+} from "@ant-design/icons";
+import { Input, Select } from "antd";
+const { Option } = Select;
 
 export default function ResourceFilter({ filters, onChange }) {
-  const [status, setStatus] = useState(filters.status || '');
-  const [subject, setSubject] = useState(filters.subject || '');
-  const [contributor, setContributor] = useState(filters.contributor || '');
-  const [startDate, setStartDate] = useState(filters.startDate || '');
-  const [endDate, setEndDate] = useState(filters.endDate || '');
+  const [status, setStatus] = useState(filters.status || "");
+  const [subject, setSubject] = useState(filters.subject || "");
+  const [contributor, setContributor] = useState(filters.contributor || "");
+  const [startDate, setStartDate] = useState(filters.startDate || "");
+  const [endDate, setEndDate] = useState(filters.endDate || "");
+
   const [isExpanded, setIsExpanded] = useState(true);
 
   useEffect(() => {
@@ -16,21 +28,29 @@ export default function ResourceFilter({ filters, onChange }) {
   }, [status, subject, contributor, startDate, endDate]);
 
   const resetFilters = () => {
-    setStatus('');
-    setSubject('');
-    setContributor('');
-    setStartDate('');
-    setEndDate('');
+
+    setStatus("");
+    setSubject("");
+    setContributor("");
+    setStartDate("");
+    setEndDate("");
     onChange({
-      status: '',
-      subject: '',
-      contributor: '',
-      startDate: '',
-      endDate: '',
+      status: "",
+      subject: "",
+      contributor: "",
+      startDate: "",
+      endDate: "",
     });
   };
 
-  const activeFiltersCount = [status, subject, contributor, startDate, endDate].filter(Boolean).length;
+  const activeFiltersCount = [
+    status,
+    subject,
+    contributor,
+    startDate,
+    endDate,
+  ].filter(Boolean).length;
+
 
   return (
     <div className='bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden transition-all duration-300 p-4'>
@@ -54,8 +74,11 @@ export default function ResourceFilter({ filters, onChange }) {
           <div>
             <h3 className='font-medium text-gray-900'>Filter Resources</h3>
             {activeFiltersCount > 0 && (
-              <p className='text-sm text-gray-500'>
-                {activeFiltersCount} active filter{activeFiltersCount !== 1 ? 's' : ''}
+
+              <p className="text-sm text-gray-500">
+                {activeFiltersCount} active filter
+                {activeFiltersCount !== 1 ? "s" : ""}
+
               </p>
             )}
           </div>
@@ -64,16 +87,21 @@ export default function ResourceFilter({ filters, onChange }) {
           onClick={() => setIsExpanded(!isExpanded)}
           className='text-gray-500 hover:text-gray-700 focus:outline-none'>
           <svg
-            xmlns='http://www.w3.org/2000/svg'
-            className={`h-5 w-5 transition-transform duration-300 ${isExpanded ? 'transform rotate-180' : ''}`}
-            fill='none'
-            viewBox='0 0 24 24'
-            stroke='currentColor'>
+
+            xmlns="http://www.w3.org/2000/svg"
+            className={`h-5 w-5 transition-transform duration-300 ${
+              isExpanded ? "transform rotate-180" : ""
+            }`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
             <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
+              strokeLinecap="round"
+              strokeLinejoin="round"
               strokeWidth={2}
-              d='M19 9l-7 7-7-7'
+              d="M19 9l-7 7-7-7"
+
             />
           </svg>
         </button>
@@ -207,6 +235,7 @@ export default function ResourceFilter({ filters, onChange }) {
                 className='w-full pl-10 pr-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors'
               />
             </div>
+
           </div>
         </div>
 
@@ -249,7 +278,9 @@ export default function ResourceFilter({ filters, onChange }) {
               />
             </svg>
             <span>
+
               Showing results with {activeFiltersCount} active filter{activeFiltersCount !== 1 ? 's' : ''}
+
             </span>
           </div>
         </div>
