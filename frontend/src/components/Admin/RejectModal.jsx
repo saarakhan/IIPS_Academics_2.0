@@ -30,18 +30,57 @@ export default function RejectModal({ resourceId, onClose, onAction }) {
       setIsSubmitting(true);
       setError(null);
 
-      const { error: supabaseError } = await supabase
+      // const { error: supabaseError } = await supabase
+      //   .from('resources')
+      //   .delete({
+      //     status: 'REJECTED',
+      //     rejection_reason: reason,
+      // rejected_at: new Date().toISOString(),
+      // rejected_by_admin_id: '0b5648d6-7f4f-43b6-88cb-7bbc9ff226a4',
+      //   })
+      //   .eq('id', resourceId);
+
+      // if (supabaseError) {
+      //   throw supabaseError;
+      // }
+
+      // First, get the resource PDF PATH
+      const { data: resourceData, error: fetchError } = await supabase.from('resources').select('file_path').eq('id', resourceId).single();
+
+      if (fetchError) {
+        console.error('Failed to fetch resource for deletion:', fetchError.message);
+        return;
+      }
+      // console.log(resourceData);
+      const pdfPath = resourceData.file_path;
+
+      if (!pdfPath) {
+        console.warn('No PDF path found. Skipping file deletion.');
+      }
+
+      //Delete the resource from the database
+      const { error: deleteDbError } = await supabase
         .from('resources')
         .update({
           status: 'REJECTED',
           rejection_reason: reason,
-          rejected_at: new Date().toISOString(),
-          rejected_by_admin_id: '0b5648d6-7f4f-43b6-88cb-7bbc9ff226a4',
         })
         .eq('id', resourceId);
 
-      if (supabaseError) {
-        throw supabaseError;
+      if (deleteDbError) {
+        console.error('Failed to delete resource from DB:', deleteDbError.message);
+        return;
+      }
+
+      // Delete the PDF file from Supabase Storage bucket
+      if (pdfPath) {
+        const { error: deleteFileError } = await supabase.storage.from('uploads').remove([pdfPath]);
+
+        if (deleteFileError) {
+          console.error('Failed to delete file from bucket:', deleteFileError.message);
+        } else {
+          console.log('PDF file deleted from bucket.');
+        }
       }
 
       onAction();
@@ -55,8 +94,12 @@ export default function RejectModal({ resourceId, onClose, onAction }) {
   };
 
   return (
-    <div className='fixed inset-0 z-[9999] bg-black/75 backdrop-blur-sm flex items-center justify-center' onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className='bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden' onClick={e => e.stopPropagation()}>
+    <div
+      className='fixed inset-0 z-[9999] bg-black/75 backdrop-blur-sm flex items-center justify-center'
+      onClick={e => e.target === e.currentTarget && onClose()}>
+      <div
+        className='bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden'
+        onClick={e => e.stopPropagation()}>
         {/* Header */}
         <div className='bg-rose-50 p-6 border-b border-rose-100'>
           <div className='flex items-center gap-4'>
@@ -71,7 +114,9 @@ export default function RejectModal({ resourceId, onClose, onAction }) {
         </div>
 
         {/* Content */}
-        <form onSubmit={handleSubmit} className='p-6'>
+        <form
+          onSubmit={handleSubmit}
+          className='p-6'>
           {error && (
             <div className='mb-6 p-4 bg-rose-50 border border-rose-200 rounded-lg text-rose-700'>
               <div className='flex items-center gap-2'>
@@ -82,7 +127,9 @@ export default function RejectModal({ resourceId, onClose, onAction }) {
           )}
 
           <div className='mb-6'>
-            <label htmlFor='reason' className='block text-sm font-medium text-gray-700 mb-2'>
+            <label
+              htmlFor='reason'
+              className='block text-sm font-medium text-gray-700 mb-2'>
               Rejection Reason <span className='text-rose-500'>*</span>
             </label>
             <textarea
@@ -98,7 +145,11 @@ export default function RejectModal({ resourceId, onClose, onAction }) {
           </div>
 
           <div className='flex gap-3 justify-end'>
-            <button type='button' onClick={onClose} className='px-6 py-2.5 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium' disabled={isSubmitting}>
+            <button
+              type='button'
+              onClick={onClose}
+              className='px-6 py-2.5 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium'
+              disabled={isSubmitting}>
               Cancel
             </button>
             <button
