@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { BookIcon, CalendarIcon, StarIcon, PlusIcon } from "../../../Icons";
+import { BookIcon, CalendarIcon, StarIcon } from "../../../Icons";
 import { FaAngleRight } from "react-icons/fa6";
 import noData from "../../../assets/noData.svg";
 import { UserAuth } from "../../../Context/AuthContext";
@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 
 function Card({ children }) {
   return (
-    <div className="bg-white shadow-sm border-b-2  cursor-pointer">
+    <div className="bg-white border-b-2  cursor-pointer">
       {children}
     </div>
   );
@@ -20,60 +20,12 @@ function CardContent({ children }) {
     <div className="p-4 flex items-center justify-between  ">{children}</div>
   );
 }
-// const contributions = [
-//   {
-//     title: "Data Structures and Algorithms",
-//     semester: "MCA III Semester",
-//     date: "May 10, 2025",
-//     rating: 4.5,
-//     reward: "+2 Gold",
-//   },
-//   {
-//     title: "Calculus II: Integration Techniques",
-//     semester: "MCA II Semester",
-//     date: "April 15, 2025",
-//     rating: 4.1,
-//     reward: "+2 Gold",
-//   },
-//   {
-//     title: "Calculus II: Integration Techniques",
-//     semester: "MCA II Semester",
-//     date: "April 15, 2025",
-//     rating: 4.1,
-//     reward: "+2 Gold",
-//   },
-//   {
-//     title: "Calculus II: Integration Techniques",
-//     semester: "MCA II Semester",
-//     date: "April 15, 2025",
-//     rating: 4.1,
-//     reward: "+2 Gold",
-//   },
-// ];
 
-export default function Notes({ canUpload }) {
+export default function Notes({ canUpload, fetchTrigger }) {
   const { session } = UserAuth();
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [fetchTrigger, setFetchTrigger] = useState(0);
-
-  function handleOpenModal() {
-    if (!canUpload) {
-      toast.error("complete your profile to upload resource");
-      return
-    }
-    setIsModalOpen(true);
-  }
-  const handleCloseModal = () => setIsModalOpen(false);
-
-  const handleUploadSuccess = useCallback(() => {
-    setFetchTrigger((prev) => prev + 1);
-    setTimeout(() => {
-      handleCloseModal();
-    }, 1500);
-  }, []);
 
   useEffect(() => {
     if (!session?.user?.id) {
@@ -82,7 +34,6 @@ export default function Notes({ canUpload }) {
     }
 
     const fetchUserNotes = async () => {
-      console.log("canUplaod ", canUpload);
       setLoading(true);
       setError(null);
       try {
@@ -99,7 +50,6 @@ export default function Notes({ canUpload }) {
           )
           .eq("uploader_profile_id", session.user.id)
           .eq("resource_type", "NOTE")
-
           .order("uploaded_at", { ascending: false });
 
         if (fetchError) throw fetchError;
@@ -115,7 +65,6 @@ export default function Notes({ canUpload }) {
               ? new Date(note.uploaded_at).toLocaleDateString()
               : "N/A",
             rating: note.rating_average || 0,
-
             status: note.status,
           }))
         );
@@ -129,7 +78,7 @@ export default function Notes({ canUpload }) {
     };
 
     fetchUserNotes();
-  }, [session?.user?.id]);
+  }, [session?.user?.id, fetchTrigger]);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -154,18 +103,7 @@ export default function Notes({ canUpload }) {
 
   return (
     <div className="mt-3">
-      <div className="flex justify-end mb-4">
-        <button
-          onClick={handleOpenModal}
-          className="flex items-center justify-center gap-2 px-4 py-2 
-          bg-[#2b3333] text-white rounded-md cursor-pointer  text-sm  hover:bg-[black]
-          font-medium shadow-sm "
-        >
-          <PlusIcon className="w-4 h-4" />
-          Upload New Notes
-        </button>
-      </div>
-      <div className="flex flex-col gap-2 h-[calc(350px-50px)] overflow-y-auto pr-2 custom-scrollbar">
+      <div className="flex flex-col gap-2 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar"> 
         {notes.length > 0 ? (
           notes.map((item) => (
             <Card key={item.id}>
@@ -192,9 +130,7 @@ export default function Notes({ canUpload }) {
                       <div className="flex flex-col sm:flex-row gap-2 mt-2 text-sm text-[#3B3838]">
                         <span className="flex items-center gap-1">
                           <CalendarIcon className="w-4 h-4" />
-                          <span className="text-xs sm:text-sm">
-                            {item.date}
-                          </span>
+                          <span className="text-xs sm:text-sm">{item.date}</span>
                         </span>
                         <span className="flex items-center gap-1 sm:ml-4">
                           {item?.rating > 0 ? (
@@ -214,8 +150,7 @@ export default function Notes({ canUpload }) {
                     </div>
                   </div>
                   <div className="flex items-center gap-3 sm:gap-6  sm:mt-0 self-start sm:self-center ml-auto sm:ml-12">
-                    {/* Reward display removed */}
-                    <FaAngleRight className="bg-white shadow-[3px_3px_0px_0px_rgba(0,0,0,0.2)] rounded-full w-5 h-5 sm:w-6 sm:h-6 " />
+                    <FaAngleRight className="border-2 rounded-full w-5 h-5 sm:w-6 sm:h-6 shadow-[3px_4px_4px_rgba(0,0,0,0.25)] " />
                   </div>
                 </div>
               </CardContent>
@@ -237,12 +172,7 @@ export default function Notes({ canUpload }) {
           </div>
         )}
       </div>
-      <ResourceUploadModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        onUploadSuccess={handleUploadSuccess}
-        defaultResourceType="NOTE"
-      />
     </div>
   );
 }
+

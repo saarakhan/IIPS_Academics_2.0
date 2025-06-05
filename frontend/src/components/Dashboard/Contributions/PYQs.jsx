@@ -4,52 +4,25 @@ import { FaAngleRight } from "react-icons/fa6";
 import { IoNewspaperOutline } from "react-icons/io5";
 import { UserAuth } from "../../../Context/AuthContext";
 import { supabase } from "../../../supabaseClient";
-import { CalendarIcon, StarIcon, PlusIcon } from "../../../Icons";
+import { CalendarIcon, StarIcon } from "../../../Icons";
 import ResourceUploadModal from "./ResourceUploadModal";
-import toast from "react-hot-toast";
 
 function Card({ children }) {
-  return (
-    <div className="bg-white shadow-sm border-b-2  cursor-pointer">
-      {children}
-    </div>
-  );
+  return <div className="bg-white shadow-sm border-b-2 cursor-pointer">{children}</div>;
 }
 
 function CardContent({ children }) {
-  return (
-    <div className="p-4 flex items-center justify-between  ">{children}</div>
-  );
+  return <div className="p-4 flex items-center justify-between">{children}</div>;
 }
-export default function PYQs({ canUpload }) {
+
+export default function PYQs({ canUpload, fetchTrigger }) {
   const { session } = UserAuth();
   const [pyqs, setPyqs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [fetchTrigger, setFetchTrigger] = useState(0);
-
-  function handleOpenModal() {
-    if (!canUpload) {
-      toast.error("complete your profile to upload resource");
-      return;
-    }
-    setIsModalOpen(true);
-  }
-  const handleCloseModal = () => setIsModalOpen(false);
-
-  const handleUploadSuccess = useCallback(() => {
-    setFetchTrigger((prev) => prev + 1);
-    setTimeout(() => {
-      handleCloseModal();
-    }, 1500);
-  }, []);
 
   useEffect(() => {
-    if (!session?.user?.id) {
-      setLoading(false);
-      return;
-    }
+    if (!session?.user?.id) return setLoading(false);
 
     const fetchUserPYQs = async () => {
       setLoading(true);
@@ -57,15 +30,13 @@ export default function PYQs({ canUpload }) {
       try {
         const { data, error: fetchError } = await supabase
           .from("resources")
-          .select(
-            `
+          .select(`
             id, title, uploaded_at, rating_average, status,
             subject:subject_id (
               semester_number,
               course:course_id (name)
             )
-          `
-          )
+          `)
           .eq("uploader_profile_id", session.user.id)
           .eq("resource_type", "PYQ")
           .order("uploaded_at", { ascending: false });
@@ -76,12 +47,8 @@ export default function PYQs({ canUpload }) {
           data.map((pyq) => ({
             id: pyq.id,
             title: pyq.title,
-            semester: `${pyq.subject?.course?.name || ""} Semester ${
-              pyq.subject?.semester_number || ""
-            }`,
-            date: pyq.uploaded_at
-              ? new Date(pyq.uploaded_at).toLocaleDateString()
-              : "N/A",
+            semester: `${pyq.subject?.course?.name || ""} Semester ${pyq.subject?.semester_number || ""}`,
+            date: pyq.uploaded_at ? new Date(pyq.uploaded_at).toLocaleDateString() : "N/A",
             status: pyq.status,
             rating: pyq.rating_average || 0,
           }))
@@ -97,6 +64,7 @@ export default function PYQs({ canUpload }) {
 
     fetchUserPYQs();
   }, [fetchTrigger, session?.user?.id]);
+
   const getStatusColor = (status) => {
     switch (status) {
       case "PENDING":
@@ -110,28 +78,12 @@ export default function PYQs({ canUpload }) {
     }
   };
 
-  if (loading) {
-    return <div className="text-center py-8">Loading your PYQs...</div>;
-  }
-
-  if (error) {
-    return <div className="text-center py-8 text-red-500">Error: {error}</div>;
-  }
+  if (loading) return <div className="text-center py-8">Loading your PYQs...</div>;
+  if (error) return <div className="text-center py-8 text-red-500">Error: {error}</div>;
 
   return (
     <div className="mt-3">
-      <div className="flex justify-end mb-4">
-        <button
-          onClick={handleOpenModal}
-          className="flex items-center justify-center gap-2 px-4 py-2 
-          bg-[#2b3333] text-white rounded-md cursor-pointer  text-sm  hover:bg-[black]
-          font-medium shadow-sm "
-        >
-          <PlusIcon className="w-4 h-4" />
-          Upload New PYQ
-        </button>
-      </div>
-      <div className="flex flex-col gap-2 h-[calc(350px-50px)] overflow-y-auto pr-2 custom-scrollbar">
+     <div className="flex flex-col gap-2 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
         {pyqs.length > 0 ? (
           pyqs.map((item) => (
             <Card key={item.id}>
@@ -143,14 +95,8 @@ export default function PYQs({ canUpload }) {
                     </div>
                     <div className="flex flex-col">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-sm sm:text-base break-words">
-                          {item.title}
-                        </h3>
-                        <span
-                          className={`px-2 py-0.5 text-xs rounded-full font-medium ${getStatusColor(
-                            item.status
-                          )}`}
-                        >
+                        <h3 className="font-semibold text-sm sm:text-base break-words">{item.title}</h3>
+                        <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${getStatusColor(item.status)}`}>
                           {item.status}
                         </span>
                       </div>
@@ -158,27 +104,19 @@ export default function PYQs({ canUpload }) {
                       <div className="flex flex-col sm:flex-row gap-2 mt-2 text-sm text-[#3B3838]">
                         <span className="flex items-center gap-1">
                           <CalendarIcon className="w-4 h-4" />
-                          <span className="text-xs sm:text-sm">
-                            {item.date}
-                          </span>
+                          <span className="text-xs sm:text-sm">{item.date}</span>
                         </span>
-                        {/* Optionally display rating for PYQs if applicable */}
                         {item.rating > 0 && (
                           <span className="flex items-center gap-1 sm:ml-4">
-                            <span>
-                              <StarIcon className="w-4 h-4 text-[#C79745]" />
-                            </span>
-                            <span className="text-xs sm:text-sm">
-                              {item.rating}/5.0
-                            </span>
+                            <StarIcon className="w-4 h-4 text-[#C79745]" />
+                            <span className="text-xs sm:text-sm">{item.rating}/5.0</span>
                           </span>
                         )}
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 sm:gap-6  sm:mt-0 self-start sm:self-center ml-auto sm:ml-12">
-                    {/* Reward display removed */}
-                    <FaAngleRight className="bg-white shadow-[3px_3px_0px_0px_rgba(0,0,0,0.2)] rounded-full w-5 h-5 sm:w-6 sm:h-6 " />
+                  <div className="flex items-center gap-3 sm:gap-6 self-start sm:self-center ml-auto sm:ml-12">
+                    <FaAngleRight className="bg-white shadow-[3px_3px_0px_rgba(0,0,0,0.2)] rounded-full w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
                 </div>
               </CardContent>
@@ -186,26 +124,13 @@ export default function PYQs({ canUpload }) {
           ))
         ) : (
           <div className="w-full justify-center flex flex-col items-center text-center">
-            <img
-              src={noData}
-              className="w-[200px] md:w-[250px]"
-              alt="No PYQs uploaded"
-            />
-            <p className="mt-4 text-lg text-gray-700">
-              You haven't uploaded any PYQs yet.
-            </p>
-            <p className="text-sm text-gray-500">
-              Click "Upload New PYQ" to share your first one!
-            </p>
+            <img src={noData} className="w-[200px] md:w-[250px]" alt="No PYQs uploaded" />
+            <p className="mt-4 text-lg text-gray-700">You haven't uploaded any PYQs yet.</p>
+            <p className="text-sm text-gray-500">Click "Upload New PYQ" to share your first one!</p>
           </div>
         )}
       </div>
-      <ResourceUploadModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        onUploadSuccess={handleUploadSuccess}
-        defaultResourceType="PYQ"
-      />
     </div>
   );
 }
+

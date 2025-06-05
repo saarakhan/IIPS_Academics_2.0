@@ -124,18 +124,7 @@ export default function Syllabus({ canUpload }) {
 
   return (
     <div className="mt-3">
-      <div className="flex justify-end mb-4">
-        <button
-          onClick={handleOpenModal}
-          className="flex items-center justify-center gap-2 px-4 py-2 
-          bg-[#2b3333] text-white rounded-md cursor-pointer  text-sm  hover:bg-[black]
-          font-medium shadow-sm "
-        >
-          <PlusIcon className="w-4 h-4" />
-          Upload New Syllabus
-        </button>
-      </div>
-      <div className="flex flex-col gap-2 h-[calc(350px-50px)] overflow-y-auto pr-2 custom-scrollbar">
+       <div className="flex flex-col gap-2 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
         {syllabusFiles.length > 0 ? (
           syllabusFiles.map((item) => (
             <Card key={item.id}>

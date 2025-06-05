@@ -2,20 +2,40 @@ import React, { useState } from "react";
 import PYQs from "./PYQs";
 import Syllabus from "./Syllabus";
 import Notes from "./Notes";
+import ResourceUploadModal from "./ResourceUploadModal";
+import { PlusIcon } from "../../../Icons";
+import toast from "react-hot-toast";
 
-const Contributions = ({canUpload}) => {
+const Contributions = ({ canUpload }) => {
   const [activeTab, setActiveTab] = useState("Notes");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [fetchTrigger, setFetchTrigger] = useState(0);
 
-  // const [uploadCounter, setUploadCounter] = useState(0);
+  const tabs = ["Notes", "PYQs", "Syllabus"];
 
-  // tabs
-  <style>{`
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
+  const handleUploadClick = () => {
+    if (!canUpload) {
+      toast.error("Complete your profile to upload resources");
+      return;
     }
-  `}</style>;
+    setIsModalOpen(true);
+  };
 
-  const tabs = [{ name: "Notes" }, { name: "PYQs" }, { name: "Syllabus" }];
+  const handleCloseModal = () => setIsModalOpen(false);
+
+  const handleUploadSuccess = () => {
+    setFetchTrigger((prev) => prev + 1);
+    setTimeout(() => {
+      handleCloseModal();
+    }, 1500);
+  };
+
+  const resourceTypeMap = {
+    Notes: "NOTE",
+    PYQs: "PYQ",
+    Syllabus: "SYLLABUS",
+  };
+
   return (
     <div
       className="overflow-auto no-scrollbar"
@@ -24,33 +44,67 @@ const Contributions = ({canUpload}) => {
         msOverflowStyle: "none",
       }}
     >
-      {" "}
-      <p className="text-3xl font-bold ">Your Contributions</p>
-      <p className="text-base ">Resources you've shared with the community.</p>
-      <div className="flex flex-wrap  gap-2 py-2 px-2 sm:w-fit border mt-2 rounded-lg w-full">
+      <style>{`
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
+
+      {/* Header Row */}
+      <div className="flex justify-between items-center mb-2">
+        <div>
+          <p className="text-3xl font-bold">Your Contributions</p>
+          <p className="text-base">Resources you've shared with the community.</p>
+        </div>
+        {canUpload && (
+          <button
+            onClick={handleUploadClick}
+            className="bg-[#2B3333] text-white mt-4 px-4 py-2 rounded-sm font-medium hover:bg-[#1f2727] transition flex items-center gap-2"
+          >
+            <PlusIcon className="w-8 h-4" />
+            Upload New {activeTab.slice(0,)}
+          </button>
+        )}
+      </div>
+
+      {/* Full-width Navbar */}
+      <div className="grid grid-cols-3 gap-2 p-1 mt-6 mb-8 border-2 rounded-sm w-full">
         {tabs.map((tab) => (
           <button
-            key={tab.name}
-            onClick={() => setActiveTab(tab.name)}
-            className={`px-4 py-1 rounded-md font-medium transition-colors ${
-              activeTab === tab.name
-                ? "bg-black text-white"
-                : "bg-gray-100 text-gray-700"
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`w-full px-4 py-2 rounded-sm font-medium text-center transition-colors ${
+              activeTab === tab
+                ? "bg-[#2B3333] text-white"
+                : "bg-gray-[#FEFEFE] text-black hover:bg-gray-200"
             }`}
           >
-            {tab.name}
+            {tab}
           </button>
         ))}
       </div>
-      {activeTab === "Notes" ? (
-        <Notes canUpload={canUpload} />
-      ) : activeTab === "PYQs" ? (
-        <PYQs canUpload={canUpload} />
-      ) : activeTab === "Syllabus" ? (
-        <Syllabus canUpload={canUpload} />
-      ) : null}
+
+      {/* Tab Content */}
+      {activeTab === "Notes" && (
+        <Notes canUpload={canUpload} fetchTrigger={fetchTrigger} />
+      )}
+      {activeTab === "PYQs" && (
+        <PYQs canUpload={canUpload} fetchTrigger={fetchTrigger} />
+      )}
+      {activeTab === "Syllabus" && (
+        <Syllabus canUpload={canUpload} fetchTrigger={fetchTrigger} />
+      )}
+
+      {/* Upload Modal */}
+      <ResourceUploadModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onUploadSuccess={handleUploadSuccess}
+        defaultResourceType={resourceTypeMap[activeTab]}
+      />
     </div>
   );
 };
 
 export default Contributions;
+
