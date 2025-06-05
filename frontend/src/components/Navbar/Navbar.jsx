@@ -101,7 +101,14 @@ export default function Navbar() {
         <div className="hidden md:flex items-center space-x-4">
           {session ? (
             <>
-              <Link to="/dashboard" className="flex items-center space-x-2">
+              <Link
+                to={
+                  session.user.user_metadata.role === "admin"
+                    ? "/admin"
+                    : "/dashboard"
+                }
+                className="flex items-center space-x-2"
+              >
                 {/* User Icon with no padding, visible color and size */}
                 {/* <UserIcon className="h-10 w-10 cursor-pointer text-[#2B3333] rounded-full border border-gray-300" /> */}
                 <Avatar alt={name} src={avatarUrl} />

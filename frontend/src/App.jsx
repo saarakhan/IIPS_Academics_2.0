@@ -4,12 +4,9 @@ import { Outlet } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import Welcom from "./assets/welcome_video.MOV";
 import { Toaster } from "react-hot-toast";
-<<<<<<< HEAD
 import Footer from './components/Home/Footer'
-=======
-// import "./App.css"
+import "./App.css"
 
->>>>>>> 25b22303ac6659cc17291b7978b711bebae96a91
 function App() {
   const [videoEnded, setVideoEnded] = useState(false);
   const [videoAnimationDone, setVideoAnimationDone] = useState(false);
@@ -34,15 +31,9 @@ function App() {
   
 
   return (
-<<<<<<< HEAD
-    <div >
-      {/* <AnimatePresence>
-        {!videoAnimationDone && (
-=======
     <div>
       <AnimatePresence>
         {shouldShowVideo && !videoAnimationDone && (
->>>>>>> 25b22303ac6659cc17291b7978b711bebae96a91
           <motion.div
             key="video-wrapper"
             className="absolute top-0 left-0 w-full h-full z-50"
@@ -66,7 +57,7 @@ function App() {
             />
           </motion.div>
         )}
-      </AnimatePresence> */}
+      </AnimatePresence> 
 
       {/* Main App Content */}
       <div className="relative z-0 w-full h-full">
