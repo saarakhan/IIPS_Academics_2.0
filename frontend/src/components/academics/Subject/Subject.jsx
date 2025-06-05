@@ -208,7 +208,6 @@ function Subject() {
         )}
       </main>
 
-      <Footer />
     </div>
   );
 }

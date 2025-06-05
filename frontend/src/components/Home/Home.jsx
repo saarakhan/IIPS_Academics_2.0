@@ -51,7 +51,6 @@ const Home = () => {
       <main className="flex-grow">
         <CardGroup />
       </main>
-      <Footer />
     </div>
   );
 };
