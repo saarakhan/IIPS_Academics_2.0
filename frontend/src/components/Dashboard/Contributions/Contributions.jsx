@@ -51,10 +51,12 @@ const Contributions = ({ canUpload }) => {
       `}</style>
 
       {/* Header Row */}
-      <div className="flex justify-between items-center mb-2">
+      <div className="flex justify-between items-start mb-2 sm:flex-row flex-col ">
         <div>
           <p className="text-3xl font-bold">Your Contributions</p>
-          <p className="text-base">Resources you've shared with the community.</p>
+          <p className="text-base">
+            Resources you've shared with the community.
+          </p>
         </div>
         {canUpload && (
           <button
@@ -62,7 +64,7 @@ const Contributions = ({ canUpload }) => {
             className="bg-[#2B3333] text-white mt-4 px-4 py-2 rounded-sm font-medium hover:bg-[#1f2727] transition flex items-center gap-2"
           >
             <PlusIcon className="w-8 h-4" />
-            Upload New {activeTab.slice(0,)}
+            Upload New {activeTab.slice(0)}
           </button>
         )}
       </div>
@@ -107,4 +109,3 @@ const Contributions = ({ canUpload }) => {
 };
 
 export default Contributions;
-

@@ -13,31 +13,43 @@ export default function AdminDashboard() {
   const [counts, setCounts] = useState({ total: 0, approved: 0, rejected: 0, pending: 0 });
   const [filters, setFilters] = useState({ status: '', subject: '', contributor: '' });
   const [loading, setLoading] = useState(true);
-  
 
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(0);
+
+  const numberResourceDisplay = 5;
 
   useEffect(() => {
-    fetchResources();
-  }, []);
+    fetchResources(page);
+  }, [page]);
 
   useEffect(() => {
     applyFilters(resources, filters);
   }, [filters, resources]);
 
-  const fetchResources = async () => {
+  const fetchResources = async (page = 0) => {
     setLoading(true);
+
+    const from = page * numberResourceDisplay;
+    const to = from + (numberResourceDisplay - 1);
+
     const { data, error } = await supabase.from('resources').select(`
         *,
         profiles!resources_uploader_profile_id_fkey(first_name, last_name, course, semester),
         subjects(name)
-      `);
+      `).range(from, to);
 
     if (error) {
       console.error('Error fetching resources:', error);
     } else {
-      setResources(data);
+      setResources((prev) => [...prev, ...data]);
+      // setResources(data);
       updateCounts(data);
       applyFilters(data, filters);
+
+      if (data.length < numberResourceDisplay) {
+        setHasMore(false);
+      }      
     }
     setLoading(false);
   };
@@ -82,6 +94,26 @@ export default function AdminDashboard() {
 };
 
 
+
+
+
+
+
+  // Load more Resources
+  const loadMoreResources = async () => {
+    const nextPage = page + 1;
+    try {
+      // const newResources = await fetchResources(nextPage);
+      // setResources((prev) => [...prev, ...newResources]);
+      setPage(nextPage);
+      
+    } catch (err) {
+      setError('Error loading more resources: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className='min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6 md:p-8'>
       <div className='max-w-7xl mx-auto'>
@@ -125,16 +157,31 @@ export default function AdminDashboard() {
               <p className='text-gray-500 max-w-md mx-auto'>Try changing the filters or check back later when new resources have been submitted.</p>
             </div>
           ) : (
-            <div className='grid gap-6'>
-              {filtered
-                .sort((a, b) => {
-                  const priority = { PENDING: 1, APPROVED: 2, REJECTED: 3 };
-                  return priority[a.status] - priority[b.status];
-                })
-                .map(resource => (
-                  <ResourceCard key={resource.id} resource={resource} onAction={handleAction} />
-                ))}
-            </div>
+            <>
+              <div className='grid gap-6'>
+                {filtered
+                  .sort((a, b) => {
+                    const priority = { PENDING: 1, APPROVED: 2, REJECTED: 3 };
+                    return priority[a.status] - priority[b.status];
+                  })
+                  .map(resource => (
+                    <ResourceCard key={resource.id} resource={resource} onAction={handleAction} />
+                  ))}
+              </div>
+
+              {/* Load More Button rather than infinite scrolling */}
+              {hasMore && (
+                <div className="flex justify-center">
+                  <button
+                    onClick={loadMoreResources}
+                    disabled={loading}
+                    className="px-6 py-2 bg-[#2B3333] text-white rounded-md hover:bg-black transition disabled:opacity-50"
+                  >
+                    {loading ? "Loading..." : "Load More"}
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
