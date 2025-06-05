@@ -88,21 +88,44 @@ export const AuthContextProvider = ({ children }) => {
       console.error("Error signing out:", error);
     }
   }
-
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      // console.log("Initial session:", session); //for debug
-      setSession(session);
-    });
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        // console.log('Auth state changed, session:', session); // ✅ Debug
-        setSession(session);
+    const fetchProfileAndStore = async (userId) => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .single();
+
+      if (data && !error) {
+        localStorage.setItem("user", JSON.stringify(data));
+      } else {
+        console.error("Error fetching profile:", error?.message);
       }
-    );
-    return () => {
-      authListener.subscription?.unsubscribe();
     };
+
+    const setupSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      setSession(session);
+      if (session?.user) {
+        await fetchProfileAndStore(session.user.id);
+      }
+    };
+    setupSession();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setSession(session);
+      if (session?.user) {
+        await fetchProfileAndStore(session.user.id);
+      } else {
+        localStorage.removeItem("user");
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   // Ensure user profile exists after login (including OAuth)

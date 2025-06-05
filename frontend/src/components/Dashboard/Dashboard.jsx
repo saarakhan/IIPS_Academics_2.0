@@ -230,7 +230,8 @@ const Dashboard = () => {
       {/* Main Content */}
       <div className="flex w-full max-w-7xl justify-center gap-4 lg:gap-8 mt-8 flex-col lg:flex-row">
         {/* Profile Overview Sidebar */}
-        <div className="border-2 w-full lg:w-72 xl:w-80 flex flex-col items-center py-6 px-6 rounded-xl h-fit lg:h-[650px] bg-white shadow-2xl shadow-[5px_7px_8px_rgba(0,0,0,0.25)]">
+        <div className="border-2 w-full lg:w-72 xl:w-80 flex flex-col items-center py-6 px-6 rounded-xl h-fit lg:h-[650px] bg-white 
+        shadow-[5px_7px_8px_rgba(0,0,0,0.25)]">
           {/* Hidden file input */}
           <input
             type="file"
