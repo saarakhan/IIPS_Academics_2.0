@@ -7,45 +7,77 @@ import {
   FaSyncAlt,
 } from "react-icons/fa";
 import { supabase } from "../../supabaseClient";
+import { Dropdown, Typography } from "antd";
+import { DownOutlined } from "@ant-design/icons";
 
 export default function StudentContributions() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCourse, setSelectedCourse] = useState("");
   const [contributionsData, setContributionsData] = useState([]);
+  const [allCourses, setAllCourses] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch data from Supabase
+  // Fetch contributions
   useEffect(() => {
-  const fetchContributions = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("first_name, last_name, course, total_uploads, rewards_points")
-      .gt("total_uploads", 0); // Only include users with contributions
+    const fetchContributions = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("first_name, last_name, course, total_uploads, rewards_points")
+        .gt("total_uploads", 0);
 
-    if (error) {
-      console.error("Error fetching contributions:", error.message);
-      setContributionsData([]);
-    } else {
-      const formattedData = data.map((item, index) => ({
-        id: index,
-        name: `${item.first_name} ${item.last_name}`,
-        course: item.course,
-        uploads: item.total_uploads || 0,
-        rewardPoints: item.rewards_points || 0,
-      }));
-      setContributionsData(formattedData);
-    }
-    setLoading(false);
-  };
+      if (error) {
+        console.error("Error fetching contributions:", error.message);
+        setContributionsData([]);
+      } else {
+        const sortedData = data
+          .map((item, index) => ({
+            id: index,
+            name: `${item.first_name} ${item.last_name}`,
+            course: item.course,
+            uploads: item.total_uploads || 0,
+            rewardPoints: item.rewards_points || 0,
+          }))
+          .sort((a, b) => b.rewardPoints - a.rewardPoints)
+          .map((item, index) => ({
+            ...item,
+            rank: index + 1,
+          }));
 
-  fetchContributions();
-}, []);
+        setContributionsData(sortedData);
+      }
+      setLoading(false);
+    };
 
+    fetchContributions();
+  }, []);
 
-  const uniqueCourses = [
-    ...new Set(contributionsData.map((item) => item.course)),
+  // Fetch all unique courses (even those without uploads)
+  useEffect(() => {
+    const fetchCourses = async () => {
+      const { data, error } = await supabase.from("profiles").select("course");
+      if (!error && data) {
+        const courseSet = new Set(data.map((item) => item.course));
+        setAllCourses([...courseSet]);
+      }
+    };
+    fetchCourses();
+  }, []);
+
+  const items = [
+    {
+      key: "all",
+      label: "All Courses",
+    },
+    ...allCourses.map((course) => ({
+      key: course,
+      label: course,
+    })),
   ];
+
+  const handleMenuClick = (e) => {
+    setSelectedCourse(e.key);
+  };
 
   const filteredData = useMemo(() => {
     return contributionsData.filter((item) => {
@@ -65,10 +97,7 @@ export default function StudentContributions() {
     (sum, item) => sum + item.rewardPoints,
     0
   );
-  const totalUploads = filteredData.reduce(
-    (sum, item) => sum + item.uploads,
-    0
-  );
+  const totalUploads = filteredData.reduce((sum, item) => sum + item.uploads, 0);
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -123,19 +152,24 @@ export default function StudentContributions() {
           />
         </div>
 
-        <div className="w-full md:w-64">
-          <select
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#C79745] focus:border-[#C79745]"
-            value={selectedCourse}
-            onChange={(e) => setSelectedCourse(e.target.value)}
+        {/* Course Dropdown */}
+        <div className="w-full md:w-64 border border-gray-300 rounded-md pl-4 pr-4">
+          <Dropdown
+            menu={{
+              items,
+              selectable: true,
+              defaultSelectedKeys: [selectedCourse || "all"],
+              onClick: handleMenuClick,
+            }}
+            className="border border-amber-600 mt-2"
           >
-            <option value="all">All Courses</option>
-            {uniqueCourses.map((course) => (
-              <option key={course} value={course}>
-                {course}
-              </option>
-            ))}
-          </select>
+            <Typography.Link className="w-full flex custom-select justify-between items-center px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:text-[#C79745] hover:border-[#C79745]">
+              {selectedCourse === "" || selectedCourse === "all"
+                ? "All Courses"
+                : selectedCourse}
+              <DownOutlined />
+            </Typography.Link>
+          </Dropdown>
         </div>
 
         <button
@@ -173,6 +207,9 @@ export default function StudentContributions() {
                   <th className="px-4 py-3 text-left font-serif font-bold text-gray-700">
                     Reward Points
                   </th>
+                  <th className="px-4 py-3 text-left font-serif font-bold text-gray-700">
+                    Rank
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -198,6 +235,12 @@ export default function StudentContributions() {
                       <span className="font-medium text-[#C28C36]">
                         {student.rewardPoints} pts
                       </span>
+                    </td>
+                    <td className="px-4 py-3 text-gray-800 font-medium flex items-center gap-2">
+                      {student.rank}
+                      {student.rank === 1 && <span>🥇</span>}
+                      {student.rank === 2 && <span>🥈</span>}
+                      {student.rank === 3 && <span>🥉</span>}
                     </td>
                   </tr>
                 ))}
