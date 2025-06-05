@@ -7,8 +7,8 @@ import {
   FaSyncAlt,
 } from "react-icons/fa";
 import { supabase } from "../../supabaseClient";
-import { Dropdown, Typography } from "antd";
-import { DownOutlined } from "@ant-design/icons";
+import { Select } from "antd";
+const { Option } = Select;
 
 export default function StudentContributions() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -52,7 +52,7 @@ export default function StudentContributions() {
     fetchContributions();
   }, []);
 
-  // Fetch all unique courses (even those without uploads)
+  // Fetch unique courses
   useEffect(() => {
     const fetchCourses = async () => {
       const { data, error } = await supabase.from("profiles").select("course");
@@ -64,30 +64,13 @@ export default function StudentContributions() {
     fetchCourses();
   }, []);
 
-  const items = [
-    {
-      key: "all",
-      label: "All Courses",
-    },
-    ...allCourses.map((course) => ({
-      key: course,
-      label: course,
-    })),
-  ];
-
-  const handleMenuClick = (e) => {
-    setSelectedCourse(e.key);
-  };
-
   const filteredData = useMemo(() => {
     return contributionsData.filter((item) => {
       const matchesSearch = item.name
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
       const matchesCourse =
-        selectedCourse === "" ||
-        selectedCourse === "all" ||
-        item.course === selectedCourse;
+        selectedCourse === "" || item.course === selectedCourse;
       return matchesSearch && matchesCourse;
     });
   }, [searchQuery, selectedCourse, contributionsData]);
@@ -102,7 +85,7 @@ export default function StudentContributions() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       <div className="mb-8">
-        <h1 className="font-serif text-4xl font-bold text-gray-800 mb-2">
+        <h1 className=" text-4xl font-bold text-gray-800 mb-2">
           Student Contributions
         </h1>
       </div>
@@ -132,7 +115,7 @@ export default function StudentContributions() {
           >
             <div>
               <p className="text-sm font-medium text-gray-500">{item.label}</p>
-              <p className="text-3xl font-serif font-bold">{item.value}</p>
+              <p className="text-3xl  font-bold">{item.value}</p>
             </div>
             {item.icon}
           </div>
@@ -141,35 +124,35 @@ export default function StudentContributions() {
 
       {/* Filter & Search */}
       <div className="flex flex-col md:flex-row gap-4 mb-6">
-        <div className="relative flex-grow">
+        <div className="relative flex-grow ">
           <FaSearch className="absolute left-3 top-3.5 text-gray-400" />
           <input
             type="text"
             placeholder="Search by student name..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1  focus:ring-[#C79745] focus:border-[#C79745]"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#C79745] focus:border-[#C79745]"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
 
-        {/* Course Dropdown */}
-        <div className="w-full md:w-64 border border-gray-300 rounded-md pl-4 pr-4">
-          <Dropdown
-            menu={{
-              items,
-              selectable: true,
-              defaultSelectedKeys: [selectedCourse || "all"],
-              onClick: handleMenuClick,
-            }}
-            className="border border-amber-600 mt-2"
+        {/* Course Dropdown (Updated) */}
+        <div className="w-full md:w-64 ">
+       
+          <Select
+            value={selectedCourse || undefined}
+            onChange={(value) => setSelectedCourse(value)}
+            allowClear
+            placeholder="All Courses"
+            className="w-full custom-select h-full"
+            size="middle"
+            popupMatchSelectWidth={false}
           >
-            <Typography.Link className="w-full flex custom-select justify-between items-center px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:text-[#C79745] hover:border-[#C79745]">
-              {selectedCourse === "" || selectedCourse === "all"
-                ? "All Courses"
-                : selectedCourse}
-              <DownOutlined />
-            </Typography.Link>
-          </Dropdown>
+            {allCourses.map((course) => (
+              <Option key={course} value={course}>
+                {course}
+              </Option>
+            ))}
+          </Select>
         </div>
 
         <button
@@ -195,19 +178,19 @@ export default function StudentContributions() {
             <table className="w-full">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="px-4 py-3 text-left font-serif font-bold text-gray-700">
+                  <th className="px-4 py-3 text-left font-bold text-gray-700">
                     Student Name
                   </th>
-                  <th className="px-4 py-3 text-left font-serif font-bold text-gray-700">
+                  <th className="px-4 py-3 text-left font-bold text-gray-700">
                     Course
                   </th>
-                  <th className="px-4 py-3 text-left font-serif font-bold text-gray-700">
+                  <th className="px-4 py-3 text-left font-bold text-gray-700">
                     Uploads
                   </th>
-                  <th className="px-4 py-3 text-left font-serif font-bold text-gray-700">
+                  <th className="px-4 py-3 text-left font-bold text-gray-700">
                     Reward Points
                   </th>
-                  <th className="px-4 py-3 text-left font-serif font-bold text-gray-700">
+                  <th className="px-4 py-3 text-left font-bold text-gray-700">
                     Rank
                   </th>
                 </tr>
@@ -228,9 +211,7 @@ export default function StudentContributions() {
                         {student.course}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-gray-600">
-                      {student.uploads}
-                    </td>
+                    <td className="px-4 py-3 text-gray-600">{student.uploads}</td>
                     <td className="px-4 py-3">
                       <span className="font-medium text-[#C28C36]">
                         {student.rewardPoints} pts
