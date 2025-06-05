@@ -13,6 +13,8 @@ export default function AdminDashboard() {
   const [counts, setCounts] = useState({ total: 0, approved: 0, rejected: 0, pending: 0 });
   const [filters, setFilters] = useState({ status: '', subject: '', contributor: '' });
   const [loading, setLoading] = useState(true);
+  
+
 
   useEffect(() => {
     fetchResources();
@@ -72,12 +74,19 @@ export default function AdminDashboard() {
   const handleAction = async () => {
     await fetchResources();
   };
+  const handleStatusClick = (statusKey) => {
+  setFilters(prev => ({
+    ...prev,
+    status: statusKey === 'total' ? '' : statusKey.toUpperCase(), // Clear filter if "Total" clicked
+  }));
+};
+
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6 md:p-8'>
       <div className='max-w-7xl mx-auto'>
         <Heading />
-        <StatusSummary counts={counts} />
+        <StatusSummary counts={counts }onStatusClick={handleStatusClick}  />
         <ResourceFilter filters={filters} onChange={handleFilterChange} />
 
         <div className='mt-8 space-y-6'>
@@ -130,5 +139,7 @@ export default function AdminDashboard() {
         </div>
       </div>
     </div>
+    
   );
-}
+
+};
