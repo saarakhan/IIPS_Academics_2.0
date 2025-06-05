@@ -397,7 +397,7 @@ const Dashboard = () => {
         initialData={profileData ?? undefined}
         onProfileUpdate={fetchDashboardData}
       />
-      <Footer/>
+      
     </div>
   );
 };
