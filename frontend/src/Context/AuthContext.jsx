@@ -7,6 +7,19 @@ const AuthContext = createContext();
 export const AuthContextProvider = ({ children }) => {
   const [session, setSession] = useState(undefined);
 
+  //signup
+  // const SignUpNewUser = async (email, password) => {
+  //   const { data, error } = await supabase.auth.signUp({
+  //     email: email.toLowerCase(),
+  //     password,
+  //   });
+  //   if (error) {
+  //     console.error("Error signing up: ", error);
+  //     return { success: false, error };
+  //   }
+  //   return { success: true, data };
+  // };
+
   // Sign in
   const SignInUser = async (email, password) => {
     try {
@@ -88,44 +101,21 @@ export const AuthContextProvider = ({ children }) => {
       console.error("Error signing out:", error);
     }
   }
+
   useEffect(() => {
-    const fetchProfileAndStore = async (userId) => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", userId)
-        .single();
-
-      if (data && !error) {
-        localStorage.setItem("user", JSON.stringify(data));
-      } else {
-        console.error("Error fetching profile:", error?.message);
-      }
-    };
-
-    const setupSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      // console.log("Initial session:", session); //for debug
       setSession(session);
-      if (session?.user) {
-        await fetchProfileAndStore(session.user.id);
-      }
-    };
-    setupSession();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setSession(session);
-      if (session?.user) {
-        await fetchProfileAndStore(session.user.id);
-      } else {
-        localStorage.removeItem("user");
-      }
     });
-
-    return () => subscription.unsubscribe();
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        // console.log('Auth state changed, session:', session); // ✅ Debug
+        setSession(session);
+      }
+    );
+    return () => {
+      authListener.subscription?.unsubscribe();
+    };
   }, []);
 
   // Ensure user profile exists after login (including OAuth)
