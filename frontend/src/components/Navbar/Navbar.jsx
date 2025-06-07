@@ -14,7 +14,8 @@ export default function Navbar() {
   const [name, setName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [OpenLogoutModal, SetOpenLogoutModal] = useState(false);
-  
+  const userProfile = JSON.parse(localStorage.getItem("userProfile"));
+
   const handleClose = useCallback(() => {
     SetOpenLogoutModal(false);
   }, []);
@@ -103,11 +104,7 @@ export default function Navbar() {
           {session ? (
             <>
               <Link
-                to={
-                  session.user.user_metadata.role === "admin"
-                    ? "/admin"
-                    : "/dashboard"
-                }
+                to={userProfile.role === "admin" ? "/admin" : "/dashboard"}
                 className="flex items-center space-x-2"
               >
                 {/* User Icon with no padding, visible color and size */}
