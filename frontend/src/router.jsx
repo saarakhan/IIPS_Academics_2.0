@@ -12,6 +12,7 @@ import ContactPage from "./components/contact/ContactPage.jsx";
 import AdminDashboard from "./components/Admin/AdminDashboard.jsx";
 import Placement from "./components/Placement/Placement";
 import AdminRoute from "./components/PrivateRoute/AdminRoute.jsx";
+import NotFound from "./components/Error/NotFound.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -40,6 +41,7 @@ export const router = createBrowserRouter([
           // </AdminRoute>
         ),
       },
+      { path:"*", element: <NotFound/>},
     ],
   },
 ]);
