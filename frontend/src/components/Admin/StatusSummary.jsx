@@ -1,6 +1,7 @@
-export default function StatusSummary({ counts }) {
+export default function StatusSummary({ counts,onStatusClick }) {
   const stats = [
     {
+      
       key: "total",
       label: "Total Resources",
       value: counts.total,
@@ -104,6 +105,8 @@ export default function StatusSummary({ counts }) {
         <div
           key={stat.key}
           className={`relative overflow-hidden rounded-2xl border ${stat.borderColor} ${stat.bgColor} p-6 shadow-sm hover:shadow-md transition-all duration-300 group`}
+          onClick={() => onStatusClick(stat.key)}
+
         >
           <div className="absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-10 transition-opacity duration-300 ease-in-out"></div>
           <div className="flex items-center">

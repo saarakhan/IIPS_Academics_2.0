@@ -13,6 +13,7 @@ export default function AdminDashboard() {
   const [counts, setCounts] = useState({ total: 0, approved: 0, rejected: 0, pending: 0 });
   const [filters, setFilters] = useState({ status: '', subject: '', contributor: '' });
   const [loading, setLoading] = useState(true);
+
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(0);
 
@@ -43,22 +44,39 @@ export default function AdminDashboard() {
     } else {
       setResources((prev) => [...prev, ...data]);
       // setResources(data);
-      updateCounts(data);
+      updateCounts();
       applyFilters(data, filters);
 
       if (data.length < numberResourceDisplay) {
         setHasMore(false);
-      }      
+      }
     }
     setLoading(false);
   };
 
-  const updateCounts = data => {
-    const total = data.length;
-    const approved = data.filter(r => r.status === 'APPROVED').length;
-    const rejected = data.filter(r => r.status === 'REJECTED').length;
-    const pending = data.filter(r => r.status === 'PENDING').length;
-    setCounts({ total, approved, rejected, pending });
+  const updateCounts = async () => {
+    const { count: total, error: error1 } = await supabase
+      .from('resources')
+      .select('*', { count: 'exact', head: true });
+    const { count: approved, error: error2 } = await supabase
+      .from('resources')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'APPROVED');
+    const { count: rejected, error: error3 } = await supabase
+      .from('resources')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'REJECTED');
+    const { count: pending, error: error4 } = await supabase
+      .from('resources')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'PENDING');
+
+    if (error1 || error2 || error3 || error4) {
+      Console.log("Error on loading resources counts");
+    }
+    else {
+      setCounts({ total, approved, rejected, pending });
+    }
   };
 
   const applyFilters = (data, { status, subject, contributor, startDate, endDate }) => {
@@ -85,20 +103,20 @@ export default function AdminDashboard() {
   const handleAction = async () => {
     await fetchResources();
   };
-
-
-
-
+  const handleStatusClick = (statusKey) => {
+  setFilters(prev => ({
+    ...prev,
+    status: statusKey === 'total' ? '' : statusKey.toUpperCase(), // Clear filter if "Total" clicked
+  }));
+};
 
 
   // Load more Resources
   const loadMoreResources = async () => {
     const nextPage = page + 1;
     try {
-      // const newResources = await fetchResources(nextPage);
-      // setResources((prev) => [...prev, ...newResources]);
       setPage(nextPage);
-      
+
     } catch (err) {
       setError('Error loading more resources: ' + err.message);
     } finally {
@@ -110,7 +128,7 @@ export default function AdminDashboard() {
     <div className='min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6 md:p-8'>
       <div className='max-w-7xl mx-auto'>
         <Heading />
-        <StatusSummary counts={counts} />
+        <StatusSummary counts={counts }onStatusClick={handleStatusClick}  />
         <ResourceFilter filters={filters} onChange={handleFilterChange} />
 
         <div className='mt-8 space-y-6'>
@@ -178,5 +196,7 @@ export default function AdminDashboard() {
         </div>
       </div>
     </div>
+    
   );
-}
+
+};
