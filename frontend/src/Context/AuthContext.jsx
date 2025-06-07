@@ -1,5 +1,4 @@
 import { createContext, useState, useEffect, useContext } from "react";
-
 import { supabase } from "../supabaseClient";
 
 const AuthContext = createContext();
@@ -7,18 +6,32 @@ const AuthContext = createContext();
 export const AuthContextProvider = ({ children }) => {
   const [session, setSession] = useState(undefined);
 
+  // Helper to fetch and store profile
+  const fetchAndStoreUserProfile = async (userId) => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select(
+        "email, course, semester, role, first_name, last_name, avatar_url"
+      )
+      .eq("id", userId)
+      .single();
+
+    if (data && !error) {
+      localStorage.setItem("userProfile", JSON.stringify(data));
+    } else {
+      console.error("Failed to fetch profile:", error?.message);
+    }
+  };
 
   // Sign in
   const SignInUser = async (email, password) => {
     try {
-      // Try signing in first
       let { data, error } = await supabase.auth.signInWithPassword({
         email: email.toLowerCase(),
         password,
       });
 
       if (error) {
-        // If credentials are invalid, try signing up
         if (error.message === "Invalid login credentials") {
           const { data: signUpData, error: signUpError } =
             await supabase.auth.signUp({
@@ -32,6 +45,9 @@ export const AuthContextProvider = ({ children }) => {
           }
 
           console.log("Sign-up success:", signUpData);
+          if (signUpData.user?.id) {
+            await fetchAndStoreUserProfile(signUpData.user.id);
+          }
           return { success: true, data: signUpData };
         } else {
           console.error("Sign-in error:", error.message);
@@ -39,8 +55,10 @@ export const AuthContextProvider = ({ children }) => {
         }
       }
 
-      // Sign-in success
       console.log("Sign-in success:", data);
+      if (data.user?.id) {
+        await fetchAndStoreUserProfile(data.user.id);
+      }
       return { success: true, data };
     } catch (err) {
       console.error("Unexpected error:", err.message);
@@ -48,7 +66,7 @@ export const AuthContextProvider = ({ children }) => {
     }
   };
 
-  // Google OAuth
+  // OAuth Google
   const signInWithGoogle = async () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
@@ -65,7 +83,7 @@ export const AuthContextProvider = ({ children }) => {
     }
   };
 
-  // GitHub OAuth
+  // OAuth GitHub
   const signInWithGitHub = async () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
@@ -84,6 +102,7 @@ export const AuthContextProvider = ({ children }) => {
 
   // Sign out
   async function SignOut() {
+    localStorage.removeItem("userProfile"); // Remove profile on logout
     const { error } = await supabase.auth.signOut();
     if (error) {
       console.error("Error signing out:", error);
@@ -92,15 +111,23 @@ export const AuthContextProvider = ({ children }) => {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      // console.log("Initial session:", session); //for debug
       setSession(session);
+      if (session?.user?.id) {
+        fetchAndStoreUserProfile(session.user.id);
+      }
     });
+
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
-        // console.log('Auth state changed, session:', session); // ✅ Debug
         setSession(session);
+        if (session?.user?.id) {
+          fetchAndStoreUserProfile(session.user.id);
+        } else {
+          localStorage.removeItem("userProfile");
+        }
       }
     );
+
     return () => {
       authListener.subscription?.unsubscribe();
     };
@@ -109,16 +136,15 @@ export const AuthContextProvider = ({ children }) => {
   // Ensure user profile exists after login (including OAuth)
   useEffect(() => {
     const ensureProfile = async () => {
-      if (session && session.user) {
+      if (session?.user) {
         const user = session.user;
-        // Check if profile exists
         const { data, error } = await supabase
           .from("profiles")
           .select("id")
           .eq("id", user.id)
           .single();
+
         if (!data && !error) {
-          // Insert new profile if not found
           await supabase.from("profiles").insert({
             id: user.id,
             email: user.email,

@@ -28,7 +28,7 @@ const SignIn = () => {
       toast.success("Logged in successfully!");
       setTimeout(() => {
         navigate("/");
-      }, 2000);
+      }, 1000);
     }
   };
 
