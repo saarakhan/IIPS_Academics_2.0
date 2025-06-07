@@ -7,6 +7,19 @@ const AuthContext = createContext();
 export const AuthContextProvider = ({ children }) => {
   const [session, setSession] = useState(undefined);
 
+  //signup
+  // const SignUpNewUser = async (email, password) => {
+  //   const { data, error } = await supabase.auth.signUp({
+  //     email: email.toLowerCase(),
+  //     password,
+  //   });
+  //   if (error) {
+  //     console.error("Error signing up: ", error);
+  //     return { success: false, error };
+  //   }
+  //   return { success: true, data };
+  // };
+
   // Sign in
   const SignInUser = async (email, password) => {
     try {

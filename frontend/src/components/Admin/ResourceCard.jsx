@@ -17,7 +17,7 @@ export default function ResourceCard({ resource, onAction }) {
       .update({
         status: 'APPROVED',
         approved_at: new Date().toISOString(),
-        approved_by_admin_id: '0b5648d6-7f4f-43b6-88cb-7bbc9ff226a4',
+        approved_by_admin_id: '0b5648d6-7f4f-43b6-88cb-7bbc9ff226a4', // to be replaced by actual admin id
       })
       .eq('id', resource.id);
 
@@ -97,24 +97,27 @@ export default function ResourceCard({ resource, onAction }) {
         return null;
     }
   };
-
+  // if resource is rejected don't show.
+  if (!resource || resource.status === 'REJECTED') return null;
+  
   return (
     <div className='border border-gray-200 rounded-lg p-4 shadow-sm overflow-hidden bg-white'>
-      <div className='flex flex-col md:flex-row md:items-center md:justify-between gap-4'>
+      <div className='flex flex-col md:flex-row md:items-center md:justify-between gap-4 '>
         <div className='flex gap-3 md:gap-4 items-start md:items-center'>
           <MdDescription className='w-6 h-6 text-gray-500 shrink-0 mt-1 md:mt-0' />
           <div className='flex-1'>
             <div className='flex flex-col sm:flex-row sm:items-center sm:gap-2 mb-1'>
               {/* Mobile: Title + Actions inline */}
-              <div className='flex justify-between md:hidden'>
-                <h4 className='font-medium text-gray-900 truncate'>{resource.title}</h4>
-                <div>{getActionButtons(resource.status)}</div>
+              <div className='flex flex-col gap-2 md:hidden '>
+                <h4 className='font-medium text-gray-900 break-words'>{resource.title}</h4>
+                <div className='flex flex-wrap gap-2'>{getActionButtons(resource.status)}</div>
               </div>
+
               {/* Desktop: Title only */}
               <div className='hidden md:block'>
                 <h4 className='font-medium text-gray-900 truncate'>{resource.title}</h4>
               </div>
-              <div className='mt-1 sm:mt-0'>{getStatusBadge(resource.status)}</div>
+              <div className='mt-1 sm:mt-0 flex '>{getStatusBadge(resource.status)}</div>
             </div>
 
             <div className='flex flex-wrap gap-x-4 gap-y-2 text-sm text-gray-600'>
@@ -145,8 +148,19 @@ export default function ResourceCard({ resource, onAction }) {
         <div className='hidden md:flex'>{getActionButtons(resource.status)}</div>
       </div>
 
-      {showPreview && <PreviewModal filePath={resource.file_path} onClose={() => setShowPreview(false)} />}
-      {showReject && <RejectModal resourceId={resource.id} onClose={() => setShowReject(false)} onAction={onAction} />}
+      {showPreview && (
+        <PreviewModal
+          filePath={resource.file_path}
+          onClose={() => setShowPreview(false)}
+        />
+      )}
+      {showReject && (
+        <RejectModal
+          resourceId={resource.id}
+          onClose={() => setShowReject(false)}
+          onAction={onAction}
+        />
+      )}
     </div>
   );
 }
