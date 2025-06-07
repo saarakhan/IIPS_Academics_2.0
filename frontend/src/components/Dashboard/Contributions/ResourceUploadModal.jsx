@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../supabaseClient';
 import { UserAuth } from '../../../Context/AuthContext';
-import { XIcon, PlusIcon } from '../../../Icons';
+import { XIcon } from '../../../Icons'; 
 
 const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResourceType }) => {
   const { session } = UserAuth();
@@ -21,12 +21,16 @@ const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResource
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
+ 
+  const MAX_PDF_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
+
   useEffect(() => {
     const fetchCourses = async () => {
       if (!isOpen) return;
       setIsLoading(true);
       setError(null);
 
+      
       setTitle('');
       setDescription('');
       setSelectedCourseId('');
@@ -37,8 +41,9 @@ const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResource
       setAvailableSemesters([]);
       setSubjectsList([]);
       setSuccessMessage(null);
-      if (document.getElementById('file-upload-input')) {
-        document.getElementById('file-upload-input').value = '';
+      const fileInput = document.getElementById('file-upload-input');
+      if (fileInput) {
+        fileInput.value = '';
       }
 
       try {
@@ -67,16 +72,16 @@ const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResource
     } else {
       setAvailableSemesters([]);
     }
-    setSelectedSemester('');
-    setSubjectsList([]);
-    setSubjectId('');
+    setSelectedSemester(''); 
+    setSubjectsList([]);   
+    setSubjectId('');       
   }, [selectedCourseId, coursesList]);
 
   useEffect(() => {
     const fetchSubjects = async () => {
       if (selectedCourseId && selectedSemester) {
         setIsLoading(true);
-        setError(null);
+        setError(null); 
         try {
           const { data, error: subjectsError } = await supabase
             .from('subjects')
@@ -94,47 +99,53 @@ const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResource
           setIsLoading(false);
         }
       } else {
-        setSubjectsList([]);
+        setSubjectsList([]); 
       }
     };
     fetchSubjects();
-    setSubjectId('');
+    setSubjectId(''); 
   }, [selectedCourseId, selectedSemester]);
 
   const handleFileChange = e => {
     const selectedFile = e.target.files[0];
+    setError(null); 
+    setFile(null);   
+
     if (selectedFile) {
       if (selectedFile.type !== 'application/pdf') {
         setError('Invalid file type. Only PDF files are allowed.');
-        setFile(null);
+        e.target.value = null; 
         return;
       }
-      if (selectedFile.size > 5 * 1024 * 1024) {
-        // 5MB
-        setError('File is too large. Maximum size is 5MB.');
-        setFile(null);
+      if (selectedFile.size > MAX_PDF_SIZE_BYTES) {
+        setError(`File is too large. Maximum size is ${MAX_PDF_SIZE_BYTES / 1024 / 1024}MB.`);
+        e.target.value = null; 
         return;
       }
       setFile(selectedFile);
-      setError(null);
     }
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
+    setError(null); 
+    setSuccessMessage(null);
 
-    if (!file || !title || !subjectId || !resourceType || !session?.user?.id) {
-      setError('Please fill all required fields and select a file.');
+    if (!file) {
+      setError('Please select a PDF file to upload.');
       return;
     }
-
-    setError(null);
-    setSuccessMessage(null);
+  
+    if (!title || !subjectId || !resourceType || !session?.user?.id) {
+      setError('Please fill all required fields (Title, Resource Type, Course, Semester, Subject).');
+      return;
+    }
+    
     setIsLoading(true);
 
     try {
       const fileExt = file.name.split('.').pop();
-      const uniqueFileName = `${session.user.id}/${resourceType}/${Date.now()}.${fileExt}`;
+      const uniqueFileName = `${session.user.id}/${resourceType.toUpperCase()}_${subjectId}_${Date.now()}.${fileExt}`;
 
       const { data: uploadData, error: uploadError } = await supabase.storage.from('uploads').upload(uniqueFileName, file, {
         cacheControl: '3600',
@@ -151,27 +162,28 @@ const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResource
         subject_id: subjectId,
         uploader_profile_id: session.user.id,
         file_name: file.name,
-        file_path: uploadData.path,
+        file_path: uploadData.path, 
         file_size_bytes: file.size,
         mime_type: file.type,
-        status: 'PENDING',
+        status: 'PENDING', 
       };
 
       const { error: insertError } = await supabase.from('resources').insert([resourceData]);
 
       if (insertError) {
+       
         await supabase.storage.from('uploads').remove([uploadData.path]);
         throw insertError;
       }
 
-      // Increment total_uploads
-      const { data, error: fetchError } = await supabase.from('profiles').select('total_uploads').eq('id', session.user.id).single();
+     
+      const { data: profileData, error: fetchError } = await supabase.from('profiles').select('total_uploads').eq('id', session.user.id).single();
 
       if (fetchError) {
         console.error('Failed to fetch total_uploads:', fetchError.message);
+      
       } else {
-        const currentUploads = data?.total_uploads || 0;
-
+        const currentUploads = profileData?.total_uploads || 0;
         const { error: updateError } = await supabase
           .from('profiles')
           .update({ total_uploads: currentUploads + 1 })
@@ -183,17 +195,20 @@ const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResource
       }
 
       setSuccessMessage('File uploaded successfully! It is now pending approval.');
+      
       setTitle('');
       setDescription('');
-      setSubjectId('');
-      setResourceType('NOTE');
+      
+      setSubjectId(''); 
+  
       setFile(null);
-
-      if (document.getElementById('file-upload-input')) {
-        document.getElementById('file-upload-input').value = '';
+      const fileInput = document.getElementById('file-upload-input');
+      if (fileInput) {
+        fileInput.value = '';
       }
 
-      if (onUploadSuccess) onUploadSuccess();
+      if (onUploadSuccess) onUploadSuccess(); 
+      
     } catch (err) {
       console.error('Upload failed:', err);
       setError(`Upload failed: ${err.message}`);
@@ -205,19 +220,20 @@ const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResource
   if (!isOpen) return null;
 
   return (
-    <div className='fixed inset-0 bg-white/10 backdrop-blur-md flex items-center justify-center z-50 p-4'>
-      <div className='bg-white p-6 rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto'>
+    <div className='fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4'> {/* Adjusted background */}
+      <div className='bg-white p-6 rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100'>
         <div className='flex justify-between items-center mb-4'>
-          <h2 className='text-2xl font-semibold'>Upload New Resource</h2>
-          <button onClick={onClose} className='text-gray-500 hover:text-gray-700'>
-            <XIcon size={24} />
+          <h2 className='text-2xl font-semibold text-gray-800'>Upload New Resource</h2>
+          <button onClick={onClose} className='text-gray-400 hover:text-gray-600'>
+            <XIcon className="w-6 h-6" /> {/* Ensure XIcon is imported and sized */}
           </button>
         </div>
 
-        {error && <p className='text-red-500 bg-red-100 p-3 rounded mb-4'>{error}</p>}
-        {successMessage && <p className='text-green-500 bg-green-100 p-3 rounded mb-4'>{successMessage}</p>}
+        {error && <p className='text-red-600 bg-red-100 p-3 rounded mb-4 text-sm'>{error}</p>}
+        {successMessage && <p className='text-green-600 bg-green-100 p-3 rounded mb-4 text-sm'>{successMessage}</p>}
 
         <form onSubmit={handleSubmit} className='space-y-4'>
+          {/* Form fields remain the same as in your provided code */}
           <div>
             <label htmlFor='title' className='block text-sm font-medium text-gray-700'>
               Title <span className='text-red-500'>*</span>
@@ -245,9 +261,10 @@ const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResource
               <option value='NOTE'>Note</option>
               <option value='PYQ'>PYQ (Previous Year Question)</option>
               <option value='SYLLABUS'>Syllabus</option>
+              {}
             </select>
           </div>
-
+          
           <div>
             <label htmlFor='courseId' className='block text-sm font-medium text-gray-700'>
               Course/Department <span className='text-red-500'>*</span>
@@ -319,21 +336,31 @@ const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResource
               className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#C79745] focus:border-[#C79745] sm:text-sm'></textarea>
           </div>
 
+          {/* Instructions Panel */}
+          <div className='p-3 mb-3 bg-blue-50 border border-blue-200 rounded-md text-sm text-blue-700'>
+            <h4 className='font-semibold mb-1'>Upload Guidelines:</h4>
+            <ul className='list-disc list-inside space-y-1'>
+              <li>Accepted file type: PDF only.</li>
+              <li>Maximum file size: {MAX_PDF_SIZE_BYTES / 1024 / 1024}MB.</li>
+              <li>Tip: For larger files, please optimize your PDF before uploading (e.g., use "Save As Reduced Size" in your PDF software or an online compressor).</li>
+            </ul>
+          </div>
+
           <div>
             <label htmlFor='file-upload-input' className='block text-sm font-medium text-gray-700'>
-              Upload PDF (Max 5MB) <span className='text-red-500'>*</span>
+              Upload PDF <span className='text-red-500'>*</span>
             </label>
             <input
               id='file-upload-input'
               type='file'
-              accept='.pdf'
+              accept='.pdf' 
               onChange={handleFileChange}
-              required
-              className='mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#EADDC5] file:text-[#C79745] hover:file:bg-[#F0E6D5]' // Adjusted file input style
+              
+              className='mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#EADDC5] file:text-[#C79745] hover:file:bg-[#F0E6D5]'
             />
             {file && (
               <p className='text-xs text-gray-500 mt-1'>
-                {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
+                Selected: {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
               </p>
             )}
           </div>
@@ -348,7 +375,7 @@ const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResource
             </button>
             <button
               type='submit'
-              disabled={isLoading || !file}
+              disabled={isLoading || !file} 
               className='px-4 py-2 text-sm font-medium text-white bg-[#C79745] border border-transparent rounded-md shadow-sm hover:bg-[#b3863c] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#b3863c] disabled:opacity-50'>
               {isLoading ? 'Uploading...' : 'Upload Resource'}
             </button>
