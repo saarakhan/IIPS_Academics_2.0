@@ -1,25 +1,10 @@
 import React from "react";
-import Backdrop from "@mui/material/Backdrop";
-import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { UserAuth } from "../../Context/AuthContext";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  borderRadius: 2,
-  boxShadow: 24,
-  p: 4,
-};
 
 const LogoutModal = React.memo(function LogoutModal({
   OpenLogoutModal,
@@ -33,6 +18,7 @@ const LogoutModal = React.memo(function LogoutModal({
     navigate("/");
     toast.success("Logout successfull!");
     handleClose();
+    localStorage.removeItem("avatarUrl");
   }
 
   return (

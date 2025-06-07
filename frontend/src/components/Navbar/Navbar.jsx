@@ -14,6 +14,7 @@ export default function Navbar() {
   const [name, setName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [OpenLogoutModal, SetOpenLogoutModal] = useState(false);
+  
   const handleClose = useCallback(() => {
     SetOpenLogoutModal(false);
   }, []);
