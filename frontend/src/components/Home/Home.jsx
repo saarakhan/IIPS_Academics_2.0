@@ -54,10 +54,9 @@ const Home = () => {
       {/* <main className="flex-grow">
         <CardGroup />
       </main> */}
-      <RoadMap/>
-      <TopContributors/>
-      <StatsCard/>
-   
+      <RoadMap />
+      <TopContributors />
+      <StatsCard />
     </div>
   );
 };
