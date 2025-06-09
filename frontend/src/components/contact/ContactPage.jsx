@@ -1,42 +1,78 @@
+import { FaEnvelope, FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
 import ContactForm from "./ContactForm";
 import DevelopersSection from "./DeveloperSection";
-import Image from "../../assets/GetInTouch.jpg";
 
 export default function ContactPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-[#fefefe] to-[#f5f5f5] text-[#2b3333] font-arvo">
-      <h1 className="text-5xl mt-8 w-full text-center font-bold text-[#222] drop-shadow-md">
-        Contact Us
-      </h1>
+    <main className="min-h-screen bg-gradient-to-br from-[#fefefe] via-[#f8f8f8] to-[#f5f5f5] text-[#2b3333]">
+      <section className="pt-16 pb-8 bg-[#F4F9FF]">
+        <div className="max-w-4xl mx-auto text-center px-4 ">
+          <h1 className="text-5xl md:text-6xl font-bold text-[#2b3333] mb-6 leading-tight">
+            Contact Us
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            We're here to help and answer any questions you might have. We look
+            forward to hearing from you.
+          </p>
+        </div>
+      </section>
 
-      {/* Contact Section */}
-      <section className="py-16">
-        <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div className="flex justify-center order-1 md:order-2">
-            <img
-              src={Image}
-              alt="Customer support representative"
-              className="rounded-md -mt-3 shadow-2xl w-full max-w-[24rem] object-cover"
-              loading="lazy"
-            />
-          </div>
-          <div className="order-2 md:order-1 md:-mt-7">
-            <h2 className="text-4xl font-bold py-2  text-[#333]">
-              Get In Touch
-            </h2>
-            <p className="text-lg text-gray-700 mb-6 leading-relaxed">
-              Have questions or feedback? We'd love to hear from you. Fill out
-              the form below and our team will get back to you shortly.
-            </p>
-            <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-200 hover:shadow-2xl transition-shadow duration-300">
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+            <div className="space-y-8">
+              <div>
+                <h2 className="text-4xl font-bold text-[#2b3333] mb-6">
+                  Get In Touch
+                </h2>
+                <p className="text-lg text-gray-600 leading-relaxed mb-8">
+                  Have questions or feedback? We'd love to hear from you. Fill
+                  out the form and our team will get back to you within 24
+                  hours.
+                </p>
+              </div>
+
+              <div className="space-y-6">
+                <div className="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm border border-gray-100">
+                  <div className="w-12 h-12 bg-[#c79745]/10 rounded-full flex items-center justify-center">
+                    <FaEnvelope className="w-6 h-6 text-[#c79745]" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-[#2b3333]">Email Us</h3>
+                    <p className="text-gray-600">contact@iips-academics.com</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm border border-gray-100">
+                  <div className="w-12 h-12 bg-[#c79745]/10 rounded-full flex items-center justify-center">
+                    <FaPhoneAlt className="w-6 h-6 text-[#c79745]" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-[#2b3333]">Call Us</h3>
+                    <p className="text-gray-600">+91 (XXX) XXX-XXXX</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm border border-gray-100">
+                  <div className="w-12 h-12 bg-[#c79745]/10 rounded-full flex items-center justify-center">
+                    <FaMapMarkerAlt className="w-6 h-6 text-[#c79745]" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-[#2b3333]">Visit Us</h3>
+                    <p className="text-gray-600">IIPS Campus, Indore</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-2xl p-8">
               <ContactForm />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Developers Section */}
-      <section className="bg-[#f7f7f7] py-16 border-t border-gray-200">
+      <section className="bg-gradient-to-b from-[#f7f7f7] to-[#f0f0f0] border-t border-gray-200">
         <DevelopersSection />
       </section>
     </main>
