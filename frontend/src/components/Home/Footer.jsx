@@ -1,4 +1,11 @@
 import { Link } from "react-router-dom";
+import { FaFacebookF, FaTwitter, FaLinkedinIn, FaInstagram } from 'react-icons/fa';
+const socialLinks = [
+  { icon: <FaFacebookF />, name: "Facebook"  },
+  { icon: <FaTwitter />, name: "Twitter" },
+  { icon: <FaLinkedinIn />, name: "LinkedIn" },
+  { icon: <FaInstagram />, name: "Instagram" },
+];
 
 export default function Footer() {
   return (
@@ -12,16 +19,22 @@ export default function Footer() {
             <p className="text-gray-400 mb-4">
               This website of IIPS providing resources and info for students.
             </p>
+
             <div className="flex space-x-4">
-              {["f", "t", "in", "ig"].map((social, index) => (
-                <div
-                  key={index}
-                  className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-[#C79745] transition-colors cursor-pointer"
-                >
-                  <span className="text-sm font-bold">{social}</span>
-                </div>
-              ))}
-            </div>
+      {socialLinks.map((social, index) => (
+        <a
+          key={index}
+          href={social.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          title={social.name}
+          className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-[#C79745] transition-colors cursor-pointer"
+        >
+          <span className="text-white text-lg">{social.icon}</span>
+        </a>
+      ))}
+    </div>    
+
           </div>
 
           <div>
