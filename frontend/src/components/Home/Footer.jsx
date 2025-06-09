@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import { FaFacebookF, FaTwitter, FaLinkedinIn, FaInstagram } from 'react-icons/fa';
+import { FaGithub, FaTwitter, FaLinkedinIn, FaInstagram } from 'react-icons/fa';
 const socialLinks = [
-  { icon: <FaFacebookF />, name: "Facebook"  },
-  { icon: <FaTwitter />, name: "Twitter" },
-  { icon: <FaLinkedinIn />, name: "LinkedIn" },
+  { icon: <FaGithub />, name: "Github", url : "https://github.com/iips-summer-internship-2025/IIPS_Academics_2.0"  },
+  { icon: <FaTwitter />, name: "Twitter", url: "https://x.com/iipsdavvindore?s=11" },
+  { icon: <FaLinkedinIn />, name: "LinkedIn", url: "https://www.linkedin.com/school/iips-davv/posts/?feedView=all" },
   { icon: <FaInstagram />, name: "Instagram" },
 ];
 
