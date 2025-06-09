@@ -1,53 +1,82 @@
-import React from "react";
 import { Link } from "react-router-dom";
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-white border-t border-[#C79745]">
-      <div className="max-w-7xl mx-auto px-4 py-8 grid md:grid-cols-3 gap-8">
-        <div>
-          <h3 className="text-lg font-bold mb-4">IIPS Academics</h3>
-          <p className="text-gray-600">
-            The unofficial website for IIPS providing resources and info for students.
-          </p>
-        </div>
-        <div>
-          <h4 className="text-lg font-bold mb-4">Quick Links</h4>
-          <ul className="space-y-2">
-            {["Academics", "Placements", "Events", "About"].map((item) => (
-              <li key={item}>
-                <Link 
-                  to={`/${item.toLowerCase()}`} 
-                  className="text-gray-700 hover:text-[#C79745] transition-colors"
+    <footer className="bg-gray-900 text-white py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid md:grid-cols-4 gap-8 mb-8">
+          <div>
+            <h3 className="text-2xl font-bold mb-4">
+              IIPS <span className="text-[#C79745]">Academics</span>
+            </h3>
+            <p className="text-gray-400 mb-4">
+              This website of IIPS providing resources and info for students.
+            </p>
+            <div className="flex space-x-4">
+              {["f", "t", "in", "ig"].map((social, index) => (
+                <div
+                  key={index}
+                  className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-[#C79745] transition-colors cursor-pointer"
                 >
-                  {item}
-                </Link>
-              </li>
-            ))}
-          </ul>
+                  <span className="text-sm font-bold">{social}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h4 className="text-lg font-bold mb-4">Quick Links</h4>
+            <ul className="space-y-2">
+              {["Academics", "Placements", "Events", "About"].map((item) => (
+                <li key={item}>
+                  <Link
+                    to={`/${item.toLowerCase()}`}
+                    className="text-gray-400 hover:text-[#C79745] transition-colors block"
+                  >
+                    {item}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-lg font-bold mb-4">Resources</h4>
+            <ul className="space-y-2">
+              {["Study Material", "Previous Year Papers", "Syllabus", "Timetable"].map((item) => (
+                <li key={item}>
+                  <Link
+                    to={`/${item.toLowerCase().replace(" ", "-")}`}
+                    className="text-gray-400 hover:text-[#C79745] transition-colors block"
+                  >
+                    {item}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-lg font-bold mb-4">Support</h4>
+            <ul className="space-y-2">
+              {["Help Center", "Guidelines", "Report Issue", "Feedback"].map((support) => (
+                <li key={support}>
+                  <a
+                    href="#"
+                    className="text-gray-400 hover:text-[#C79745] transition-colors block"
+                  >
+                    {support}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-        <div>
-          <h4 className="text-lg font-bold mb-4">Resources</h4>
-          <ul className="space-y-2">
-            {["Study Material", "Previous Year Papers", "Syllabus", "Timetable"].map((item) => (
-              <li key={item}>
-                <Link 
-                  to={`/${item.toLowerCase().replace(' ', '-')}`} 
-                  className="text-gray-700 hover:text-[#C79745] transition-colors"
-                >
-                  {item}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-      <div className="border-t border-[#C79745] py-4">
-        <div className="max-w-7xl mx-auto px-4 text-center text-sm text-gray-500">
-          © 2025 IIPS Academics. All rights reserved
+
+        <div className="border-t border-gray-700 pt-8 text-center text-gray-400 text-sm">
+          <p>&copy; 2025 IIPS Academics. All rights reserved. | University Affiliation</p>
         </div>
       </div>
     </footer>
   );
 }
-

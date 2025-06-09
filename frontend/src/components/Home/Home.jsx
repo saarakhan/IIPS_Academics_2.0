@@ -1,8 +1,11 @@
 import HeroImage from "../../assets/HeroImage.png";
 import CardGroup from "./CardGroup";
-import SectionNav from "../Navbar/SectionNav.jsx";
+// import SectionNav from "../Navbar/SectionNav.jsx";
 import Typewriter from "./typewriter.jsx";
-import Footer from "./Footer.jsx";
+// import Footer from "./Footer.jsx";
+import RoadMap from "./RoadMap.jsx";
+import StatsCard from "./StatsCard.jsx";
+import TopContributors from "./TopContributors.jsx";
 
 function HeroSection() {
   return (
@@ -47,10 +50,14 @@ const Home = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <HeroSection />
-      <SectionNav />
-      <main className="flex-grow">
+      {/* <SectionNav /> */}
+      {/* <main className="flex-grow">
         <CardGroup />
-      </main>
+      </main> */}
+      <RoadMap/>
+      <TopContributors/>
+      <StatsCard/>
+   
     </div>
   );
 };
