@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import SignIn from "./components/SignIn/SignIn";
 import SubjectDetail from "./components/academics/SubjectDetail/SubjectDetail";
 import Subject from "./components/academics/Subject/Subject";
@@ -41,7 +41,9 @@ export const router = createBrowserRouter([
           // </AdminRoute>
         ),
       },
-      { path:"*", element: <NotFound/>},
+
+      { path:"404", element: <NotFound/>},
+      { path: "*", element: <Navigate to = "/404"/>}
     ],
   },
 ]);
