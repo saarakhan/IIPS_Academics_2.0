@@ -54,15 +54,20 @@ export default function StudentContributions() {
 
   // Fetch unique courses
   useEffect(() => {
-    const fetchCourses = async () => {
-      const { data, error } = await supabase.from("profiles").select("course");
-      if (!error && data) {
-        const courseSet = new Set(data.map((item) => item.course));
-        setAllCourses([...courseSet]);
-      }
-    };
-    fetchCourses();
-  }, []);
+  const fetchCourses = async () => {
+    const { data, error } = await supabase.from("profiles").select("course");
+    if (!error && data) {
+      const courseSet = new Set(
+        data
+          .map((item) => item.course)
+          .filter((course) => course && course.trim() !== "")
+      );
+      setAllCourses([...courseSet].sort());
+    }
+  };
+  fetchCourses();
+}, []);
+
 
   const filteredData = useMemo(() => {
     return contributionsData.filter((item) => {
