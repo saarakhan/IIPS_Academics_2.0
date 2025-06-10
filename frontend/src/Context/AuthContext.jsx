@@ -5,8 +5,9 @@ const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
   const [session, setSession] = useState(undefined);
+  const [loadingAuth, setLoadingAuth] = useState(true); 
 
-  // Helper to fetch and store profile
+  
   const fetchAndStoreUserProfile = async (userId) => {
     const { data, error } = await supabase
       .from("profiles")
@@ -23,7 +24,7 @@ export const AuthContextProvider = ({ children }) => {
     }
   };
 
-  // Sign in
+  
   const SignInUser = async (email, password) => {
     try {
       let { data, error } = await supabase.auth.signInWithPassword({
@@ -46,9 +47,9 @@ export const AuthContextProvider = ({ children }) => {
 
           console.log("Sign-up success:", signUpData);
           if (signUpData.user?.id) {
-            await fetchAndStoreUserProfile(signUpData.user.id);
+
           }
-          return { success: true, data: signUpData };
+          return { success: true, data: signUpData }; // signUpData contains the new session
         } else {
           console.error("Sign-in error:", error.message);
           return { success: false, error: error.message };
@@ -102,29 +103,35 @@ export const AuthContextProvider = ({ children }) => {
 
   // Sign out
   async function SignOut() {
-    localStorage.removeItem("userProfile"); // Remove profile on logout
+    localStorage.removeItem("userProfile"); 
     const { error } = await supabase.auth.signOut();
     if (error) {
       console.error("Error signing out:", error);
     }
+    
   }
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session?.user?.id) {
-        fetchAndStoreUserProfile(session.user.id);
+    setLoadingAuth(true); // Set loading true at the start
+    supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
+      setSession(initialSession);
+      if (initialSession?.user?.id) {
+        fetchAndStoreUserProfile(initialSession.user.id);
       }
+      setLoadingAuth(false); 
+    }).catch(() => {
+      setLoadingAuth(false); 
     });
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-        if (session?.user?.id) {
-          fetchAndStoreUserProfile(session.user.id);
+      (_event, currentSession) => {
+        setSession(currentSession);
+        if (currentSession?.user?.id) {
+          fetchAndStoreUserProfile(currentSession.user.id);
         } else {
           localStorage.removeItem("userProfile");
         }
+        setLoadingAuth(false); 
       }
     );
 
@@ -133,36 +140,64 @@ export const AuthContextProvider = ({ children }) => {
     };
   }, []);
 
-  // Ensure user profile exists after login (including OAuth)
+  
   useEffect(() => {
     const ensureProfile = async () => {
       if (session?.user) {
         const user = session.user;
-        const { data, error } = await supabase
+        const { data: existingProfile, error: selectError } = await supabase
           .from("profiles")
-          .select("id")
+          .select("id, role") 
           .eq("id", user.id)
           .single();
 
-        if (!data && !error) {
-          await supabase.from("profiles").insert({
+        if (selectError && selectError.code !== 'PGRST116') { 
+            console.error("Error checking for profile:", selectError);
+            return;
+        }
+        
+        if (!existingProfile) { // Profile does not exist, create it
+          console.log(`AuthContext: Profile for ${user.id} not found, creating one.`);
+          const { error: insertError } = await supabase.from("profiles").insert({
             id: user.id,
-            email: user.email,
+            email: user.email?.toLowerCase(),
             full_name:
-              user.user_metadata?.full_name || user.user_metadata?.name || "",
+              user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || "",
             avatar_url: user.user_metadata?.avatar_url || "",
+            role: 'user', 
           });
+          if (insertError) {
+            console.error("Error creating profile:", insertError);
+          } else {
+            
+            await fetchAndStoreUserProfile(user.id);
+          }
+        } else if (existingProfile && !existingProfile.role) { 
+            console.log(`AuthContext: Profile for ${user.id} exists but missing role, updating.`);
+            const { error: updateRoleError } = await supabase
+                .from("profiles")
+                .update({ role: 'user' })
+                .eq("id", user.id);
+            if (updateRoleError) {
+                console.error("Error updating profile role:", updateRoleError);
+            } else {
+                await fetchAndStoreUserProfile(user.id); 
+            }
         }
       }
     };
-    ensureProfile();
-  }, [session]);
+    
+    if (session && !loadingAuth) { 
+        ensureProfile();
+    }
+  }, [session, loadingAuth]); 
 
   return (
     <AuthContext.Provider
       value={{
         SignInUser,
         session,
+        loadingAuth, // Provide loadingAuth
         SignOut,
         signInWithGoogle,
         signInWithGitHub,
