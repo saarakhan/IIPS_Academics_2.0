@@ -4,7 +4,7 @@ const socialLinks = [
   { icon: <FaGithub />, name: "Github", url : "https://github.com/iips-summer-internship-2025/IIPS_Academics_2.0"  },
   { icon: <FaTwitter />, name: "Twitter", url: "https://x.com/iipsdavvindore?s=11" },
   { icon: <FaLinkedinIn />, name: "LinkedIn", url: "https://www.linkedin.com/school/iips-davv/posts/?feedView=all" },
-  { icon: <FaInstagram />, name: "Instagram" },
+  { icon: <FaInstagram />, name: "Instagram",url :"https://www.instagram.com/iips_davv_indore?igsh=M3p5YTBkb2ExZHlm" },
 ];
 
 export default function Footer() {
