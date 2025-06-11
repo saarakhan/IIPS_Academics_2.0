@@ -1,4 +1,4 @@
-export default function StatusSummary({ counts }) {
+export default function StatusSummary({ counts, onStatusClick }) {
   const stats = [
     {
       key: "total",
@@ -99,11 +99,12 @@ export default function StatusSummary({ counts }) {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 my-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 my-8" >
       {stats.map((stat) => (
         <div
           key={stat.key}
           className={`relative overflow-hidden rounded-2xl border ${stat.borderColor} ${stat.bgColor} p-6 shadow-sm hover:shadow-md transition-all duration-300 group`}
+          onClick={() => {onStatusClick(stat.key)}}
         >
           <div className="absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-10 transition-opacity duration-300 ease-in-out"></div>
           <div className="flex items-center">
