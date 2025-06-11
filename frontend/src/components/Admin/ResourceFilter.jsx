@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import {
   SearchOutlined,
@@ -14,39 +12,32 @@ export default function ResourceFilter({ filters, onChange }) {
   const [status, setStatus] = useState(filters.status || "");
   const [subject, setSubject] = useState(filters.subject || "");
   const [contributor, setContributor] = useState(filters.contributor || "");
-  const [startDate, setStartDate] = useState(filters.startDate || "");
-  const [endDate, setEndDate] = useState(filters.endDate || "");
+  const [course, setCourse] = useState(filters.course || "");
   const [isExpanded, setIsExpanded] = useState(true);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      onChange({ status, subject, contributor, startDate, endDate });
+      onChange({ status, subject, contributor, course });
     }, 300);
     return () => clearTimeout(timeout);
-  }, [status, subject, contributor, startDate, endDate]);
+  }, [status, subject, contributor, course]);
 
   const resetFilters = () => {
     setStatus("");
     setSubject("");
     setContributor("");
-    setStartDate("");
-    setEndDate("");
+    setCourse("");
     onChange({
       status: "",
       subject: "",
       contributor: "",
-      startDate: "",
-      endDate: "",
+      course: "",
     });
   };
 
-  const activeFiltersCount = [
-    status,
-    subject,
-    contributor,
-    startDate,
-    endDate,
-  ].filter(Boolean).length;
+  const activeFiltersCount = [status, subject, contributor, course].filter(
+    Boolean
+  ).length;
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden transition-all duration-300">
@@ -108,9 +99,9 @@ export default function ResourceFilter({ filters, onChange }) {
             : "max-h-0 opacity-0 overflow-hidden"
         }`}
       >
-        <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Status Dropdown */}
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 col-span-1">
             <label className="block text-sm font-medium text-gray-700">
               Status
             </label>
@@ -161,43 +152,27 @@ export default function ResourceFilter({ filters, onChange }) {
             />
           </div>
 
-          {/* Start Date */}
+          {/* Course Input */}
           <div className="space-y-1.5">
             <label className="block text-sm font-medium text-gray-700">
-              Start Date
+              Course
             </label>
             <Input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
+              value={course}
+              onChange={(e) => setCourse(e.target.value)}
               allowClear
-              prefix={<CalendarOutlined className="text-gray-400" />}
-              size="middle"
-              className="w-full custom-input"
-            />
-          </div>
-
-          {/* End Date */}
-          <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-gray-700">
-              End Date
-            </label>
-            <Input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              allowClear
-              prefix={<CalendarOutlined className="text-gray-400" />}
+              placeholder="Search by course..."
+              prefix={<FilterOutlined className="text-gray-400" />}
               size="middle"
               className="w-full custom-input"
             />
           </div>
         </div>
 
-        <div className="p-4 bg-gray-50 border-t border-gray-100 flex justify-end">
+        <div className="p-4 bg-gray-50 border-t border-gray-100 flex flex-col sm:flex-row justify-end items-end gap-2">
           <button
             onClick={resetFilters}
-            className="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors shadow-sm flex items-center gap-2"
+            className="w-full sm:w-auto px-4 py-2 bg-white text-gray-700 hover:text-[#C28C36] md:border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#C28C36] transition-colors shadow-sm flex items-center justify-center gap-2 border-none "
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

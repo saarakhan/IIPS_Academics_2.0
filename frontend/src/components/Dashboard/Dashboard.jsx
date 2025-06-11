@@ -376,7 +376,7 @@ const Dashboard = () => {
                 onClick={() => setActive(item.label)}
                 className={`flex items-center gap-4 border-2 rounded-lg px-4 py-3 text-sm cursor-pointer transition-colors w-full ${
                   active === item.label
-                    ? "bg-gray-100 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]"
+                    ? "bg-gray-100 shadow-[5px_7px_4px_rgba(0,0,0,0.25)]"
                     : "bg-white hover:bg-gray-50"
                 }`}
               >

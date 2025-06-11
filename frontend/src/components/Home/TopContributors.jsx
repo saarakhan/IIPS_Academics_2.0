@@ -48,7 +48,7 @@ export default function TopContributors() {
         {topContributors.map((contributor, i) => (
           <div
             key={i}
-            className="bg-white border rounded-xl px-6 py-8 shadow-md transition duration-300 hover:shadow-lg flex flex-col items-center"
+            className="bg-white shadow-[5px_7px_8px_rgba(0,0,0,0.25)] rounded-lg px-1 py-6 transition duration-300 hover:shadow-[5px_7px_8px_rgba(132,166,211,0.65)] flex flex-col items-center"
           >
             <div className="w-20 h-20 mb-4 rounded-full bg-gray-100 border flex items-center justify-center text-gray-400 text-4xl">
               👤

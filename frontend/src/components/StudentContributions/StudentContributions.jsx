@@ -54,15 +54,20 @@ export default function StudentContributions() {
 
   // Fetch unique courses
   useEffect(() => {
-    const fetchCourses = async () => {
-      const { data, error } = await supabase.from("profiles").select("course");
-      if (!error && data) {
-        const courseSet = new Set(data.map((item) => item.course));
-        setAllCourses([...courseSet]);
-      }
-    };
-    fetchCourses();
-  }, []);
+  const fetchCourses = async () => {
+    const { data, error } = await supabase.from("profiles").select("course");
+    if (!error && data) {
+      const courseSet = new Set(
+        data
+          .map((item) => item.course)
+          .filter((course) => course && course.trim() !== "")
+      );
+      setAllCourses([...courseSet].sort());
+    }
+  };
+  fetchCourses();
+}, []);
+
 
   const filteredData = useMemo(() => {
     return contributionsData.filter((item) => {
@@ -111,7 +116,7 @@ export default function StudentContributions() {
         ].map((item, i) => (
           <div
             key={i}
-            className="bg-white shadow-sm border rounded-xl p-6 flex items-center justify-between"
+            className="bg-white shadow-sm border-2 border-gray-300 rounded-md p-6 flex items-center justify-between"
           >
             <div>
               <p className="text-sm font-medium text-gray-500">{item.label}</p>
@@ -168,7 +173,7 @@ export default function StudentContributions() {
       </div>
 
       {/* Table */}
-      <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-white border border-gray-200 rounded-md shadow-sm overflow-hidden">
         {loading ? (
           <div className="p-8 text-center text-gray-500 font-medium">
             Loading contributions...

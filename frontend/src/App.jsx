@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import Welcom from "./assets/welcome_video.MOV";
 import { Toaster } from "react-hot-toast";
@@ -11,6 +11,11 @@ function App() {
   const [videoEnded, setVideoEnded] = useState(false);
   const [videoAnimationDone, setVideoAnimationDone] = useState(false);
   const [shouldShowVideo, setShouldShowVideo] = useState(false);
+
+  const location = useLocation();
+  const hideLayoutPaths = ["/404", "/login"]; // paths without header/footer
+
+  const hideLayout = hideLayoutPaths.includes(location.pathname);
 
   // play video only once
   useEffect(() => {
@@ -62,9 +67,9 @@ function App() {
       {/* Main App Content */}
       <div className="relative z-0 w-full h-full">
         <Toaster position="top-right" reverseOrder={false} />
-        <Navbar />
+        {!hideLayout && <Navbar />}
         <Outlet />
-        <Footer/>
+        {!hideLayout && <Footer/>}
       </div>
     </div>
   );

@@ -10,51 +10,104 @@ import { supabase } from "../../supabaseClient";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { session } = UserAuth();
+  const { session } = UserAuth(); 
   const [name, setName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [OpenLogoutModal, SetOpenLogoutModal] = useState(false);
-  const userProfile = JSON.parse(localStorage.getItem("userProfile"));
+  
+  
+  const [userProfile, setUserProfile] = useState(JSON.parse(localStorage.getItem("userProfile")));
+
+  useEffect(() => {
+   
+    const currentProfile = JSON.parse(localStorage.getItem("userProfile"));
+    setUserProfile(currentProfile);
+
+    if (currentProfile?.first_name || currentProfile?.last_name) {
+      setName(`${currentProfile.first_name || ""} ${currentProfile.last_name || ""}`.trim());
+    } else if (session?.user?.user_metadata?.full_name) {
+      setName(session.user.user_metadata.full_name);
+    } else if (session?.user?.email) {
+      setName(session.user.email.split('@')[0]);
+    } else {
+      setName("");
+    }
+    
+    
+    const handleStorageChange = () => {
+        const updatedProfile = JSON.parse(localStorage.getItem("userProfile"));
+        setUserProfile(updatedProfile);
+        if (updatedProfile?.first_name || updatedProfile?.last_name) {
+            setName(`${updatedProfile.first_name || ""} ${updatedProfile.last_name || ""}`.trim());
+        } else if (session?.user?.user_metadata?.full_name) { 
+            setName(session.user.user_metadata.full_name);
+        }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+        window.removeEventListener('storage', handleStorageChange);
+    };
+
+  }, [session]);
+
 
   const handleClose = useCallback(() => {
     SetOpenLogoutModal(false);
   }, []);
 
   useEffect(() => {
-    if (session?.user?.user_metadata?.full_name) {
+    
+    if (!name && session?.user?.user_metadata?.full_name) {
       setName(session.user.user_metadata.full_name);
+    } else if (!name && session?.user?.email && (!userProfile?.first_name && !userProfile?.last_name)) {
+     
+      setName(session.user.email.split('@')[0]);
     }
-  }, [session]);
+  }, [session, name, userProfile]);
 
   useEffect(() => {
-    const cachedAvatar = localStorage.getItem("avatarUrl");
-    if (cachedAvatar) {
-      setAvatarUrl(cachedAvatar);
+   
+    if (userProfile?.avatar_url) {
+      setAvatarUrl(userProfile.avatar_url);
       return;
     }
 
+    
     const fetchAvatar = async () => {
+      if (!session?.user?.id) {
+        setAvatarUrl(null); 
+        return;
+      }
+      
+      const cachedAvatar = localStorage.getItem(`avatarUrl-${session.user.id}`); 
+      if (cachedAvatar) {
+        setAvatarUrl(cachedAvatar);
+        return;
+      }
+
       const { data, error } = await supabase
         .from("profiles")
         .select("avatar_url")
-        .eq("id", session?.user?.id)
+        .eq("id", session.user.id) // Ensure we use the actual user ID
         .single();
 
       if (error) {
-        console.error("Error fetching avatar URL:", error.message);
+        console.error("Error fetching avatar URL for Navbar:", error.message);
+        setAvatarUrl(null); 
         return;
       }
 
       if (data?.avatar_url) {
         setAvatarUrl(data.avatar_url);
-        localStorage.setItem("avatarUrl", data.avatar_url);
+        localStorage.setItem(`avatarUrl-${session.user.id}`, data.avatar_url);
+      } else {
+        setAvatarUrl(null); 
       }
     };
 
-    if (session?.user?.id) {
-      fetchAvatar();
-    }
-  }, [session?.user?.id]);
+    fetchAvatar();
+    
+  }, [session?.user?.id, userProfile?.avatar_url]); 
 
   const location = useLocation();
 
@@ -97,20 +150,31 @@ export default function Navbar() {
               </Link>
             )
           )}
+          {}
+          {session && userProfile && userProfile.role === "admin" && (
+            <Link
+              to="/admin"
+              className={`px-4 py-2 font-medium rounded-md transition-all whitespace-nowrap ${
+                pathMatch("admin")
+                  ? "bg-[#F5F5F5] text-[#2B3333]"
+                  : "text-[#2B3333] hover:bg-[#F5F5F5]"
+              }`}
+            >
+              Admin Panel
+            </Link>
+          )}
         </div>
 
-        {/* Desktop Auth */}
+        {}
         <div className="hidden md:flex items-center space-x-4">
           {session ? (
             <>
               <Link
-                to={userProfile?.role === "admin" ? "/admin" : "/dashboard"}
+                to={(userProfile && userProfile.role === "admin") ? "/admin" : "/dashboard"} // Defensive check for userProfile and role
                 className="flex items-center space-x-2"
               >
-                {/* User Icon with no padding, visible color and size */}
-                {/* <UserIcon className="h-10 w-10 cursor-pointer text-[#2B3333] rounded-full border border-gray-300" /> */}
-                <Avatar alt={name} src={avatarUrl} />
-                <span>{name}</span>
+                <Avatar alt={name || "User"} src={avatarUrl || undefined} /> {/* Provide fallback for alt and ensure src is not null */}
+                <span>{name || "Profile"}</span>
               </Link>
 
               <button
@@ -145,7 +209,7 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {}
       {menuOpen && (
         <div className="md:hidden bg-white shadow-lg rounded-b-lg px-4 py-3 space-y-2 text-sm">
           {["Home", "Academics", "Placements", "Contact", "Contributors"].map(
@@ -166,22 +230,37 @@ export default function Navbar() {
               </Link>
             )
           )}
+          {}
+          {session && userProfile && userProfile.role === "admin" && (
+             <Link
+                to="/admin"
+                className={`block px-4 py-2 rounded-md transition-all ${
+                  pathMatch("admin")
+                    ? "bg-[#2B3333] text-white"
+                    : "text-[#2B3333] hover:bg-[#2B3333] hover:text-white"
+                }`}
+                onClick={() => setMenuOpen(false)}
+              >
+                Admin Panel
+              </Link>
+          )}
 
           <div className="pt-3 border-t border-gray-200">
             {session ? (
               <div className="flex flex-col items-start space-y-2">
                 <Link
-                  to="/dashboard"
+                  to={(userProfile && userProfile.role === "admin") ? "/admin" : "/dashboard"} 
                   className="flex items-center space-x-2 px-4 py-2 text-[#2B3333] hover:bg-[#C79745] rounded-md w-full"
                   onClick={() => setMenuOpen(false)}
                 >
-                  <UserIcon className="h-5 w-5" />
-
-                  <span> {name}</span>
+                  {}
+                  <Avatar alt={name || "User"} src={avatarUrl || undefined} sx={{ width: 24, height: 24 }} />
+                  <span> {name || "Profile"}</span>
                 </Link>
                 <button
                   onClick={() => {
                     SetOpenLogoutModal(true);
+                    setMenuOpen(false); 
                   }}
                   className="bg-[#2B3333] text-[#F3F6F2] hover:bg-black px-4 py-2 rounded text-sm w-full"
                 >
