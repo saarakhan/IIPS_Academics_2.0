@@ -1,8 +1,3 @@
-import {
-  VerticalTimeline,
-  VerticalTimelineElement,
-} from "react-vertical-timeline-component";
-import "react-vertical-timeline-component/style.min.css";
 import { FaFileAlt, FaUpload, FaUserCheck, FaUsers } from "react-icons/fa";
 
 const steps = [
@@ -58,43 +53,33 @@ export default function RoadMap() {
       </div>
 
       {/* Timeline */}
+      <div className="relative border-l-2 border-gray-200 pl-6 lg:pl-12">
+        {steps.map((step, index) => (
+          <div key={index} className="mb-12 relative">
+            {/* Icon */}
+            <div
+              className="w-10 h-10 rounded-full flex items-center justify-center text-white absolute -left-5 lg:-left-7 top-0 shadow-lg"
+              style={{ backgroundColor: step.color }}
+            >
+              <step.icon size={18} />
+            </div>
 
-      <div className="relative">
-        <div
-          className="hidden lg:block absolute left-1/2 top-0 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b z-0 pointer-events-none"
-          style={{
-            background: `linear-gradient(
-            to bottom, 
-            #3b82f6 0%,       
-            #10b981 40%,     
-            #8b5cf6 70%,      
-            #f59e0b 100%    
-          )`,
-          }}
-        />
-
-        {/* Timeline */}
-        <VerticalTimeline className="relative z-10 !w-full">
-          {steps.map((step, index) => (
-            <VerticalTimelineElement
-              key={index}
-              contentStyle={{
-                background: `${step.color}1A`,
+            {/* Content */}
+            <div
+              className="ml-6 p-6 rounded-md shadow-md"
+              style={{
+                backgroundColor: `${step.color}1A`,
                 borderTop: `4px solid ${step.color}`,
-                color: "#1f2937",
               }}
-              contentArrowStyle={{ borderRight: `7px solid ${step.color}` }}
-              iconStyle={{ background: step.color, color: "#fff" }}
-              icon={<step.icon />}
             >
               <h3 className="text-xl font-bold">{step.title}</h3>
               <p className="mt-2 text-gray-700">{step.desc}</p>
               <span className="text-xs font-semibold text-gray-600 mt-2 inline-block">
                 Step {step.step}
               </span>
-            </VerticalTimelineElement>
-          ))}
-        </VerticalTimeline>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

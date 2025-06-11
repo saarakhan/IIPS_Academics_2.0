@@ -104,7 +104,7 @@ export default function Navbar() {
           {session ? (
             <>
               <Link
-                to={userProfile.role === "admin" ? "/admin" : "/dashboard"}
+                to={userProfile?.role === "admin" ? "/admin" : "/dashboard"}
                 className="flex items-center space-x-2"
               >
                 {/* User Icon with no padding, visible color and size */}
