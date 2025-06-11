@@ -139,66 +139,28 @@ function Subject() {
               // Skeleton
               <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-6'>
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className='rounded-xl border border-gray-100 shadow-lg w-full h-[400px] overflow-hidden bg-white'
-                    style={{ boxShadow: '14px 11px 8px rgba(0,0,0,.08)' }}>
+                  <div key={i} className='rounded-xl border border-gray-100 shadow-lg w-full h-[400px] overflow-hidden bg-white' style={{ boxShadow: '14px 11px 8px rgba(0,0,0,.08)' }}>
                     {/* Header */}
                     <div className='p-6 space-y-5 my-5'>
-                      <Skeleton
-                        variant='text'
-                        width='35%'
-                        height={20}
-                        animation='wave'
-                      />
-                      <Skeleton
-                        variant='text'
-                        width='65%'
-                        height={32}
-                        animation='wave'
-                      />
-                      <Skeleton
-                        variant='text'
-                        width='45%'
-                        height={18}
-                        animation='wave'
-                      />
+                      <Skeleton variant='text' width='35%' height={20} animation='wave' />
+                      <Skeleton variant='text' width='65%' height={32} animation='wave' />
+                      <Skeleton variant='text' width='45%' height={18} animation='wave' />
                     </div>
 
                     {/* Info grid */}
                     <div className='grid grid-cols-2 gap-3 px-6'>
-                      <Skeleton
-                        variant='rectangular'
-                        height={64}
-                        animation='wave'
-                        sx={{ borderRadius: 2 }}
-                      />
-                      <Skeleton
-                        variant='rectangular'
-                        height={64}
-                        animation='wave'
-                        sx={{ borderRadius: 2 }}
-                      />
+                      <Skeleton variant='rectangular' height={64} animation='wave' sx={{ borderRadius: 2 }} />
+                      <Skeleton variant='rectangular' height={64} animation='wave' sx={{ borderRadius: 2 }} />
                     </div>
 
                     {/* Instructor */}
                     <div className='px-6 mt-6'>
-                      <Skeleton
-                        variant='rectangular'
-                        height={56}
-                        animation='wave'
-                        sx={{ borderRadius: 2 }}
-                      />
+                      <Skeleton variant='rectangular' height={56} animation='wave' sx={{ borderRadius: 2 }} />
                     </div>
 
                     {/* Button */}
                     <div className='px-6 mt-4'>
-                      <Skeleton
-                        variant='rectangular'
-                        height={48}
-                        animation='wave'
-                        sx={{ borderRadius: 3 }}
-                      />
+                      <Skeleton variant='rectangular' height={48} animation='wave' sx={{ borderRadius: 3 }} />
                     </div>
                   </div>
                 ))}
@@ -222,23 +184,14 @@ function Subject() {
                       teacher: subject.teacher_name || 'To Be Announced',
                     };
 
-                    return (
-                      <SubjectCard
-                        key={subject.id}
-                        subject={cardData}
-                        onClick={handleCardClick}
-                      />
-                    );
+                    return <SubjectCard key={subject.id} subject={cardData} onClick={handleCardClick} />;
                   })}
                 </div>
 
                 {/* Load More Button rather than infinite scrolling */}
                 {hasMore && (
                   <div className='flex justify-center'>
-                    <button
-                      onClick={loadMoreSubjects}
-                      disabled={loading}
-                      className='px-6 py-2 bg-[#2B3333] text-white rounded-md hover:bg-black transition disabled:opacity-50'>
+                    <button onClick={loadMoreSubjects} disabled={loading} className='px-6 py-2 bg-[#2B3333] text-white rounded-md hover:bg-black transition disabled:opacity-50'>
                       {loading ? 'Loading...' : 'Load More'}
                     </button>
                   </div>

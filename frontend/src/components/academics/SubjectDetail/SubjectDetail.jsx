@@ -74,12 +74,11 @@ function SubjectDetail() {
 
         const { data: resourcesData, error: resourcesError } = await supabase
           .from('resources')
-          .select('id, title, resource_type, file_path, file_name')
+          .select('id, title, resource_type, file_path, file_name, uploaded_at, file_size_bytes, rating_average')
           .eq('subject_id', subjectData.id)
           .eq('status', 'APPROVED');
 
         if (resourcesError) throw resourcesError;
-
         const notesArray = [];
         const pyqsArray = [];
         const syllabusArray = [];
@@ -89,6 +88,9 @@ function SubjectDetail() {
             title: res.title,
             file: res.file_path,
             originalFileName: res.file_name,
+            uploaded_at: res.uploaded_at,
+            file_size_bytes: res.file_size_bytes,
+            rating_average: res.rating_average,
           };
           if (res.resource_type === 'NOTE') notesArray.push(resourceItemData);
           else if (res.resource_type === 'PYQ') pyqsArray.push(resourceItemData);
