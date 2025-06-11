@@ -15,7 +15,9 @@ const SignIn = () => {
 
   const handleSignIn = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const { success, data, error } = await SignInUser(email, password);
+    setLoading(false);
 
     if (!success) {
       setError(error);
@@ -110,14 +112,46 @@ const SignIn = () => {
             placeholder="Password"
             required
           />
+
         </div>
 
         <button
           type="submit"
-          className="w-full mt-4 bg-[#2B3333] py-3 shadow-lg shadow-[#2B3333] rounded-lg transition duration-300 text-white"
+          disabled={loading}
+          className={`w-full mt-4 py-3 rounded-lg text-white transition duration-300 ${loading
+              ? "bg-[#2B3333]/70 cursor-not-allowed"
+              : "bg-[#2B3333] hover:shadow-lg shadow-[#2B3333]"
+            }`}
         >
-          Sign In
+          {loading ? (
+            <div className="flex justify-center items-center space-x-2">
+              <svg
+                className="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8z"
+                />
+              </svg>
+              <span>Signing In...</span>
+            </div>
+          ) : (
+            "Sign In"
+          )}
         </button>
+
 
         <div className="flex items-center my-4">
           <div className="flex-grow h-px bg-gray-300" />
