@@ -1,16 +1,15 @@
-// supabase/functions/send-contact-email/index.ts
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { Resend } from "npm:resend";
 
 const ALLOWED_ORIGINS = [
-  "http://localhost:5173", // Adjust port if your local dev server uses a different one
+  "http://localhost:5173",
   "https://iips-academics-2-0.vercel.app"
 ];
 
 const TO_EMAIL_ADDRESS = "iipsacademicspotal@gmail.com";
-// IMPORTANT: For production, verify a domain with Resend (e.g., yourproject.com)
-// and use an email like "noreply@yourproject.com" for better deliverability.
-const FROM_EMAIL_ADDRESS = "onboarding@resend.dev"; // Default Resend sending address for now
+
+const FROM_EMAIL_ADDRESS = "onboarding@resend.dev"; 
 
 console.log("Edge Function 'send-contact-email' initializing.");
 
@@ -27,22 +26,20 @@ serve(async (req: Request) => {
 
 
   const corsHeaders = {
-    "Access-Control-Allow-Origin": accessControlAllowOrigin || ALLOWED_ORIGINS[0], // Fallback to first allowed for safety, or be stricter
+    "Access-Control-Allow-Origin": accessControlAllowOrigin || ALLOWED_ORIGINS[0], 
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
   };
 
-  // Handle CORS preflight OPTIONS request
   if (req.method === "OPTIONS") {
     console.log(`Handling OPTIONS preflight request from origin: ${requestOrigin}`);
     return new Response("ok", { headers: corsHeaders });
   }
 
-  // Ensure it's a POST request for submitting data
   if (req.method !== "POST") {
     console.warn(`Invalid request method: ${req.method}`);
     return new Response(JSON.stringify({ error: "Method not allowed. Please use POST." }), {
-      status: 405, // Method Not Allowed
+      status: 405, 
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
