@@ -6,7 +6,7 @@ import Header from './Header';
 import EmptyState from './EmptyState';
 import SubjectInfo from './SubjectInfo';
 import ResourceSection from './ResourceSection';
-import Footer from '../../Home/Footer';
+import Loader from './Loader';
 
 function SubjectDetail() {
   const { id: subjectId } = useParams();
@@ -73,12 +73,11 @@ function SubjectDetail() {
 
         const { data: resourcesData, error: resourcesError } = await supabase
           .from('resources')
-          .select('id, title, resource_type, file_path, file_name')
+          .select('id, title, resource_type, file_path, file_name, uploaded_at, file_size_bytes, rating_average')
           .eq('subject_id', subjectData.id)
           .eq('status', 'APPROVED');
 
         if (resourcesError) throw resourcesError;
-
         const notesArray = [];
         const pyqsArray = [];
         const syllabusArray = [];
@@ -88,6 +87,9 @@ function SubjectDetail() {
             title: res.title,
             file: res.file_path,
             originalFileName: res.file_name,
+            uploaded_at: res.uploaded_at,
+            file_size_bytes: res.file_size_bytes,
+            rating_average: res.rating_average,
           };
           if (res.resource_type === 'NOTE') notesArray.push(resourceItemData);
           else if (res.resource_type === 'PYQ') pyqsArray.push(resourceItemData);
@@ -113,10 +115,9 @@ function SubjectDetail() {
   }, [subjectId, error]);
   if (loading) {
     return (
-      <div className='min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#f5f7fa] to-[#f0f4f8]'>
-        {/* Replace with your LoadingSpinner component if you have one */}
-        <p className='text-gray-500'>Loading subject details...</p>
-      </div>
+      <>
+        <Loader />
+      </>
     );
   }
 
@@ -140,24 +141,9 @@ function SubjectDetail() {
             </div>
             <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
               {/* Pass the bucket name as the folder prop for ResourceItem to construct URL */}
-              <ResourceSection
-                title='Lecture Notes'
-                IconComponent={BookOpenIcon}
-                resources={notes}
-                folder='academic_resources'
-              />
-              <ResourceSection
-                title='Previous Year Questions'
-                IconComponent={ClipboardListIcon}
-                resources={pyqs}
-                folder='academic_resources'
-              />
-              <ResourceSection
-                title='Course Syllabus'
-                IconComponent={DocumentTextIcon}
-                resources={syllabus}
-                folder='academic_resources'
-              />
+              <ResourceSection title='Lecture Notes' IconComponent={BookOpenIcon} resources={notes} folder='academic_resources' />
+              <ResourceSection title='Previous Year Questions' IconComponent={ClipboardListIcon} resources={pyqs} folder='academic_resources' />
+              <ResourceSection title='Course Syllabus' IconComponent={DocumentTextIcon} resources={syllabus} folder='academic_resources' />
               {}
             </div>
           </>
@@ -169,7 +155,6 @@ function SubjectDetail() {
           </div>
         )}
       </div>
-      <Footer />
     </div>
   );
 }

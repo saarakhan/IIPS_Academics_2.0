@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../supabaseClient';
 import { UserAuth } from '../../../Context/AuthContext';
-import { XIcon } from '../../../Icons'; 
+import { XIcon } from '../../../Icons';
 
 const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResourceType }) => {
   const { session } = UserAuth();
@@ -21,7 +21,6 @@ const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResource
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
- 
   const MAX_PDF_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
 
   useEffect(() => {
@@ -29,8 +28,6 @@ const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResource
       if (!isOpen) return;
       setIsLoading(true);
       setError(null);
-
-      
       setTitle('');
       setDescription('');
       setSelectedCourseId('');
@@ -72,16 +69,16 @@ const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResource
     } else {
       setAvailableSemesters([]);
     }
-    setSelectedSemester(''); 
-    setSubjectsList([]);   
-    setSubjectId('');       
+    setSelectedSemester('');
+    setSubjectsList([]);
+    setSubjectId('');
   }, [selectedCourseId, coursesList]);
 
   useEffect(() => {
     const fetchSubjects = async () => {
       if (selectedCourseId && selectedSemester) {
         setIsLoading(true);
-        setError(null); 
+        setError(null);
         try {
           const { data, error: subjectsError } = await supabase
             .from('subjects')
@@ -99,27 +96,27 @@ const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResource
           setIsLoading(false);
         }
       } else {
-        setSubjectsList([]); 
+        setSubjectsList([]);
       }
     };
     fetchSubjects();
-    setSubjectId(''); 
+    setSubjectId('');
   }, [selectedCourseId, selectedSemester]);
 
   const handleFileChange = e => {
     const selectedFile = e.target.files[0];
-    setError(null); 
-    setFile(null);   
+    setError(null);
+    setFile(null);
 
     if (selectedFile) {
       if (selectedFile.type !== 'application/pdf') {
         setError('Invalid file type. Only PDF files are allowed.');
-        e.target.value = null; 
+        e.target.value = null;
         return;
       }
       if (selectedFile.size > MAX_PDF_SIZE_BYTES) {
         setError(`File is too large. Maximum size is ${MAX_PDF_SIZE_BYTES / 1024 / 1024}MB.`);
-        e.target.value = null; 
+        e.target.value = null;
         return;
       }
       setFile(selectedFile);
@@ -128,19 +125,19 @@ const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResource
 
   const handleSubmit = async e => {
     e.preventDefault();
-    setError(null); 
+    setError(null);
     setSuccessMessage(null);
 
     if (!file) {
       setError('Please select a PDF file to upload.');
       return;
     }
-  
+
     if (!title || !subjectId || !resourceType || !session?.user?.id) {
       setError('Please fill all required fields (Title, Resource Type, Course, Semester, Subject).');
       return;
     }
-    
+
     setIsLoading(true);
 
     try {
@@ -162,26 +159,23 @@ const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResource
         subject_id: subjectId,
         uploader_profile_id: session.user.id,
         file_name: file.name,
-        file_path: uploadData.path, 
+        file_path: uploadData.path,
         file_size_bytes: file.size,
         mime_type: file.type,
-        status: 'PENDING', 
+        status: 'PENDING',
       };
 
       const { error: insertError } = await supabase.from('resources').insert([resourceData]);
 
       if (insertError) {
-       
         await supabase.storage.from('uploads').remove([uploadData.path]);
         throw insertError;
       }
 
-     
       const { data: profileData, error: fetchError } = await supabase.from('profiles').select('total_uploads').eq('id', session.user.id).single();
 
       if (fetchError) {
         console.error('Failed to fetch total_uploads:', fetchError.message);
-      
       } else {
         const currentUploads = profileData?.total_uploads || 0;
         const { error: updateError } = await supabase
@@ -195,20 +189,19 @@ const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResource
       }
 
       setSuccessMessage('File uploaded successfully! It is now pending approval.');
-      
+
       setTitle('');
       setDescription('');
-      
-      setSubjectId(''); 
-  
+
+      setSubjectId('');
+
       setFile(null);
       const fileInput = document.getElementById('file-upload-input');
       if (fileInput) {
         fileInput.value = '';
       }
 
-      if (onUploadSuccess) onUploadSuccess(); 
-      
+      if (onUploadSuccess) onUploadSuccess();
     } catch (err) {
       console.error('Upload failed:', err);
       setError(`Upload failed: ${err.message}`);
@@ -220,12 +213,14 @@ const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResource
   if (!isOpen) return null;
 
   return (
-    <div className='fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4'> {/* Adjusted background */}
+    <div className='fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4'>
+      {' '}
+      {/* Adjusted background */}
       <div className='bg-white p-6 rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100'>
         <div className='flex justify-between items-center mb-4'>
           <h2 className='text-2xl font-semibold text-gray-800'>Upload New Resource</h2>
           <button onClick={onClose} className='text-gray-400 hover:text-gray-600'>
-            <XIcon className="w-6 h-6" /> {/* Ensure XIcon is imported and sized */}
+            <XIcon className='w-6 h-6' /> {/* Ensure XIcon is imported and sized */}
           </button>
         </div>
 
@@ -264,7 +259,7 @@ const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResource
               {}
             </select>
           </div>
-          
+
           <div>
             <label htmlFor='courseId' className='block text-sm font-medium text-gray-700'>
               Course/Department <span className='text-red-500'>*</span>
@@ -353,9 +348,8 @@ const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResource
             <input
               id='file-upload-input'
               type='file'
-              accept='.pdf' 
+              accept='.pdf'
               onChange={handleFileChange}
-              
               className='mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#EADDC5] file:text-[#C79745] hover:file:bg-[#F0E6D5]'
             />
             {file && (
@@ -375,7 +369,7 @@ const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResource
             </button>
             <button
               type='submit'
-              disabled={isLoading || !file} 
+              disabled={isLoading || !file}
               className='px-4 py-2 text-sm font-medium text-white bg-[#C79745] border border-transparent rounded-md shadow-sm hover:bg-[#b3863c] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#b3863c] disabled:opacity-50'>
               {isLoading ? 'Uploading...' : 'Upload Resource'}
             </button>
