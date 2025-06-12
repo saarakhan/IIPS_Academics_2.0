@@ -6,7 +6,6 @@ import Header from './Header';
 import EmptyState from './EmptyState';
 import SubjectInfo from './SubjectInfo';
 import ResourceSection from './ResourceSection';
-import Footer from '../../Home/Footer';
 import Loader from './Loader';
 
 function SubjectDetail() {
@@ -156,7 +155,6 @@ function SubjectDetail() {
           </div>
         )}
       </div>
-      <Footer />
     </div>
   );
 }

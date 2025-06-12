@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { DownloadIcon, EyeIcon, XIcon } from '../../../Icons';
 import { supabase } from '../../../supabaseClient';
+import { saveAs } from 'file-saver';
 
 function ResourceItem({ id, title, file, uploaded_at, file_size_bytes }) {
   const [fileUrl, setFileUrl] = useState('');
@@ -14,11 +15,17 @@ function ResourceItem({ id, title, file, uploaded_at, file_size_bytes }) {
 
   // Generate signed file URL
   useEffect(() => {
-    (async () => {
+    const generateSignedUrl = async () => {
       const { data, error } = await supabase.storage.from('uploads').createSignedUrl(file, 60 * 60, { download: false });
 
-      if (data?.signedUrl) setFileUrl(data.signedUrl);
-    })();
+      if (data?.signedUrl) {
+        setFileUrl(data.signedUrl);
+      } else {
+        console.error('Error generating signed URL:', error);
+      }
+    };
+
+    generateSignedUrl();
   }, [file]);
 
   // Load user
@@ -30,8 +37,8 @@ function ResourceItem({ id, title, file, uploaded_at, file_size_bytes }) {
   useEffect(() => {
     if (!user) return;
 
-    (async () => {
-      // Check if user has rated
+    const existingRating = async () => {
+      // Check if user has rated from rating table
       const { data: existingRating } = await supabase.from('ratings').select('rating_value').eq('profile_id', user.id).eq('resource_id', id).single();
 
       if (existingRating) {
@@ -39,20 +46,22 @@ function ResourceItem({ id, title, file, uploaded_at, file_size_bytes }) {
         setHasRated(true);
       }
 
-      // Load current avg and count from resource
+      // Load current avg and count from resource table
       const { data: resourceData } = await supabase.from('resources').select('rating_average, rating_count').eq('id', id).single();
 
       if (resourceData) {
         setAvgRating(resourceData.rating_average || 0);
         // setRatingCount(resourceData.rating_count || 0);
       }
-    })();
+    };
+    existingRating();
   }, [user, id]);
 
   // Submit a new rating
   const handleRating = async newRating => {
     if (!user || hasRated) return;
 
+    // insert or update if doesnot exists
     const { error: insertError } = await supabase.from('ratings').upsert({
       profile_id: user.id,
       resource_id: id,
@@ -97,6 +106,37 @@ function ResourceItem({ id, title, file, uploaded_at, file_size_bytes }) {
     setHasRated(true);
   };
 
+  // Download function
+  const downloadFile = async () => {
+    const { data, error } = await supabase.storage.from('uploads').download(file);
+
+    if (error) {
+      console.error('Download error:', error.message);
+      return;
+    }
+    const blob = data;
+    saveAs(blob, `iips_academics_${title}.pdf`);
+
+    // console.log('resource id ' + id);
+    // console.log('profile_id' + user.id);
+
+    // when user downloads a data the in download_log table store values if user download again then don't store
+
+    // check if already downloaded
+    const { data: existingDownload } = await supabase.from('user_download_log').select('id').eq('resource_id', id).eq('profile_id', user.id).maybeSingle();
+
+    // if not then insert
+    if (!existingDownload) {
+      await supabase.from('user_download_log').insert([
+        {
+          resource_id: id,
+          profile_id: user.id,
+          downloaded_at: new Date(),
+        },
+      ]);
+    }
+  };
+
   return (
     <>
       <li className='bg-white p-4 rounded-xl shadow-sm border hover:shadow-md'>
@@ -107,9 +147,12 @@ function ResourceItem({ id, title, file, uploaded_at, file_size_bytes }) {
             <button onClick={() => setShowPreview(true)} className='flex items-center px-3 py-1.5 text-sm border rounded shadow-sm hover:text-blue-600'>
               <EyeIcon className='w-4 h-4 mr-1' /> Preview
             </button>
-            <a href={fileUrl} download className='flex items-center px-3 py-1.5 text-sm bg-yellow-400 hover:bg-yellow-500 rounded shadow-sm'>
+            {/* <a href={fileUrl} download className='flex items-center px-3 py-1.5 text-sm bg-yellow-400 hover:bg-yellow-500 rounded shadow-sm'>
               <DownloadIcon className='w-4 h-4 mr-1' /> Download
-            </a>
+            </a> */}
+            <button onClick={downloadFile} className='flex items-center px-3 py-1.5 text-sm bg-yellow-400 hover:bg-yellow-500 rounded shadow-sm'>
+              <DownloadIcon className='w-4 h-4 mr-1' /> Download
+            </button>
           </div>
         </div>
 
