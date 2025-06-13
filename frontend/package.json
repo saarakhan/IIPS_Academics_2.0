@@ -21,6 +21,7 @@
     "date-fns": "^4.1.0",
     "depcheck": "^1.4.7",
     "embla-carousel-react": "^8.6.0",
+    "file-saver": "^2.0.5",
     "framer-motion": "^12.15.0",
     "rc-progress": "^4.0.0",
     "react": "^19.1.0",
