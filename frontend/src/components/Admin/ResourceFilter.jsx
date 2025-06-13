@@ -106,7 +106,7 @@ export default function ResourceFilter({ filters, onChange }) {
               Status
             </label>
             <Select
-              value={status || undefined}
+              value={filters.status || undefined}
               onChange={(value) => setStatus(value)}
               allowClear
               placeholder="All Statuses"
