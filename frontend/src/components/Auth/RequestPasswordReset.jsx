@@ -1,27 +1,25 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { supabase } from '../../supabaseClient';
-import toast from 'react-hot-toast';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline'; 
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { supabase } from "../../supabaseClient";
+import toast from "react-hot-toast";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 
 const RequestPasswordReset = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState(''); 
-  const navigate = useNavigate();
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage('');
+    setMessage("");
 
     if (!email) {
-      toast.error('Please enter your email address.');
-      setMessage('Please enter your email address.');
+      toast.error("Please enter your email address.");
+      setMessage("Please enter your email address.");
       setLoading(false);
       return;
     }
-
 
     const redirectTo = `${window.location.origin}/update-password`;
 
@@ -33,13 +31,18 @@ const RequestPasswordReset = () => {
       if (error) {
         throw error;
       }
-      setMessage('If an account exists for this email, a password reset link has been sent. Please check your inbox (and spam folder).');
-      toast.success('Password reset link sent (if account exists).');
-      setEmail(''); 
+      setMessage(
+        "If an account exists for this email, a password reset link has been sent. Please check your inbox (and spam folder)."
+      );
+      toast.success("Password reset link sent (if account exists).");
+      setEmail("");
     } catch (error) {
-      console.error('Error sending password reset email:', error);
-      setMessage(error.message || 'Failed to send password reset email. Please try again.');
-      toast.error(error.message || 'Failed to send reset link.');
+      console.error("Error sending password reset email:", error);
+      setMessage(
+        error.message ||
+          "Failed to send password reset email. Please try again."
+      );
+      toast.error(error.message || "Failed to send reset link.");
     } finally {
       setLoading(false);
     }
@@ -53,7 +56,8 @@ const RequestPasswordReset = () => {
             Forgot Your Password?
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            No worries! Enter your email address below and we'll send you a link to reset your password.
+            No worries! Enter your email address below and we'll send you a link
+            to reset your password.
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -78,7 +82,13 @@ const RequestPasswordReset = () => {
           </div>
 
           {message && (
-            <p className={`text-sm ${message.startsWith('If an account exists') ? 'text-green-600' : 'text-red-600'}`}>
+            <p
+              className={`text-sm ${
+                message.startsWith("If an account exists")
+                  ? "text-green-600"
+                  : "text-red-600"
+              }`}
+            >
               {message}
             </p>
           )}
@@ -88,25 +98,46 @@ const RequestPasswordReset = () => {
               type="submit"
               disabled={loading}
               className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white ${
-                loading ? 'bg-[#b3863c]/80 cursor-not-allowed' : 'bg-[#C79745] hover:bg-[#b3863c]'
-              } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#b3863c] transition-colors`}
+                loading
+                  ? "bg-[#2b3333]/80 cursor-not-allowed"
+                  : "bg-[#2b3333] hover:bg-black"
+              }`}
             >
               {loading ? (
                 <>
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
                   </svg>
                   Sending...
                 </>
               ) : (
-                'Send Password Reset Link'
+                "Send Password Reset Link"
               )}
             </button>
           </div>
         </form>
         <div className="text-sm text-center mt-4">
-          <Link to="/signin" className="font-medium text-[#C79745] hover:text-[#b3863c] hover:underline flex items-center justify-center">
+          <Link
+            to="/signin"
+            className="font-medium text-[#C79745] hover:text-[#b3863c] hover:underline flex items-center justify-center"
+          >
             <ArrowLeftIcon className="h-4 w-4 mr-1" />
             Back to Sign In
           </Link>

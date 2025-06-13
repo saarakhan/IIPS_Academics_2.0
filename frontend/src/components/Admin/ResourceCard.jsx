@@ -65,78 +65,78 @@ export default function ResourceCard({ resource, onAction }) {
     }
   };
 
-const getActionButtons = (status) => {
-  const baseButtonClass =
-    "inline-flex items-center justify-center px-3 py-1 border-2 border-[#2B3333] rounded-md shadow-sm font-semibold text-sm transition-colors hover:shadow-[6px_7px_4px_rgba(0,0,0,0.1)]";
-  const iconButtonClass = "w-4 h-4";
+  const getActionButtons = (status) => {
+    const baseButtonClass =
+      "inline-flex items-center justify-center px-3 py-1 border-2 border-[#2B3333] rounded-md shadow-sm font-semibold text-sm transition-colors hover:shadow-[6px_7px_4px_rgba(0,0,0,0.1)]";
+    const iconButtonClass = "w-4 h-4";
 
-  switch (status) {
-    case "PENDING":
-      return (
-        <div className="flex gap-1 sm:gap-2">
+    switch (status) {
+      case "PENDING":
+        return (
+          <div className="flex gap-1 sm:gap-2">
+            <button
+              onClick={() => setShowPreview(true)}
+              className={`${baseButtonClass} bg-white text-[#2B3333] `}
+              aria-label="Preview"
+            >
+              <MdVisibility className={iconButtonClass} />
+              <span className="sr-only sm:not-sr-only sm:ml-1">Preview</span>
+            </button>
+            <button
+              onClick={approve}
+              className={`${baseButtonClass} bg-green-500 text-white border-green-600 hover:bg-green-600`}
+              aria-label="Approve"
+            >
+              <MdCheck className={iconButtonClass} />
+              <span className="sr-only sm:not-sr-only sm:ml-1">Approve</span>
+            </button>
+            <button
+              onClick={() => setShowReject(true)}
+              className={`${baseButtonClass} bg-red-500 text-white border-red-600 hover:bg-red-600`}
+              aria-label="Reject"
+            >
+              <MdClose className={iconButtonClass} />
+              <span className="sr-only sm:not-sr-only sm:ml-1">Reject</span>
+            </button>
+          </div>
+        );
+      case "APPROVED":
+        return (
+          <div className="flex gap-1 sm:gap-2">
+            <button
+              onClick={() => setShowPreview(true)}
+              className={`${baseButtonClass} bg-white text-[#2B3333] `}
+              aria-label="Preview"
+            >
+              <MdVisibility className={iconButtonClass} />
+              <span className="sr-only sm:not-sr-only sm:ml-1">Preview</span>
+            </button>
+            <button
+              onClick={() => setShowReject(true)}
+              className={`${baseButtonClass} bg-red-500 text-white border-red-600 hover:bg-red-600`}
+              aria-label="Reject"
+            >
+              <MdClose className={iconButtonClass} />
+              <span className="sr-only sm:not-sr-only sm:ml-1">Reject</span>
+            </button>
+          </div>
+        );
+      case "REJECTED":
+        return (
           <button
             onClick={() => setShowPreview(true)}
-            className={`${baseButtonClass} bg-white text-[#2B3333] `}
+            className={`${baseButtonClass} bg-white text-[#2B3333]`}
             aria-label="Preview"
           >
             <MdVisibility className={iconButtonClass} />
             <span className="sr-only sm:not-sr-only sm:ml-1">Preview</span>
           </button>
-          <button
-            onClick={approve}
-            className={`${baseButtonClass} bg-green-500 text-white border-green-600 hover:bg-green-600`}
-            aria-label="Approve"
-          >
-            <MdCheck className={iconButtonClass} />
-            <span className="sr-only sm:not-sr-only sm:ml-1">Approve</span>
-          </button>
-          <button
-            onClick={() => setShowReject(true)}
-            className={`${baseButtonClass} bg-red-500 text-white border-red-600 hover:bg-red-600`}
-            aria-label="Reject"
-          >
-            <MdClose className={iconButtonClass} />
-            <span className="sr-only sm:not-sr-only sm:ml-1">Reject</span>
-          </button>
-        </div>
-      );
-    case "APPROVED":
-      return (
-        <div className="flex gap-1 sm:gap-2">
-          <button
-            onClick={() => setShowPreview(true)}
-            className={`${baseButtonClass} bg-white text-[#2B3333] `}
-            aria-label="Preview"
-          >
-            <MdVisibility className={iconButtonClass} />
-            <span className="sr-only sm:not-sr-only sm:ml-1">Preview</span>
-          </button>
-          <button
-            onClick={() => setShowReject(true)}
-            className={`${baseButtonClass} bg-red-500 text-white border-red-600 hover:bg-red-600`}
-            aria-label="Reject"
-          >
-            <MdClose className={iconButtonClass} />
-            <span className="sr-only sm:not-sr-only sm:ml-1">Reject</span>
-          </button>
-        </div>
-      );
-    case "REJECTED":
-      return (
-        <button
-          onClick={() => setShowPreview(true)}
-          className={`${baseButtonClass} bg-white text-[#2B3333]`}
-          aria-label="Preview"
-        >
-          <MdVisibility className={iconButtonClass} />
-          <span className="sr-only sm:not-sr-only sm:ml-1">Preview</span>
-        </button>
-      );
-    default:
-      return null;
-  }
-};
-if (!resource || resource.status === "REJECTED") return null;
+        );
+      default:
+        return null;
+    }
+  };
+  if (!resource || resource.status === "REJECTED") return null;
 
   return (
     <div className="border-2 border-gray-300 rounded-md p-3 sm:p-4 hover:shadow-[7px_8px_4.8px_rgba(0,0,0,0.1)] bg-white">

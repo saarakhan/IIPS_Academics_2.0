@@ -1,6 +1,5 @@
 // frontend/src/components/Auth/UpdatePassword.jsx
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../supabaseClient';
 import toast from 'react-hot-toast';
 import { UserAuth } from '../../Context/AuthContext';
