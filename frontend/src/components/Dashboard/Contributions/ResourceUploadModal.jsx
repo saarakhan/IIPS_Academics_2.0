@@ -213,14 +213,12 @@ const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResource
   if (!isOpen) return null;
 
   return (
-    <div className='fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4'>
-      {' '}
-      {/* Adjusted background */}
+    <div className='fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4'> {/* Adjusted background */}
       <div className='bg-white p-6 rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100'>
         <div className='flex justify-between items-center mb-4'>
           <h2 className='text-2xl font-semibold text-gray-800'>Upload New Resource</h2>
           <button onClick={onClose} className='text-gray-400 hover:text-gray-600'>
-            <XIcon className='w-6 h-6' /> {/* Ensure XIcon is imported and sized */}
+            <XIcon className="w-6 h-6" /> {/* Ensure XIcon is imported and sized */}
           </button>
         </div>
 
@@ -228,7 +226,7 @@ const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResource
         {successMessage && <p className='text-green-600 bg-green-100 p-3 rounded mb-4 text-sm'>{successMessage}</p>}
 
         <form onSubmit={handleSubmit} className='space-y-4'>
-          {/* Form fields remain the same as in your provided code */}
+          
           <div>
             <label htmlFor='title' className='block text-sm font-medium text-gray-700'>
               Title <span className='text-red-500'>*</span>
@@ -256,7 +254,7 @@ const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResource
               <option value='NOTE'>Note</option>
               <option value='PYQ'>PYQ (Previous Year Question)</option>
               <option value='SYLLABUS'>Syllabus</option>
-              {}
+              
             </select>
           </div>
 
@@ -337,7 +335,7 @@ const ResourceUploadModal = ({ isOpen, onClose, onUploadSuccess, defaultResource
             <ul className='list-disc list-inside space-y-1'>
               <li>Accepted file type: PDF only.</li>
               <li>Maximum file size: {MAX_PDF_SIZE_BYTES / 1024 / 1024}MB.</li>
-              <li>Tip: For larger files, please optimize your PDF before uploading (e.g., use "Save As Reduced Size" in your PDF software or an online compressor).</li>
+              <li>Tip: For larger files, please optimize your PDF before uploading (e.g., use "Save As Reduced Size" in your PDF software or an online compressor like <a href='https://www.ilovepdf.com/compress_pdf' target='_blank' rel='noopener noreferrer' className='text-blue-600 hover:underline'>iLovePDF</a>).</li>
             </ul>
           </div>
 

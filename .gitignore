@@ -1,0 +1,33 @@
+# Node.js & General
+node_modules/
+npm-debug.log*
+yarn-error.log*
+yarn.lock
+pnpm-lock.yaml
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Vite
+dist/
+.vite/
+coverage/
+*.log
+
+# Supabase local development
+supabase/.temp/
+# IMPORTANT: Uncomment the next line if you ever run 'supabase start' locally
+# to avoid committing local Docker database volumes.
+# supabase/db/volumes/
+
+# IDE & OS specific
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json

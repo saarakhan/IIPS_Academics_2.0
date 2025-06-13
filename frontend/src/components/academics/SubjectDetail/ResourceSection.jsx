@@ -8,7 +8,7 @@ function ResourceSection({ title, IconComponent, resources, folder }) {
         <IconComponent className='h-5 w-5 text-[#C79745]/90 mr-2' />
         <h3 className='font-semibold text-gray-800'>{title}</h3>
       </div>
-      <ul className='space-y-2'>
+      <ul className='space-y-4'>
         {resources.map((item, index) => (
           <ResourceItem
             key={index}
