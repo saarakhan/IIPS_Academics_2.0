@@ -16,15 +16,16 @@ const SignIn = () => {
   const handleSignIn = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const { success, data, error } = await SignInUser(email, password);
+    setError(null);
+    const { success, data, error: signInError } = await SignInUser(email, password); // Renamed error to avoid conflict
     setLoading(false);
 
     if (!success) {
-      setError(error);
-      toast.error("Login failed");
+      setError(signInError);
+      toast.error(signInError || "Login failed"); 
 
       setTimeout(() => {
-        setError("");
+        setError(null); 
       }, 3000);
     } else {
       toast.success("Logged in successfully!");
@@ -38,13 +39,13 @@ const SignIn = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const { success, error } = await signInWithGoogle();
+    const { success, error: googleError } = await signInWithGoogle(); 
     setLoading(false);
 
     if (!success) {
-      setError(error);
-      toast.error("Google sign-in failed");
-      setTimeout(() => setError(""), 3000);
+      setError(googleError);
+      toast.error(googleError || "Google sign-in failed");
+      setTimeout(() => setError(null), 3000);
     } else {
       toast.success("Signed in with Google!");
       setTimeout(() => {
@@ -57,16 +58,16 @@ const SignIn = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const { success, error } = await signInWithGitHub();
+    const { success, error: githubError } = await signInWithGitHub(); // Renamed error
     setLoading(false);
 
     if (!success) {
-      setError(error);
-      toast.show("GitHub sign-in failed");
+      setError(githubError);
+      toast.error(githubError || "GitHub sign-in failed");
 
-      setTimeout(() => setError(""), 3000);
+      setTimeout(() => setError(null), 3000);
     } else {
-      toast.show("Signed in with GitHub!");
+      toast.success("Signed in with GitHub!"); 
       setTimeout(() => {
         navigate("/");
       }, 2000);
@@ -84,6 +85,7 @@ const SignIn = () => {
             Sign in
           </h2>
           <button
+            type="button" 
             onClick={() => navigate("/")}
             className="absolute right-0 top-0 p-1"
           >
@@ -112,7 +114,14 @@ const SignIn = () => {
             placeholder="Password"
             required
           />
-
+          <div className="text-right mt-1">
+            <Link
+              to="/request-password-reset"
+              className="text-sm text-[#C79745] hover:text-[#b3863c] hover:underline"
+            >
+              Forgot Password?
+            </Link>
+          </div>
         </div>
 
         <button
