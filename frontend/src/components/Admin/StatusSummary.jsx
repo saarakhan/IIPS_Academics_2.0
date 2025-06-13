@@ -59,7 +59,7 @@ export default function StatusSummary({ counts, onStatusClick }) {
               {stat.icon}
             </div>
             <div className="flex-1">
-              <p className="text-sm text-gray-600 font-medium">{stat.label}</p>
+              <p className="text-sm font-semibold text-[#2b3333]">{stat.label}</p>
               <p className={`text-3xl font-bold ${stat.numberColor}`}>{stat.value}</p>
             </div>
           </div>
