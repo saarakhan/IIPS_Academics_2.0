@@ -141,13 +141,14 @@ export default function ResourceCard({ resource, onAction }) {
 
   return (
     <div className="border border-gray-200 rounded-lg p-3 sm:p-4 shadow-sm bg-white">
+      {console.log(resource)}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex gap-3 items-start">
           <MdDescription className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500 shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
             <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2 mb-1">
               <h4 className="font-medium text-gray-900 break-words line-clamp-2 sm:line-clamp-1">
-                {resource.title}
+                {resource?.subjects.name}
               </h4>
               <div className="mt-1 sm:mt-0">
                 {getStatusBadge(resource.status)}
