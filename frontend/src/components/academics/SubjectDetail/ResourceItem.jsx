@@ -8,184 +8,169 @@ function ResourceItem({ id, title, file, uploaded_at, file_size_bytes }) {
   const [user, setUser] = useState(null);
   const [userRating, setUserRating] = useState(0);
   const [avgRating, setAvgRating] = useState(0);
-  // const [ratingCount, setRatingCount] = useState(0);
   const [hover, setHover] = useState(0);
   const [showPreview, setShowPreview] = useState(false);
   const [hasRated, setHasRated] = useState(false);
 
-  // Generate signed file URL
   useEffect(() => {
     const generateSignedUrl = async () => {
-      const { data, error } = await supabase.storage.from('uploads').createSignedUrl(file, 60 * 60, { download: false });
-
-      if (data?.signedUrl) {
-        setFileUrl(data.signedUrl);
-      } else {
-        console.error('Error generating signed URL:', error);
-      }
+      const { data, error } = await supabase.storage
+        .from('uploads')
+        .createSignedUrl(file, 60 * 60, { download: false });
+      if (data?.signedUrl) setFileUrl(data.signedUrl);
+      else console.error('Signed URL error:', error);
     };
-
     generateSignedUrl();
   }, [file]);
 
-  // Load user
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user));
   }, []);
 
-  // Load user rating and resource average rating
   useEffect(() => {
     if (!user) return;
 
-    const existingRating = async () => {
-      // Check if user has rated from rating table
-      const { data: existingRating } = await supabase.from('ratings').select('rating_value').eq('profile_id', user.id).eq('resource_id', id).single();
+    const fetchRatings = async () => {
+      const { data: existing } = await supabase
+        .from('ratings')
+        .select('rating_value')
+        .eq('profile_id', user.id)
+        .eq('resource_id', id)
+        .single();
 
-      if (existingRating) {
-        setUserRating(existingRating.rating_value);
+      if (existing) {
+        setUserRating(existing.rating_value);
         setHasRated(true);
       }
 
-      // Load current avg and count from resource table
-      const { data: resourceData } = await supabase.from('resources').select('rating_average, rating_count').eq('id', id).single();
+      const { data: resource } = await supabase
+        .from('resources')
+        .select('rating_average')
+        .eq('id', id)
+        .single();
 
-      if (resourceData) {
-        setAvgRating(resourceData.rating_average || 0);
-        // setRatingCount(resourceData.rating_count || 0);
-      }
+      if (resource) setAvgRating(resource.rating_average || 0);
     };
-    existingRating();
+
+    fetchRatings();
   }, [user, id]);
 
-  // Submit a new rating
-  const handleRating = async newRating => {
+  const handleRating = async (rating) => {
     if (!user || hasRated) return;
 
-    // insert or update if doesnot exists
-    const { error: insertError } = await supabase.from('ratings').upsert({
+    await supabase.from('ratings').upsert({
       profile_id: user.id,
       resource_id: id,
-      rating_value: newRating,
+      rating_value: rating,
     });
 
-    if (insertError) {
-      console.error('Rating insert error:', insertError.message);
-      return;
-    }
+    const { data: allRatings } = await supabase
+      .from('ratings')
+      .select('rating_value')
+      .eq('resource_id', id);
 
-    // Get updated list of ratings for this resource
-    const { data: allRatings, error: fetchError } = await supabase.from('ratings').select('rating_value').eq('resource_id', id);
+    const avg = (
+      allRatings.reduce((sum, r) => sum + r.rating_value, 0) / allRatings.length
+    ).toFixed(2);
 
-    if (fetchError) {
-      console.error('Fetch ratings error:', fetchError.message);
-      return;
-    }
+    await supabase.from('resources').update({
+      rating_average: avg,
+      rating_count: allRatings.length,
+    }).eq('id', id);
 
-    const count = allRatings.length;
-    const total = allRatings.reduce((acc, r) => acc + r.rating_value, 0);
-    const avg = parseFloat((total / count).toFixed(2));
-
-    // Update the resource table with new avg/count
-    const { error: updateError } = await supabase
-      .from('resources')
-      .update({
-        rating_average: avg,
-        rating_count: count,
-      })
-      .eq('id', id);
-
-    if (updateError) {
-      console.error('Update resource error:', updateError.message);
-      return;
-    }
-
-    // Update state
-    setUserRating(newRating);
+    setUserRating(rating);
     setAvgRating(avg);
-    // setRatingCount(count);
     setHasRated(true);
   };
 
-  // Download function
   const downloadFile = async () => {
     const { data, error } = await supabase.storage.from('uploads').download(file);
+    if (error) return console.error('Download error:', error);
 
-    if (error) {
-      console.error('Download error:', error.message);
-      return;
-    }
-    const blob = data;
-    saveAs(blob, `iips_academics_${title}.pdf`);
+    saveAs(data, `iips_academics_${title}.pdf`);
 
-    // console.log('resource id ' + id);
-    // console.log('profile_id' + user.id);
+    const { data: log } = await supabase
+      .from('user_download_log')
+      .select('id')
+      .eq('resource_id', id)
+      .eq('profile_id', user.id)
+      .maybeSingle();
 
-    // when user downloads a data the in download_log table store values if user download again then don't store
-
-    // check if already downloaded
-    const { data: existingDownload } = await supabase.from('user_download_log').select('id').eq('resource_id', id).eq('profile_id', user.id).maybeSingle();
-
-    // if not then insert
-    if (!existingDownload) {
-      await supabase.from('user_download_log').insert([
-        {
-          resource_id: id,
-          profile_id: user.id,
-          downloaded_at: new Date(),
-        },
-      ]);
+    if (!log) {
+      await supabase.from('user_download_log').insert({
+        resource_id: id,
+        profile_id: user.id,
+        downloaded_at: new Date(),
+      });
     }
   };
 
   return (
     <>
-      <li className='bg-white p-4 rounded-xl shadow-sm border hover:shadow-md'>
-        <div className='flex justify-between'>
-          <h4 className='font-semibold text-lg text-gray-800'>{title}</h4>
-
-          <div className='flex gap-2'>
-            <button onClick={() => setShowPreview(true)} className='flex items-center px-3 py-1.5 text-sm border rounded shadow-sm hover:text-blue-600'>
-              <EyeIcon className='w-4 h-4 mr-1' /> Preview
+      <li className="bg-white p-4 rounded-xl shadow-sm border-2 border-gray-200 hover:shadow-[5px_7px_4px_rgba(0,0,0,0.25)]  flex flex-col gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <h4 className="font-semibold text-lg text-gray-800 break-words">{title}</h4>
+          <div className="flex flex-wrap gap-2 sm:justify-end">
+            <button
+              onClick={() => setShowPreview(true)}
+              className="flex items-center px-3 py-1.5 text-sm border-2 border-[#2B3333] rounded-xl font-semibold hover:border-[#C79745] hover:shadow-[6px_7px_4px_rgba(0,0,0,0.1)] transition"
+            >
+              <EyeIcon className="w-4 h-4 mr-1" /> Preview
             </button>
-            {/* <a href={fileUrl} download className='flex items-center px-3 py-1.5 text-sm bg-yellow-400 hover:bg-yellow-500 rounded shadow-sm'>
-              <DownloadIcon className='w-4 h-4 mr-1' /> Download
-            </a> */}
-            <button onClick={downloadFile} className='flex items-center px-3 py-1.5 text-sm bg-yellow-400 hover:bg-yellow-500 rounded shadow-sm'>
-              <DownloadIcon className='w-4 h-4 mr-1' /> Download
+            <button
+              onClick={downloadFile}
+              className="flex items-center px-3 py-1.5 text-sm bg-yellow-400 border-2 border-[#2B3333] hover:bg-yellow-500 rounded-xl font-semibold hover:shadow-[6px_7px_4px_rgba(0,0,0,0.1)] transition"
+            >
+              <DownloadIcon className="w-4 h-4 mr-1" /> Download
             </button>
           </div>
         </div>
 
-        <div className='flex gap-1 mt-2'>
-          {[1, 2, 3, 4, 5].map(star => (
+        {/* Ratings */}
+        <div className="flex gap-1 mt-2">
+          {[1, 2, 3, 4, 5].map((star) => (
             <button
               key={star}
               onClick={() => handleRating(star)}
               onMouseEnter={() => setHover(star)}
               onMouseLeave={() => setHover(0)}
               disabled={hasRated}
-              className={`text-lg ${hover > 0 ? (star <= hover ? 'text-yellow-400' : 'text-gray-300') : star <= userRating ? 'text-yellow-400' : 'text-gray-300'} ${
-                hasRated ? 'cursor-not-allowed' : ''
-              }`}>
+              className={`text-lg ${
+                hover ? (star <= hover ? 'text-yellow-400' : 'text-gray-300')
+                      : (star <= userRating ? 'text-yellow-400' : 'text-gray-300')
+              } ${hasRated ? 'cursor-not-allowed' : ''}`}
+            >
               ★
             </button>
           ))}
         </div>
-
-        <div className='flex gap-4 text-xs text-gray-600 mt-3'>
+        <div className="flex flex-wrap gap-4 text-xs text-gray-600 mt-2">
           <span>📅 {uploaded_at ? new Date(uploaded_at).toLocaleDateString() : 'N/A'}</span>
           <span>📄 {(file_size_bytes / 1024 / 1024).toFixed(1)} MB</span>
           <span>⭐ {avgRating.toFixed(2)}</span>
         </div>
       </li>
-
+      {/* Preview Modal */}
       {showPreview && (
-        <div onClick={() => setShowPreview(false)} className='fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4'>
-          <div onClick={e => e.stopPropagation()} className='relative w-full max-w-5xl rounded-lg shadow-lg bg-white'>
-            <button onClick={() => setShowPreview(false)} className='absolute top-3 right-3 bg-white rounded-full p-1 shadow-md'>
-              <XIcon className='w-6 h-6 text-gray-600' />
+        <div
+          onClick={() => setShowPreview(false)}
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-5xl rounded-lg shadow-lg bg-white"
+          >
+            <button
+              onClick={() => setShowPreview(false)}
+              className="absolute top-3 right-3 bg-white rounded-full p-1 shadow-md"
+            >
+              <XIcon className="w-6 h-6 text-gray-600" />
             </button>
-            <iframe src={`${fileUrl}#toolbar=0&navpanes=0&scrollbar=0`} title='PDF Preview' className='w-full h-[80vh] rounded-b-lg' />
+            <iframe
+              src={`${fileUrl}#toolbar=0&navpanes=0&scrollbar=0`}
+              title="PDF Preview"
+              className="w-full h-[80vh] rounded-b-lg"
+            />
           </div>
         </div>
       )}
@@ -194,3 +179,4 @@ function ResourceItem({ id, title, file, uploaded_at, file_size_bytes }) {
 }
 
 export default ResourceItem;
+
