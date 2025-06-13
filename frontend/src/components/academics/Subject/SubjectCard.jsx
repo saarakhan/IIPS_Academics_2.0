@@ -25,9 +25,7 @@ function SubjectCard({ subject, onClick }) {
         <div className="absolute inset-0 bg-grid-white/[0.05] bg-[length:20px_20px]" />
         <div className="relative z-10 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold px-3 py-1">
-              {subject.code}
-            </span>
+            <span className="text-xs font-bold px-3 py-1">{subject.code}</span>
             <div className="w-2 h-2 bg-[#C79745]/30 rounded-full group-hover:bg-[#C79745]/50 transition-colors" />
           </div>
           <div className="space-y-1">

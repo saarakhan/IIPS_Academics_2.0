@@ -1,81 +1,137 @@
-import { useEffect, useState } from "react";
-import { supabase } from "../../supabaseClient";
-import { FaUpload, FaStar, FaRegCommentDots } from "react-icons/fa";
+"use client";
+import { useState } from "react";
+import { FaUpload, FaStar, FaAward, FaMedal, FaTrophy } from "react-icons/fa";
+import { motion } from "framer-motion";
+
+const mockContributors = [
+  {
+    name: "Alex Johnson",
+    course: "B.Tech Computer Science",
+    uploads: 32,
+    rating: "4.8",
+    avatar: "/avatars/avatar-1.png",
+  },
+  {
+    name: "Priya Sharma",
+    course: "MCA",
+    uploads: 28,
+    rating: "4.9",
+    avatar: "/avatars/avatar-2.png",
+  },
+  {
+    name: "Rahul Verma",
+    course: "B.Tech IT",
+    uploads: 25,
+    rating: "4.7",
+    avatar: "/avatars/avatar-3.png",
+  },
+];
+
+const badges = [FaTrophy, FaMedal, FaAward];
 
 export default function TopContributors() {
-  const [topContributors, setTopContributors] = useState([]);
-
-  useEffect(() => {
-    const fetchTopContributors = async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("first_name, last_name, course, total_uploads, rewards_points")
-        .gt("total_uploads", 0);
-
-      if (error) {
-        console.error("Error fetching contributors:", error.message);
-        return;
-      }
-
-      const sorted = data
-        .map((person) => ({
-          name: `${person.first_name} ${person.last_name}`,
-          course: person.course,
-          uploads: person.total_uploads || 0,
-          rating: (4.5 + Math.random() * 0.4).toFixed(1),
-        }))
-        .sort((a, b) => b.uploads - a.uploads)
-        .slice(0, 3);
-
-      setTopContributors(sorted);
-    };
-
-    fetchTopContributors();
-  }, []);
+  const [activeIndex, setActiveIndex] = useState(null);
 
   return (
-    <section className="w-full px-4 sm:px-6 lg:px-20 xl:px-32 py-16 bg-[#f9fbfd]">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-2">
-          Top Contributors
-        </h2>
-        <p className="text-[#C79745] text-base sm:text-lg">
-          Recognizing our amazing student contributors
-        </p>
+    <section className="w-full px-4 py-24 bg-gradient-to-b from-[#F4F9FF] to-white relative overflow-hidden">
+      {/* Decorative elements */}
+      <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-20 right-20 w-72 h-72 rounded-full bg-gradient-to-br from-[#C79745]/10 to-orange-100 opacity-70 blur-3xl"></div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-        {topContributors.map((contributor, i) => (
-          <div
-            key={i}
-            className="bg-white shadow-[5px_7px_8px_rgba(0,0,0,0.25)] rounded-lg px-1 py-6 transition duration-300 hover:shadow-[5px_7px_8px_rgba(132,166,211,0.65)] flex flex-col items-center"
-          >
-            <div className="w-20 h-20 mb-4 rounded-full bg-gray-100 border flex items-center justify-center text-gray-400 text-4xl">
-              👤
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900">
-              {contributor.name}
-            </h3>
-            <p className="text-sm text-gray-500 mb-4">{contributor.course}</p>
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="text-center mb-16" data-aos="fade-up">
+          <span className="inline-block mb-4 text-sm font-medium px-4 py-2 bg-[#C79745]/10 text-[#C79745] rounded-full">
+            Hall of Fame
+          </span>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            Top Contributors
+          </h2>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Recognizing our amazing student contributors who make this platform
+            valuable
+          </p>
+        </div>
 
-            <div className="flex justify-center gap-6 text-sm text-gray-600 mb-4">
-              <div className="flex items-center gap-1">
-                <FaUpload className="text-[#C79745]" />
-                {contributor.uploads} uploads
-              </div>
-              <div className="flex items-center gap-1">
-                <FaStar className="text-[#C79745]" />
-                {contributor.rating}
-              </div>
-            </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          {mockContributors.map((contributor, i) => {
+            const BadgeIcon = badges[i];
 
-            {/* Optional Connect Button */}
-            {/* <button className="mt-auto flex items-center justify-center gap-2 border border-[#C79745] text-[#C79745] px-4 py-2 rounded-md hover:bg-[#fff4e0] transition text-sm">
-              <FaRegCommentDots className="text-base" />
-              Connect
-            </button> */}
-          </div>
-        ))}
+            return (
+              <motion.div
+                key={i}
+                className="relative"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: i * 0.2 }}
+                onMouseEnter={() => setActiveIndex(i)}
+                onMouseLeave={() => setActiveIndex(null)}
+                data-aos="fade-up"
+                data-aos-delay={i * 150}
+              >
+                <div
+                  className={`relative bg-white rounded-2xl p-8 transition-all duration-300 ${
+                    activeIndex === i
+                      ? "shadow-xl transform -translate-y-2"
+                      : "shadow-md"
+                  }`}
+                >
+                  {/* Rank badge */}
+                  <div
+                    className="absolute -top-4 -right-4 w-12 h-12 rounded-full flex items-center justify-center text-white"
+                    style={{
+                      background: `linear-gradient(135deg, #C79745, ${
+                        i === 0 ? "#FFD700" : i === 1 ? "#C0C0C0" : "#CD7F32"
+                      })`,
+                    }}
+                  >
+                    <BadgeIcon className="text-xl" />
+                  </div>
+
+                  <div className="flex flex-col items-center">
+                    <div className="w-24 h-24 mb-6 rounded-full bg-gradient-to-br from-[#C79745]/20 to-blue-100 flex items-center justify-center text-gray-400 text-5xl overflow-hidden border-4 border-white shadow-md">
+                      👤
+                    </div>
+
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">
+                      {contributor.name}
+                    </h3>
+
+                    <p className="text-[#C79745] font-medium mb-4">
+                      {contributor.course}
+                    </p>
+
+                    <div className="flex justify-center gap-6 text-sm text-gray-600 mb-6 w-full">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                          <FaUpload />
+                        </div>
+                        <div>
+                          <p className="font-bold text-gray-800">
+                            {contributor.uploads}
+                          </p>
+                          <p className="text-xs text-gray-500">Uploads</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
+                          <FaStar />
+                        </div>
+                        <div>
+                          <p className="font-bold text-gray-800">
+                            {contributor.rating}
+                          </p>
+                          <p className="text-xs text-gray-500">Rating</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
