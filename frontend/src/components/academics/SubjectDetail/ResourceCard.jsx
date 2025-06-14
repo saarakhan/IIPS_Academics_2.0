@@ -10,7 +10,6 @@ import { BookOpenIcon } from '../../../Icons';
 const ResourceCard = ({ resource }) => {
   return (
     <div className='bg-white border rounded-xl shadow-sm p-4 flex flex-col gap-2'>
-      {/* Title and Action Buttons */}
       <div className='flex justify-between'>
         <div className='flex items-center gap-2'>
             <BookOpenIcon/>
@@ -27,8 +26,6 @@ const ResourceCard = ({ resource }) => {
           </button>
         </div>
       </div>
-
-      {/* Tags */}
       <div className='flex flex-wrap gap-2'>
         {resource.tags?.map((tag, i) => (
           <span key={i} className='bg-gray-200 text-xs px-2 py-1 rounded-full'>
@@ -36,9 +33,7 @@ const ResourceCard = ({ resource }) => {
           </span>
         ))}
       </div>
-
-      {/* Meta Info */}
-      <div className='text-sm text-gray-600 flex flex-wrap gap-3'>
+     <div className='text-sm text-gray-600 flex flex-wrap gap-3'>
         👤 {resource.uploadedBy}
         📅 {resource.date}
         📄 {resource.size}

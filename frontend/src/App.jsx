@@ -4,8 +4,10 @@ import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import Welcom from "./assets/welcome_video.MOV";
 import { Toaster } from "react-hot-toast";
-import Footer from './components/Home/Footer'
-import "./App.css"
+import Footer from "./components/Home/Footer";
+import "./App.css";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 function App() {
   const [videoEnded, setVideoEnded] = useState(false);
@@ -29,11 +31,17 @@ function App() {
     }
   }, []);
 
+  useEffect(() => {
+    AOS.init({
+      duration: 1000,
+      once: true,
+    });
+  }, []);
+  
   const handleVideoEnd = () => {
     sessionStorage.setItem("hasSeenWelcomeVideo", "true");
     setVideoEnded(true);
   };
-  
 
   return (
     <div>
@@ -62,14 +70,14 @@ function App() {
             />
           </motion.div>
         )}
-      </AnimatePresence> 
+      </AnimatePresence>
 
       {/* Main App Content */}
       <div className="relative z-0 w-full h-full">
         <Toaster position="top-right" reverseOrder={false} />
         {!hideLayout && <Navbar />}
         <Outlet />
-        {!hideLayout && <Footer/>}
+        {!hideLayout && <Footer />}
       </div>
     </div>
   );

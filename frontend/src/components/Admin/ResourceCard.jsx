@@ -67,7 +67,7 @@ export default function ResourceCard({ resource, onAction }) {
 
   const getActionButtons = (status) => {
     const baseButtonClass =
-      "inline-flex items-center justify-center p-2 rounded-md";
+      "inline-flex items-center justify-center px-3 py-1 border-2 border-[#2B3333] rounded-md shadow-sm font-semibold text-sm transition-colors hover:shadow-[6px_7px_4px_rgba(0,0,0,0.1)]";
     const iconButtonClass = "w-4 h-4";
 
     switch (status) {
@@ -76,7 +76,7 @@ export default function ResourceCard({ resource, onAction }) {
           <div className="flex gap-1 sm:gap-2">
             <button
               onClick={() => setShowPreview(true)}
-              className={`${baseButtonClass} text-gray-700 hover:bg-gray-100`}
+              className={`${baseButtonClass} bg-white text-[#2B3333] `}
               aria-label="Preview"
             >
               <MdVisibility className={iconButtonClass} />
@@ -84,7 +84,7 @@ export default function ResourceCard({ resource, onAction }) {
             </button>
             <button
               onClick={approve}
-              className={`${baseButtonClass} text-white bg-green-500 hover:bg-green-600`}
+              className={`${baseButtonClass} bg-green-500 text-white border-green-600 hover:bg-green-600`}
               aria-label="Approve"
             >
               <MdCheck className={iconButtonClass} />
@@ -92,7 +92,7 @@ export default function ResourceCard({ resource, onAction }) {
             </button>
             <button
               onClick={() => setShowReject(true)}
-              className={`${baseButtonClass} text-white bg-red-500 hover:bg-red-600`}
+              className={`${baseButtonClass} bg-red-500 text-white border-red-600 hover:bg-red-600`}
               aria-label="Reject"
             >
               <MdClose className={iconButtonClass} />
@@ -105,7 +105,7 @@ export default function ResourceCard({ resource, onAction }) {
           <div className="flex gap-1 sm:gap-2">
             <button
               onClick={() => setShowPreview(true)}
-              className={`${baseButtonClass} text-gray-700 hover:bg-gray-100`}
+              className={`${baseButtonClass} bg-white text-[#2B3333] `}
               aria-label="Preview"
             >
               <MdVisibility className={iconButtonClass} />
@@ -113,7 +113,7 @@ export default function ResourceCard({ resource, onAction }) {
             </button>
             <button
               onClick={() => setShowReject(true)}
-              className={`${baseButtonClass} text-white bg-red-500 hover:bg-red-600`}
+              className={`${baseButtonClass} bg-red-500 text-white border-red-600 hover:bg-red-600`}
               aria-label="Reject"
             >
               <MdClose className={iconButtonClass} />
@@ -125,7 +125,7 @@ export default function ResourceCard({ resource, onAction }) {
         return (
           <button
             onClick={() => setShowPreview(true)}
-            className={`${baseButtonClass} text-gray-700 hover:bg-gray-100`}
+            className={`${baseButtonClass} bg-white text-[#2B3333]`}
             aria-label="Preview"
           >
             <MdVisibility className={iconButtonClass} />
@@ -136,18 +136,17 @@ export default function ResourceCard({ resource, onAction }) {
         return null;
     }
   };
-
   if (!resource || resource.status === "REJECTED") return null;
 
   return (
-    <div className="border border-gray-200 rounded-lg p-3 sm:p-4 shadow-sm bg-white">
+    <div className="border-2 border-gray-300 rounded-md p-3 sm:p-4 hover:shadow-[7px_8px_4.8px_rgba(0,0,0,0.1)] bg-white">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex gap-3 items-start">
           <MdDescription className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500 shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
             <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2 mb-1">
               <h4 className="font-medium text-gray-900 break-words line-clamp-2 sm:line-clamp-1">
-                {resource.title}
+                {resource?.subjects.name}
               </h4>
               <div className="mt-1 sm:mt-0">
                 {getStatusBadge(resource.status)}

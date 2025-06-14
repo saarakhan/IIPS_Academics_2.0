@@ -33,17 +33,17 @@ const steps = [
 
 export default function RoadMap() {
   return (
-    <div className="py-16 px-4 max-w-6xl mx-auto">
+    <div className="py-24 px-4 bg-gradient-to-b from-white to-[#F4F9FF]">
       {/* Header */}
-      <div className="text-center mb-16">
-        <span className="inline-block mb-4 text-sm font-medium px-3 py-1 border border-gray-300 rounded-full text-gray-700">
+      <div className="text-center mb-20">
+        <span className="inline-block mb-4 text-sm font-medium px-4 py-2 bg-[#C79745]/10 text-[#C79745] rounded-full">
           How It Works
         </span>
         <h2 className="text-4xl md:text-5xl font-bold mb-6">
           Your Journey to{" "}
           <span className="text-[#C79745] italic relative">
             Contribution
-            <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-[#C79745] to-[#E6B366] rounded-full opacity-30"></div>
+            <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-[#C79745] to-[#E6B366] rounded-full"></div>
           </span>
         </h2>
         <p className="text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed">
@@ -52,29 +52,80 @@ export default function RoadMap() {
         </p>
       </div>
 
-      {/* Timeline */}
-      <div className="relative border-l-2 border-gray-200 pl-6 lg:pl-12">
+      {/* Timeline - Desktop */}
+      <div className="hidden md:block max-w-6xl mx-auto relative">
+        <div className="absolute left-1/2 transform -translate-x-1/2 top-0 h-full w-1 bg-gradient-to-b from-[#3B82F6] via-[#8B5CF6] to-[#F59E0B] rounded-full"></div>
+
+        <div className="relative">
+          {steps.map((step, index) => (
+            <div
+              key={index}
+              className={`flex items-center mb-24 last:mb-0 ${
+                index % 2 === 0 ? "justify-start" : "justify-end"
+              }`}
+            >
+              <div
+                className={`w-5/12 ${
+                  index % 2 === 0 ? "pr-12 text-right" : "pl-12"
+                }`}
+              >
+                <div
+                  className="p-6 rounded-2xl shadow-lg bg-white border-t-4"
+                  style={{ borderColor: step.color }}
+                >
+                  <div className="flex items-center gap-4 mb-4">
+                    <div
+                      className="w-12 h-12 rounded-xl flex items-center justify-center text-white flex-shrink-0"
+                      style={{ backgroundColor: step.color }}
+                    >
+                      <step.icon size={20} />
+                    </div>
+                    <div className="flex flex-col items-start">
+                      <h3 className="text-xl font-bold">{step.title}</h3>
+                      <span
+                        className="text-sm font-semibold"
+                        style={{ color: step.color }}
+                      >
+                        Step {step.step}
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-gray-700 text-left">{step.desc}</p>
+                </div>
+              </div>
+
+              <div
+                className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 rounded-full border-4 border-white shadow-md"
+                style={{
+                  backgroundColor: step.color,
+                  top: `${index *17 + 3}rem`,
+                }}
+              ></div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Timeline - Mobile */}
+      <div className="md:hidden relative border-l-2 border-gray-200 pl-8 ml-4 max-w-md mx-auto">
         {steps.map((step, index) => (
           <div key={index} className="mb-12 relative">
-            {/* Icon */}
             <div
-              className="w-10 h-10 rounded-full flex items-center justify-center text-white absolute -left-5 lg:-left-7 top-0 shadow-lg"
+              className="w-10 h-10 rounded-full flex items-center justify-center text-white absolute -left-5 top-0 shadow-lg"
               style={{ backgroundColor: step.color }}
             >
               <step.icon size={18} />
             </div>
-
-            {/* Content */}
             <div
-              className="ml-6 p-6 rounded-md shadow-md"
-              style={{
-                backgroundColor: `${step.color}1A`,
-                borderTop: `4px solid ${step.color}`,
-              }}
+              className="p-6 rounded-xl shadow-md bg-white border-t-4"
+              style={{ borderColor: step.color }}
             >
               <h3 className="text-xl font-bold">{step.title}</h3>
               <p className="mt-2 text-gray-700">{step.desc}</p>
-              <span className="text-xs font-semibold text-gray-600 mt-2 inline-block">
+              <span
+                className="text-xs font-semibold mt-2 inline-block"
+                style={{ color: step.color }}
+              >
                 Step {step.step}
               </span>
             </div>

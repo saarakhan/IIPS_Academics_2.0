@@ -81,7 +81,8 @@ export default function DevelopersSection() {
           {developers.map((developer, index) => (
             <div
               key={index}
-              className="group bg-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 rounded-lg overflow-hidden border border-gray-100"
+              className="group bg-white shadow-lg hover:shadow-2xl transition-all 
+              duration-300 rounded-lg overflow-hidden border border-gray-100"
             >
               <div className="p-6 text-center">
                 <div className="relative mb-6">
@@ -109,7 +110,8 @@ export default function DevelopersSection() {
                 <div className="flex justify-center gap-3">
                   <button
                     onClick={() => window.open(developer.linkedin, "_blank")}
-                    className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 hover:border-[#c79745] hover:bg-[#c79745] hover:text-white transition-all duration-200"
+                    className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-300
+                     hover:border-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-200"
                   >
                     <FaLinkedin className="w-4 h-4" />
                   </button>
