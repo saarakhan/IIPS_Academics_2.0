@@ -1,36 +1,41 @@
-"use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "../../supabaseClient";
 import { FaUpload, FaStar, FaAward, FaMedal, FaTrophy } from "react-icons/fa";
 import { motion } from "framer-motion";
-
-const mockContributors = [
-  {
-    name: "Alex Johnson",
-    course: "B.Tech Computer Science",
-    uploads: 32,
-    rating: "4.8",
-    avatar: "/avatars/avatar-1.png",
-  },
-  {
-    name: "Priya Sharma",
-    course: "MCA",
-    uploads: 28,
-    rating: "4.9",
-    avatar: "/avatars/avatar-2.png",
-  },
-  {
-    name: "Rahul Verma",
-    course: "B.Tech IT",
-    uploads: 25,
-    rating: "4.7",
-    avatar: "/avatars/avatar-3.png",
-  },
-];
 
 const badges = [FaTrophy, FaMedal, FaAward];
 
 export default function TopContributors() {
+  const [topContributors, setTopContributors] = useState([]);
   const [activeIndex, setActiveIndex] = useState(null);
+
+  useEffect(() => {
+    const fetchTopContributors = async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("first_name, last_name, course, total_uploads, rewards_points")
+        .gt("total_uploads", 0);
+
+      if (error) {
+        console.error("Error fetching contributors:", error.message);
+        return;
+      }
+
+      const sorted = data
+        .map((person) => ({
+          name: `${person.first_name} ${person.last_name}`,
+          course: person.course,
+          uploads: person.total_uploads || 0,
+          rating: (4.5 + Math.random() * 0.4).toFixed(1),
+        }))
+        .sort((a, b) => b.uploads - a.uploads)
+        .slice(0, 3);
+
+      setTopContributors(sorted);
+    };
+
+    fetchTopContributors();
+  }, []);
 
   return (
     <section className="w-full px-4 py-24 bg-gradient-to-b from-[#F4F9FF] to-white relative overflow-hidden">
@@ -54,7 +59,7 @@ export default function TopContributors() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {mockContributors.map((contributor, i) => {
+          {topContributors.map((contributor, i) => {
             const BadgeIcon = badges[i];
 
             return (
@@ -66,8 +71,6 @@ export default function TopContributors() {
                 transition={{ duration: 0.6, delay: i * 0.2 }}
                 onMouseEnter={() => setActiveIndex(i)}
                 onMouseLeave={() => setActiveIndex(null)}
-                data-aos="fade-up"
-                data-aos-delay={i * 150}
               >
                 <div
                   className={`relative bg-white rounded-2xl p-8 transition-all duration-300 ${
