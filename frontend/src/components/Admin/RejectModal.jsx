@@ -1,6 +1,4 @@
-import { useEffect } from "react";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MdClose, MdWarning } from "react-icons/md";
 import { supabase } from "../../supabaseClient";
 
