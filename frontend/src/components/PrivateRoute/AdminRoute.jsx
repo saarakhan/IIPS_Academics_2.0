@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Navigate } from "react-router-dom";
 import { UserAuth } from "../../Context/AuthContext";
 import { supabase } from "../../supabaseClient";
@@ -6,17 +6,11 @@ import { toast } from "react-hot-toast";
 
 const AdminRoute = ({ children }) => {
   const { session } = UserAuth();
-  const [isAuthorized, setIsAuthorized] = useState(null); // null = loading
+  const [isAuthorized, setIsAuthorized] = useState(null);
 
   useEffect(() => {
-    if (!session) return;
-    
     const checkRole = async () => {
-      if (!session?.user?.id) {
-        console.log("go away");
-        setIsAuthorized(false);
-        return;
-      }
+      if (!session?.user?.id) return;
 
       const { data, error } = await supabase
         .from("profiles")
@@ -32,9 +26,18 @@ const AdminRoute = ({ children }) => {
       setIsAuthorized(data.role === "admin");
     };
 
-    checkRole();
+    if (session) {
+      checkRole();
+    }
   }, [session]);
 
+  // Not logged in
+  if (!session) {
+    toast.error("Unauthorized access");
+    return <Navigate to="/signin" replace />;
+  }
+
+  // Still checking
   if (isAuthorized === null) {
     return (
       <div className="flex justify-center items-center h-screen text-3xl font-bold">
@@ -42,16 +45,11 @@ const AdminRoute = ({ children }) => {
       </div>
     );
   }
-  if (isAuthorized === false && !session) {
-    return <Navigate to="/signin" replace />;
-  }
 
+  // Not admin
   if (!isAuthorized) {
-    return (
-      <>
-        <Navigate to="/" replace />;{toast.error("Unauthorized access")}
-      </>
-    );
+    toast.error("Unauthorized access");
+    return <Navigate to="/" replace />;
   }
 
   return children;

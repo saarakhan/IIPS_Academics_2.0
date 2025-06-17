@@ -13,7 +13,7 @@ import AdminDashboard from "./components/Admin/AdminDashboard.jsx";
 import Placement from "./components/Placement/Placement";
 import AdminRoute from "./components/PrivateRoute/AdminRoute.jsx";
 import NotFound from "./components/Error/NotFound.jsx";
-import RequestPasswordReset from "./components/Auth/RequestPasswordReset.jsx"; 
+import RequestPasswordReset from "./components/Auth/RequestPasswordReset.jsx";
 import UpdatePassword from "./components/Auth/UpdatePassword.jsx";
 
 export const router = createBrowserRouter([
@@ -24,8 +24,8 @@ export const router = createBrowserRouter([
       { path: "/", element: <Home /> },
       { path: "signin", element: <SignIn /> },
       { path: "signup", element: <SignUp /> },
-      { path: "request-password-reset", element: <RequestPasswordReset /> }, 
-      { path: "update-password", element: <UpdatePassword /> }, 
+      { path: "request-password-reset", element: <RequestPasswordReset /> },
+      { path: "update-password", element: <UpdatePassword /> },
       { path: "academics", element: <Subject /> },
       { path: "subject/:id", element: <SubjectDetail /> },
       { path: "Contributors", element: <StudentContributions /> },
@@ -33,18 +33,18 @@ export const router = createBrowserRouter([
       { path: "placements", element: <Placement /> },
       {
         path: "dashboard",
-        element: <Dashboard /> 
+        element: <Dashboard />,
       },
       {
         path: "admin",
         element: (
-          // <AdminRoute> // 
+          <AdminRoute>
             <AdminDashboard />
-          // </AdminRoute>
+          </AdminRoute>
         ),
       },
-      { path:"404", element: <NotFound/>},
-      { path: "*", element: <Navigate to = "/404"/>}
+      { path: "404", element: <NotFound /> },
+      { path: "*", element: <Navigate to="/404" /> },
     ],
   },
 ]);
