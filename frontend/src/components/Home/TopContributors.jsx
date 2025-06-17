@@ -1,4 +1,3 @@
-"use client";
 import { useState } from "react";
 import { FaUpload, FaStar, FaAward, FaMedal, FaTrophy } from "react-icons/fa";
 import { motion } from "framer-motion";
