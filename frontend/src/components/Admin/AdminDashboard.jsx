@@ -15,7 +15,7 @@ export default function AdminDashboard() {
     pending: 0,
   });
   const [filters, setFilters] = useState({
-    status: "",
+    status: "ALL",
     subject: "",
     contributor: "",
     course: "",
@@ -33,7 +33,20 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     applyFilters(resources, filters);
-  }, [filters, resources]);
+  }, [resources, filters]);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      const { data, error } = await supabase
+        .from("courses")
+        .select("id, name")
+        .order("name", { ascending: true });
+
+      if (!error) setDepartments(data || []);
+    };
+
+    fetchCourses();
+  }, []);
 
   const fetchResources = async (page = 0) => {
     setLoading(true);
@@ -52,12 +65,11 @@ export default function AdminDashboard() {
     } else {
       setResources((prev) => [...prev, ...data]);
       updateCounts();
-      applyFilters([...resources, ...data], filters);
-
       if (data.length < numberResourceDisplay) {
         setHasMore(false);
       }
     }
+
     setLoading(false);
   };
 
@@ -65,18 +77,9 @@ export default function AdminDashboard() {
     try {
       const [total, approved, rejected, pending] = await Promise.all([
         supabase.from("resources").select("*", { count: "exact", head: true }),
-        supabase
-          .from("resources")
-          .select("*", { count: "exact", head: true })
-          .eq("status", "APPROVED"),
-        supabase
-          .from("resources")
-          .select("*", { count: "exact", head: true })
-          .eq("status", "REJECTED"),
-        supabase
-          .from("resources")
-          .select("*", { count: "exact", head: true })
-          .eq("status", "PENDING"),
+        supabase.from("resources").select("*", { count: "exact", head: true }).eq("status", "APPROVED"),
+        supabase.from("resources").select("*", { count: "exact", head: true }).eq("status", "REJECTED"),
+        supabase.from("resources").select("*", { count: "exact", head: true }).eq("status", "PENDING"),
       ]);
 
       setCounts({
@@ -86,56 +89,33 @@ export default function AdminDashboard() {
         pending: pending.count || 0,
       });
     } catch (err) {
-      console.log("Error updating resource counts", err);
+      console.error("Error updating resource counts:", err);
     }
   };
 
-  useEffect(() => {
-    const fetchCourses = async () => {
-      const { data, error } = await supabase
-        .from("courses")
-        .select("id, name")
-        .order("name", { ascending: true });
-
-      if (!error) setDepartments(data || []);
-    };
-
-    fetchCourses();
-  }, []);
-
   const applyFilters = (data, { status, subject, contributor, course }) => {
     const filtered = data.filter((r) => {
-      const matchesStatus = !status || r.status === status;
+      const matchesStatus = !status || status === "ALL" || r.status === status;
       const matchesSubject =
-        !subject ||
-        r.subjects?.name.toLowerCase().includes(subject.toLowerCase());
-      const fullName = `${r.profiles?.first_name || ""} ${
-        r.profiles?.last_name || ""
-      }`.toLowerCase();
-      const matchesContributor =
-        !contributor || fullName.includes(contributor.toLowerCase());
-      const matchesCourse =
-        !course ||
-        r.profiles?.course?.toLowerCase().includes(course.toLowerCase());
-      return (
-        matchesStatus && matchesSubject && matchesContributor && matchesCourse
-      );
+        !subject || r.subjects?.name.toLowerCase().includes(subject.toLowerCase());
+      const fullName = `${r.profiles?.first_name || ""} ${r.profiles?.last_name || ""}`.toLowerCase();
+      const matchesContributor = !contributor || fullName.includes(contributor.toLowerCase());
+      const matchesCourse = !course || r.profiles?.course?.toLowerCase().includes(course.toLowerCase());
+
+      return matchesStatus && matchesSubject && matchesContributor && matchesCourse;
     });
 
     setFiltered(filtered);
   };
 
-  const handleFilterChange = (newFilters) => setFilters(newFilters);
-
-  const handleAction = async () => {
-    await fetchResources();
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
   };
 
-  const handleStatusClick = (statusKey) => {
-    setFilters((prev) => ({
-      ...prev,
-      status: statusKey === "total" ? "" : statusKey.toUpperCase(),
-    }));
+  const handleAction = async () => {
+    setPage(0);
+    setResources([]);
+    await fetchResources(0);
   };
 
   const loadMoreResources = () => {
@@ -146,34 +126,27 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-[#FFFEFE] p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-8">
         <Heading />
-        <StatusSummary counts={counts} onStatusClick={handleStatusClick} />
-        <ResourceFilter
-          filters={filters}
-          onChange={handleFilterChange}
-          departments={departments}
-        />
+        <StatusSummary counts={counts} onStatusClick={() => {}} />
 
-        {/* 📄 Submitted Resources Section cause my dumbass just gaveup */}
         <div className="bg-white rounded-md border-2 border-gray-300 shadow-[7px_8px_4.8px_rgba(0,0,0,0.1)] mt-8">
+          {/* Header */}
           <div className="px-6 py-4 border-b border-gray-200 flex items-center gap-2">
-            <svg
-              className="w-6 h-6 text-gray-700"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M9 12h6m2 0a2 2 0 002-2V6a2 2 0 00-2-2H7a2 2 0 00-2 2v4a2 2 0 002 2m10 0v6a2 2 0 01-2 2H7a2 2 0 01-2-2v-6"
-              />
+            <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m2 0a2 2 0 002-2V6a2 2 0 00-2-2H7a2 2 0 00-2 2v4a2 2 0 002 2m10 0v6a2 2 0 01-2 2H7a2 2 0 01-2-2v-6" />
             </svg>
-            <h2 className="text-xl font-bold text-gray-800">
-              Submitted Resources
-            </h2>
+            <h2 className="text-xl font-bold text-gray-800">Submitted Resources</h2>
           </div>
 
+          {/* Collapsible Filter */}
+          <div className="p-6">
+            <ResourceFilter
+              filters={filters}
+              onChange={handleFilterChange}
+              departments={departments}
+            />
+          </div>
+
+          {/* Results */}
           <div>
             {loading ? (
               [...Array(3)].map((_, i) => (
@@ -185,28 +158,12 @@ export default function AdminDashboard() {
               <div className="p-6">
                 <div className="border border-dashed border-gray-300 p-10 rounded-xl text-center bg-white/90 backdrop-blur-sm shadow">
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-8 w-8 text-gray-400"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <p className="text-xl font-semibold text-gray-700 mb-2">
-                    No resources found
-                  </p>
-                  <p className="text-gray-500 max-w-md mx-auto">
-                    Try changing the filters or check back later when new
-                    resources are submitted.
-                  </p>
+                  <p className="text-xl font-semibold text-gray-700 mb-2">No resources found</p>
+                  <p className="text-gray-500 max-w-md mx-auto">Try changing the filters or check back later when new resources are submitted.</p>
                 </div>
               </div>
             ) : (
@@ -218,11 +175,7 @@ export default function AdminDashboard() {
                       return priority[a.status] - priority[b.status];
                     })
                     .map((resource) => (
-                      <ResourceCard
-                        key={resource.id}
-                        resource={resource}
-                        onAction={handleAction}
-                      />
+                      <ResourceCard key={resource.id} resource={resource} onAction={handleAction} />
                     ))}
                 </div>
                 {hasMore && (
@@ -244,3 +197,4 @@ export default function AdminDashboard() {
     </div>
   );
 }
+
