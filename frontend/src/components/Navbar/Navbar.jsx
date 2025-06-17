@@ -179,11 +179,10 @@ export default function Navbar() {
                   userProfile && userProfile.role === "admin"
                     ? "/admin"
                     : "/dashboard"
-                } // Defensive check for userProfile and role
+                }
                 className="flex items-center space-x-2"
               >
                 <Avatar alt={name || "User"} src={avatarUrl || undefined} />{" "}
-                {/* Provide fallback for alt and ensure src is not null */}
                 <span>{name || "Profile"}</span>
               </Link>
 
