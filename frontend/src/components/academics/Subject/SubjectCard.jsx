@@ -21,7 +21,7 @@ function SubjectCard({ subject, onClick }) {
       }}
     >
       {/* Header */}
-      <div className="relative px-6 py-6 bg-[#3A4E4E]">
+      <div className="relative px-6 py-6 bg-gray-100">
         <div className="absolute inset-0 bg-grid-white/[0.05] bg-[length:20px_20px]" />
         <div className="relative z-10 space-y-3">
           <div className="flex items-center justify-between">
@@ -31,10 +31,10 @@ function SubjectCard({ subject, onClick }) {
             <div className="w-2 h-2 bg-[#C79745]/30 rounded-full group-hover:bg-[#C79745]/50 transition-colors" />
           </div>
           <div className="space-y-1">
-            <h2 className="text-xl font-bold text-white leading-snug line-clamp-2 h-[48px]">
+            <h2 className="text-xl font-bold  leading-snug line-clamp-2 h-[54px]">
               {subject.name}
             </h2>
-            <p className="text-sm text-white leading-snug line-clamp-2 h-[40px]">
+            <p className="text-sm leading-snug line-clamp-2 h-[40px]">
               {subject.description}
             </p>
           </div>
@@ -46,12 +46,18 @@ function SubjectCard({ subject, onClick }) {
         {/* Info Grid */}
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-gray-50 rounded-md p-3 text-center group-hover:bg-gray-100/80 transition-colors border border-gray-100">
-            <div className="text-xs font-bold uppercase text-[#C79745] mb-1 tracking-wide">Semester</div>
+            <div className="text-xs font-bold uppercase text-[#C79745] mb-1 tracking-wide">
+              Semester
+            </div>
             <div className="text-sm text-gray-900">{subject.semester}</div>
           </div>
           <div className="bg-gray-50 rounded-md p-3 text-center group-hover:bg-gray-100/80 transition-colors border border-gray-100">
-            <div className="text-xs font-bold uppercase text-[#C79745] mb-1 tracking-wide">Department</div>
-            <div className="text-sm font-medium text-gray-900 line-clamp-1">{subject.department}</div>
+            <div className="text-xs font-bold uppercase text-[#C79745] mb-1 tracking-wide">
+              Department
+            </div>
+            <div className="text-sm font-medium text-gray-900 line-clamp-1">
+              {subject.department}
+            </div>
           </div>
         </div>
 
@@ -61,7 +67,9 @@ function SubjectCard({ subject, onClick }) {
             <UserIcon className="h-4 w-4 text-[#C79745]" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-xs font-medium text-[#C79745] uppercase tracking-wide mb-0.5">Instructor</div>
+            <div className="text-xs font-medium text-[#C79745] uppercase tracking-wide mb-0.5">
+              Instructor
+            </div>
             <div className="text-sm font-semibold text-gray-900 truncate">
               {subject.teacher || "To Be Announced"}
             </div>
@@ -79,16 +87,28 @@ function SubjectCard({ subject, onClick }) {
               boxShadow: "0 4px 15px rgba(43, 51, 51, 0.3)",
             }}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent 
-              transform -skew-x-12 -translate-x-full group-hover/button:translate-x-full transition-transform duration-700 ease-out" />
+            <div
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent 
+              transform -skew-x-12 -translate-x-full group-hover/button:translate-x-full transition-transform duration-700 ease-out"
+            />
 
             <div className="absolute inset-0 overflow-hidden rounded-lg">
               <div className="absolute inset-0 bg-white/0 group-active/button:bg-white/20 transition-colors duration-150 rounded-lg" />
             </div>
 
             <span className="relative z-10">View Resources</span>
-            <svg className="relative z-10 w-4 h-4 group-hover/button:translate-x-1 group-hover/button:scale-110 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            <svg
+              className="relative z-10 w-4 h-4 group-hover/button:translate-x-1 group-hover/button:scale-110 transition"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
             </svg>
           </button>
         </div>

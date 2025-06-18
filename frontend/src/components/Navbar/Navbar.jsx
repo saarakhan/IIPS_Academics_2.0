@@ -123,7 +123,7 @@ export default function Navbar() {
 
   return (
     <nav
-      className="bg-[#FFFEFE] text-[#2B3333] px-4 py-2 border-b border-[#C79745] top-0 z-50"
+      className="bg-[#FFFEFE] text-[#2B3333] px-4 py-2 border-b border-[#C79745] top-0 z-50 sticky"
       style={{
         boxShadow: "0px 4px 16px 20px rgba(0, 0, 0, 0.05)",
       }}
@@ -156,7 +156,7 @@ export default function Navbar() {
             )
           )}
           {}
-          {/* {session && userProfile && userProfile.role === "admin" && (
+          {session && userProfile && userProfile.role === "admin" && (
             <Link
               to="/admin"
               className={`px-4 py-2 font-medium rounded-md transition-all whitespace-nowrap ${
@@ -167,7 +167,7 @@ export default function Navbar() {
             >
               Admin Panel
             </Link>
-          )} */}
+          )}
         </div>
 
         {}
@@ -175,11 +175,12 @@ export default function Navbar() {
           {session ? (
             <>
               <Link
-                to={
-                  userProfile && userProfile.role === "admin"
-                    ? "/admin"
-                    : "/dashboard"
-                }
+                // to={
+                //   userProfile && userProfile.role === "admin"
+                //     ? "/admin"
+                //     : "/dashboard"
+                // }
+                to="/dashboard"
                 className="flex items-center space-x-2"
               >
                 <Avatar alt={name || "User"} src={avatarUrl || undefined} />{" "}
