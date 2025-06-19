@@ -15,6 +15,7 @@ import AdminRoute from "./components/PrivateRoute/AdminRoute.jsx";
 import NotFound from "./components/Error/NotFound.jsx";
 import RequestPasswordReset from "./components/Auth/RequestPasswordReset.jsx";
 import UpdatePassword from "./components/Auth/UpdatePassword.jsx";
+import OtpVerificationPage from "./components/SignIn/OtpVerificationPage.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -23,6 +24,7 @@ export const router = createBrowserRouter([
     children: [
       { path: "/", element: <Home /> },
       { path: "signin", element: <SignIn /> },
+      { path: "otp-verification", element: <OtpVerificationPage/>},
       { path: "signup", element: <SignUp /> },
       { path: "request-password-reset", element: <RequestPasswordReset /> },
       { path: "update-password", element: <UpdatePassword /> },

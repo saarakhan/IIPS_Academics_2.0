@@ -17,20 +17,21 @@ const SignIn = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+
     const { success, data, error: signInError } = await SignInUser(email, password); // Renamed error to avoid conflict
     setLoading(false);
 
     if (!success) {
       setError(signInError);
-      toast.error(signInError || "Login failed"); 
+      toast.error(signInError || "Login failed");
 
       setTimeout(() => {
-        setError(null); 
+        setError(null);
       }, 3000);
     } else {
       toast.success("Logged in successfully!");
       setTimeout(() => {
-        navigate("/");
+        navigate("/otp-verification");
       }, 1000);
     }
   };
@@ -39,7 +40,7 @@ const SignIn = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const { success, error: googleError } = await signInWithGoogle(); 
+    const { success, error: googleError } = await signInWithGoogle();
     setLoading(false);
 
     if (!success) {
@@ -67,7 +68,7 @@ const SignIn = () => {
 
       setTimeout(() => setError(null), 3000);
     } else {
-      toast.success("Signed in with GitHub!"); 
+      toast.success("Signed in with GitHub!");
       setTimeout(() => {
         navigate("/");
       }, 2000);
@@ -85,7 +86,7 @@ const SignIn = () => {
             Sign in
           </h2>
           <button
-            type="button" 
+            type="button"
             onClick={() => navigate("/")}
             className="absolute right-0 top-0 p-1"
           >
@@ -128,8 +129,8 @@ const SignIn = () => {
           type="submit"
           disabled={loading}
           className={`w-full mt-4 py-3 rounded-lg text-white transition duration-300 ${loading
-              ? "bg-[#2B3333]/70 cursor-not-allowed"
-              : "bg-[#2B3333] hover:shadow-lg shadow-[#2B3333]"
+            ? "bg-[#2B3333]/70 cursor-not-allowed"
+            : "bg-[#2B3333] hover:shadow-lg shadow-[#2B3333]"
             }`}
         >
           {loading ? (
@@ -160,7 +161,6 @@ const SignIn = () => {
             "Sign In"
           )}
         </button>
-
 
         <div className="flex items-center my-4">
           <div className="flex-grow h-px bg-gray-300" />
@@ -215,7 +215,7 @@ const SignIn = () => {
         `}
       </style>
     </div>
-  );
+  )
 };
 
 export default SignIn;
