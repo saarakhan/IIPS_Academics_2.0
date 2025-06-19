@@ -9,11 +9,8 @@ const AdminRoute = ({ children }) => {
   const [isAuthorized, setIsAuthorized] = useState(null); // null = loading
 
   useEffect(() => {
-    if (!session) return;
-    
     const checkRole = async () => {
       if (!session?.user?.id) {
-        console.log("go away");
         setIsAuthorized(false);
         return;
       }
@@ -32,7 +29,11 @@ const AdminRoute = ({ children }) => {
       setIsAuthorized(data.role === "admin");
     };
 
-    checkRole();
+    if (session) {
+      checkRole();
+    } else {
+      setIsAuthorized(false); // Not logged in
+    }
   }, [session]);
 
   if (isAuthorized === null) {
@@ -42,16 +43,10 @@ const AdminRoute = ({ children }) => {
       </div>
     );
   }
-  if (isAuthorized === false && !session) {
-    return <Navigate to="/signin" replace />;
-  }
 
-  if (!isAuthorized) {
-    return (
-      <>
-        <Navigate to="/" replace />;{toast.error("Unauthorized access")}
-      </>
-    );
+  if (!session || !isAuthorized) {
+    toast.error("Unauthorized access");
+    return <Navigate to={session ? "/" : "/signin"} replace />;
   }
 
   return children;

@@ -19,21 +19,77 @@ export default function ResourceCard({ resource, onAction }) {
   const [showReject, setShowReject] = useState(false);
 
   const approve = async () => {
-    const { error } = await supabase
+    const adminId = "0b5648d6-7f4f-43b6-88cb-7bbc9ff226a4"; // to be replaced with actual admin ID
+
+    // 1. Approve resource
+    const { error: updateError } = await supabase
       .from("resources")
       .update({
         status: "APPROVED",
         approved_at: new Date().toISOString(),
-        approved_by_admin_id: "0b5648d6-7f4f-43b6-88cb-7bbc9ff226a4", // to be replaced by actual admin id
+        approved_by_admin_id: adminId,
       })
       .eq("id", resource.id);
 
-    if (!error) {
-      toast.success("Resource approved!");
-      onAction();
-    } else {
+    if (updateError) {
       toast.error("Failed to approve resource.");
+      return;
     }
+
+    toast.success("Resource approved!");
+
+    // 2. Insert reward log
+    // for notes -> 15 points else 5
+    const pointValue = resource.resource_type === "NOTE" ? 15 : 5;
+
+    const { error: rewardsError } = await supabase
+      .from("user_rewards_log")
+      .insert({
+        profile_id: resource.uploader_profile_id,
+        reward_type: resource.resource_type,
+        points_awarded: pointValue,
+        related_resource_id: resource.id,
+        awarded_at: new Date().toISOString(),
+        awarded_by_admin_id: adminId,
+      });
+
+    if (rewardsError) {
+      console.error("Insert failed:", rewardsError);
+      toast.error("Failed to reward resource.");
+      return;
+    }
+
+    toast.success("Resource rewarded!");
+
+    // 3. Fetch current reward points
+    const { data: profileData, error: fetchProfileError } = await supabase
+      .from("profiles")
+      .select("rewards_points")
+      .eq("id", resource.uploader_profile_id)
+      .single();
+
+    if (fetchProfileError || !profileData) {
+      console.error("Failed to fetch profile:", fetchProfileError);
+      toast.error("Failed to fetch profile.");
+      return;
+    }
+
+    // 4. Update profile reward points
+    const newPoints = profileData.rewards_points + pointValue;
+
+    const { error: profileUpdateError } = await supabase
+      .from("profiles")
+      .update({ rewards_points: newPoints })
+      .eq("id", resource.uploader_profile_id);
+
+    if (profileUpdateError) {
+      console.error("Profile update failed:", profileUpdateError);
+      toast.error("Failed to update profile.");
+    } else {
+      toast.success("Profile updated!");
+    }
+
+    onAction();
   };
 
   const getStatusBadge = (status) => {
@@ -123,15 +179,11 @@ export default function ResourceCard({ resource, onAction }) {
         );
       case "REJECTED":
         return (
-          <button
-            onClick={() => setShowPreview(true)}
-            className={`${baseButtonClass} bg-white text-[#2B3333]`}
-            aria-label="Preview"
-          >
-            <MdVisibility className={iconButtonClass} />
-            <span className="sr-only sm:not-sr-only sm:ml-1">Preview</span>
-          </button>
+          <span className="text-sm text-gray-500 italic">
+            Preview not available
+          </span>
         );
+
       default:
         return null;
     }
@@ -191,13 +243,13 @@ export default function ResourceCard({ resource, onAction }) {
           {getActionButtons(resource.status)}
         </div>
       </div>
-
-      {showPreview && (
+      {showPreview && resource.status !== "REJECTED" && (
         <PreviewModal
           filePath={resource.file_path}
           onClose={() => setShowPreview(false)}
         />
       )}
+
       {showReject && (
         <RejectModal
           resourceId={resource.id}

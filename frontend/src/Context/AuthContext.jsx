@@ -5,9 +5,8 @@ const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
   const [session, setSession] = useState(undefined);
-  const [loadingAuth, setLoadingAuth] = useState(true); 
+  const [loadingAuth, setLoadingAuth] = useState(true);
 
-  
   const fetchAndStoreUserProfile = async (userId) => {
     const { data, error } = await supabase
       .from("profiles")
@@ -24,7 +23,6 @@ export const AuthContextProvider = ({ children }) => {
     }
   };
 
-  
   const SignInUser = async (email, password) => {
     try {
       let { data, error } = await supabase.auth.signInWithPassword({
@@ -47,7 +45,6 @@ export const AuthContextProvider = ({ children }) => {
 
           console.log("Sign-up success:", signUpData);
           if (signUpData.user?.id) {
-
           }
           return { success: true, data: signUpData }; // signUpData contains the new session
         } else {
@@ -103,25 +100,27 @@ export const AuthContextProvider = ({ children }) => {
 
   // Sign out
   async function SignOut() {
-    localStorage.removeItem("userProfile"); 
+    localStorage.removeItem("userProfile");
     const { error } = await supabase.auth.signOut();
     if (error) {
       console.error("Error signing out:", error);
     }
-    
   }
 
   useEffect(() => {
     setLoadingAuth(true); // Set loading true at the start
-    supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
-      setSession(initialSession);
-      if (initialSession?.user?.id) {
-        fetchAndStoreUserProfile(initialSession.user.id);
-      }
-      setLoadingAuth(false); 
-    }).catch(() => {
-      setLoadingAuth(false); 
-    });
+    supabase.auth
+      .getSession()
+      .then(({ data: { session: initialSession } }) => {
+        setSession(initialSession);
+        if (initialSession?.user?.id) {
+          fetchAndStoreUserProfile(initialSession.user.id);
+        }
+        setLoadingAuth(false);
+      })
+      .catch(() => {
+        setLoadingAuth(false);
+      });
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (_event, currentSession) => {
@@ -131,7 +130,7 @@ export const AuthContextProvider = ({ children }) => {
         } else {
           localStorage.removeItem("userProfile");
         }
-        setLoadingAuth(false); 
+        setLoadingAuth(false);
       }
     );
 
@@ -140,57 +139,65 @@ export const AuthContextProvider = ({ children }) => {
     };
   }, []);
 
-  
   useEffect(() => {
     const ensureProfile = async () => {
       if (session?.user) {
         const user = session.user;
         const { data: existingProfile, error: selectError } = await supabase
           .from("profiles")
-          .select("id, role") 
+          .select("id, role")
           .eq("id", user.id)
           .single();
 
-        if (selectError && selectError.code !== 'PGRST116') { 
-            console.error("Error checking for profile:", selectError);
-            return;
+        if (selectError && selectError.code !== "PGRST116") {
+          console.error("Error checking for profile:", selectError);
+          return;
         }
-        
-        if (!existingProfile) { // Profile does not exist, create it
-          console.log(`AuthContext: Profile for ${user.id} not found, creating one.`);
-          const { error: insertError } = await supabase.from("profiles").insert({
-            id: user.id,
-            email: user.email?.toLowerCase(),
-            full_name:
-              user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || "",
-            avatar_url: user.user_metadata?.avatar_url || "",
-            role: 'user', 
-          });
+
+        if (!existingProfile) {
+          // Profile does not exist, create it
+          console.log(
+            `AuthContext: Profile for ${user.id} not found, creating one.`
+          );
+          const { error: insertError } = await supabase
+            .from("profiles")
+            .insert({
+              id: user.id,
+              email: user.email?.toLowerCase(),
+              full_name:
+                user.user_metadata?.full_name ||
+                user.user_metadata?.name ||
+                user.email?.split("@")[0] ||
+                "",
+              avatar_url: user.user_metadata?.avatar_url || "",
+              role: "user",
+            });
           if (insertError) {
             console.error("Error creating profile:", insertError);
           } else {
-            
             await fetchAndStoreUserProfile(user.id);
           }
-        } else if (existingProfile && !existingProfile.role) { 
-            console.log(`AuthContext: Profile for ${user.id} exists but missing role, updating.`);
-            const { error: updateRoleError } = await supabase
-                .from("profiles")
-                .update({ role: 'user' })
-                .eq("id", user.id);
-            if (updateRoleError) {
-                console.error("Error updating profile role:", updateRoleError);
-            } else {
-                await fetchAndStoreUserProfile(user.id); 
-            }
+        } else if (existingProfile && !existingProfile.role) {
+          console.log(
+            `AuthContext: Profile for ${user.id} exists but missing role, updating.`
+          );
+          const { error: updateRoleError } = await supabase
+            .from("profiles")
+            .update({ role: "user" })
+            .eq("id", user.id);
+          if (updateRoleError) {
+            console.error("Error updating profile role:", updateRoleError);
+          } else {
+            await fetchAndStoreUserProfile(user.id);
+          }
         }
       }
     };
-    
-    if (session && !loadingAuth) { 
-        ensureProfile();
+
+    if (session && !loadingAuth) {
+      ensureProfile();
     }
-  }, [session, loadingAuth]); 
+  }, [session, loadingAuth]);
 
   return (
     <AuthContext.Provider

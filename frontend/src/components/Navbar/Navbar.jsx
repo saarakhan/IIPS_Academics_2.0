@@ -10,76 +10,82 @@ import { supabase } from "../../supabaseClient";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { session } = UserAuth(); 
+  const { session } = UserAuth();
   const [name, setName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [OpenLogoutModal, SetOpenLogoutModal] = useState(false);
-  
-  
-  const [userProfile, setUserProfile] = useState(JSON.parse(localStorage.getItem("userProfile")));
+
+  const [userProfile, setUserProfile] = useState(
+    JSON.parse(localStorage.getItem("userProfile"))
+  );
 
   useEffect(() => {
-   
     const currentProfile = JSON.parse(localStorage.getItem("userProfile"));
     setUserProfile(currentProfile);
 
     if (currentProfile?.first_name || currentProfile?.last_name) {
-      setName(`${currentProfile.first_name || ""} ${currentProfile.last_name || ""}`.trim());
+      setName(
+        `${currentProfile.first_name || ""} ${
+          currentProfile.last_name || ""
+        }`.trim()
+      );
     } else if (session?.user?.user_metadata?.full_name) {
       setName(session.user.user_metadata.full_name);
     } else if (session?.user?.email) {
-      setName(session.user.email.split('@')[0]);
+      setName(session.user.email.split("@")[0]);
     } else {
       setName("");
     }
-    
-    
+
     const handleStorageChange = () => {
-        const updatedProfile = JSON.parse(localStorage.getItem("userProfile"));
-        setUserProfile(updatedProfile);
-        if (updatedProfile?.first_name || updatedProfile?.last_name) {
-            setName(`${updatedProfile.first_name || ""} ${updatedProfile.last_name || ""}`.trim());
-        } else if (session?.user?.user_metadata?.full_name) { 
-            setName(session.user.user_metadata.full_name);
-        }
+      const updatedProfile = JSON.parse(localStorage.getItem("userProfile"));
+      setUserProfile(updatedProfile);
+      if (updatedProfile?.first_name || updatedProfile?.last_name) {
+        setName(
+          `${updatedProfile.first_name || ""} ${
+            updatedProfile.last_name || ""
+          }`.trim()
+        );
+      } else if (session?.user?.user_metadata?.full_name) {
+        setName(session.user.user_metadata.full_name);
+      }
     };
-    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener("storage", handleStorageChange);
     return () => {
-        window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener("storage", handleStorageChange);
     };
-
   }, [session]);
-
 
   const handleClose = useCallback(() => {
     SetOpenLogoutModal(false);
   }, []);
 
   useEffect(() => {
-    
     if (!name && session?.user?.user_metadata?.full_name) {
       setName(session.user.user_metadata.full_name);
-    } else if (!name && session?.user?.email && (!userProfile?.first_name && !userProfile?.last_name)) {
-     
-      setName(session.user.email.split('@')[0]);
+    } else if (
+      !name &&
+      session?.user?.email &&
+      !userProfile?.first_name &&
+      !userProfile?.last_name
+    ) {
+      setName(session.user.email.split("@")[0]);
     }
   }, [session, name, userProfile]);
 
   useEffect(() => {
-   
     if (userProfile?.avatar_url) {
       setAvatarUrl(userProfile.avatar_url);
       return;
     }
 
-    
     const fetchAvatar = async () => {
       if (!session?.user?.id) {
-        setAvatarUrl(null); 
+        setAvatarUrl(null);
         return;
       }
-      
-      const cachedAvatar = localStorage.getItem(`avatarUrl-${session.user.id}`); 
+
+      const cachedAvatar = localStorage.getItem(`avatarUrl-${session.user.id}`);
       if (cachedAvatar) {
         setAvatarUrl(cachedAvatar);
         return;
@@ -93,7 +99,7 @@ export default function Navbar() {
 
       if (error) {
         console.error("Error fetching avatar URL for Navbar:", error.message);
-        setAvatarUrl(null); 
+        setAvatarUrl(null);
         return;
       }
 
@@ -101,13 +107,12 @@ export default function Navbar() {
         setAvatarUrl(data.avatar_url);
         localStorage.setItem(`avatarUrl-${session.user.id}`, data.avatar_url);
       } else {
-        setAvatarUrl(null); 
+        setAvatarUrl(null);
       }
     };
 
     fetchAvatar();
-    
-  }, [session?.user?.id, userProfile?.avatar_url]); 
+  }, [session?.user?.id, userProfile?.avatar_url]);
 
   const location = useLocation();
 
@@ -118,7 +123,7 @@ export default function Navbar() {
 
   return (
     <nav
-      className="bg-[#FFFEFE] text-[#2B3333] px-4 py-2 border-b border-[#C79745] top-0 z-50"
+      className="bg-[#FFFEFE] text-[#2B3333] px-4 py-2 border-b border-[#C79745] top-0 z-50 sticky"
       style={{
         boxShadow: "0px 4px 16px 20px rgba(0, 0, 0, 0.05)",
       }}
@@ -170,10 +175,15 @@ export default function Navbar() {
           {session ? (
             <>
               <Link
-                to={(userProfile && userProfile.role === "admin") ? "/admin" : "/dashboard"} // Defensive check for userProfile and role
+                // to={
+                //   userProfile && userProfile.role === "admin"
+                //     ? "/admin"
+                //     : "/dashboard"
+                // }
+                to="/dashboard"
                 className="flex items-center space-x-2"
               >
-                <Avatar alt={name || "User"} src={avatarUrl || undefined} /> {/* Provide fallback for alt and ensure src is not null */}
+                <Avatar alt={name || "User"} src={avatarUrl || undefined} />{" "}
                 <span>{name || "Profile"}</span>
               </Link>
 
@@ -232,35 +242,43 @@ export default function Navbar() {
           )}
           {}
           {session && userProfile && userProfile.role === "admin" && (
-             <Link
-                to="/admin"
-                className={`block px-4 py-2 rounded-md transition-all ${
-                  pathMatch("admin")
-                    ? "bg-[#2B3333] text-white"
-                    : "text-[#2B3333] hover:bg-[#2B3333] hover:text-white"
-                }`}
-                onClick={() => setMenuOpen(false)}
-              >
-                Admin Panel
-              </Link>
+            <Link
+              to="/admin"
+              className={`block px-4 py-2 rounded-md transition-all ${
+                pathMatch("admin")
+                  ? "bg-[#2B3333] text-white"
+                  : "text-[#2B3333] hover:bg-[#2B3333] hover:text-white"
+              }`}
+              onClick={() => setMenuOpen(false)}
+            >
+              Admin Panel
+            </Link>
           )}
 
           <div className="pt-3 border-t border-gray-200">
             {session ? (
               <div className="flex flex-col items-start space-y-2">
                 <Link
-                  to={(userProfile && userProfile.role === "admin") ? "/admin" : "/dashboard"} 
+                  to={
+                    userProfile && userProfile.role === "admin"
+                      ? "/admin"
+                      : "/dashboard"
+                  }
                   className="flex items-center space-x-2 px-4 py-2 text-[#2B3333] hover:bg-[#C79745] rounded-md w-full"
                   onClick={() => setMenuOpen(false)}
                 >
                   {}
-                  <Avatar alt={name || "User"} src={avatarUrl || undefined} sx={{ width: 24, height: 24 }} />
+                  <Avatar
+                    alt={name || "User"}
+                    src={avatarUrl || undefined}
+                    sx={{ width: 24, height: 24 }}
+                  />
                   <span> {name || "Profile"}</span>
                 </Link>
                 <button
                   onClick={() => {
                     SetOpenLogoutModal(true);
-                    setMenuOpen(false); 
+                    setMenuOpen(false);
                   }}
                   className="bg-[#2B3333] text-[#F3F6F2] hover:bg-black px-4 py-2 rounded text-sm w-full"
                 >

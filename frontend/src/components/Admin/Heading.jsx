@@ -3,7 +3,7 @@ const Heading = () => {
     <div className="mb-8 relative">
       <div className="absolute -top-6 -left-6 w-24 h-24 bg-indigo-100 rounded-full opacity-70 blur-2xl"></div>
       <div className="absolute top-10 right-10 w-16 h-16 bg-blue-100 rounded-full opacity-70 blur-xl"></div>
-      <h1 className="text-4xl font-bold text-gray-900 relative z-10 bg-black inline-block text-transparent bg-clip-text">
+      <h1 className="text-4xl font-bold text-gray-900 relative z-10 bg-black inline-block bg-clip-text">
         Admin Panel
       </h1>
       <p className="text-gray-600 mt-2 text-lg max-w-2xl">
