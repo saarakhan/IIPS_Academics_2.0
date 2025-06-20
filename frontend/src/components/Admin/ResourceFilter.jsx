@@ -8,7 +8,7 @@ const { Option } = Select;
 
 const statusTabs = ["ALL", "PENDING", "APPROVED", "REJECTED"];
 
-export default function ResourceFilter({ filters, onChange, departments }) {
+export default function ResourceFilter({ filters, onChange, departments, onStatusChange }) {
   const [subject, setSubject] = useState(filters.subject || "");
   const [contributor, setContributor] = useState(filters.contributor || "");
   const [course, setCourse] = useState(filters.course || "");
@@ -45,6 +45,7 @@ export default function ResourceFilter({ filters, onChange, departments }) {
       ...filters,
       status: status === "ALL" ? "" : status,
     });
+    if (onStatusChange) onStatusChange(status);
   };
 
   return (
@@ -81,7 +82,7 @@ export default function ResourceFilter({ filters, onChange, departments }) {
       <div className={`transition-all duration-300 ease-in-out ${isExpanded ? "max-h-[800px] opacity-100" : "max-h-0 opacity-0 overflow-hidden"}`}>
         
         {/* Tabs */}
-        <div className="px-4 pt-4 grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
+        <div className="px-4 pt-4 grid grid-cols-2 sm:flex sm:flex-wrap gap-2 ">
           {statusTabs.map((tab) => (
             <button
               key={tab}
@@ -109,7 +110,7 @@ export default function ResourceFilter({ filters, onChange, departments }) {
               placeholder="Search subjects..."
               prefix={<SearchOutlined className="text-gray-400" />}
               size="middle"
-              className="w-full"
+              className="w-full custom-input"
             />
           </div>
 
@@ -123,7 +124,7 @@ export default function ResourceFilter({ filters, onChange, departments }) {
               placeholder="Contributor name"
               prefix={<UserOutlined className="text-gray-400" />}
               size="middle"
-              className="w-full"
+              className="w-full custom-input"
             />
           </div>
 
@@ -135,7 +136,7 @@ export default function ResourceFilter({ filters, onChange, departments }) {
               onChange={(value) => setCourse(value)}
               allowClear
               placeholder="All Programs"
-              className="w-full"
+              className="w-full custom-select"
               size="middle"
               popupMatchSelectWidth={false}
               showSearch
