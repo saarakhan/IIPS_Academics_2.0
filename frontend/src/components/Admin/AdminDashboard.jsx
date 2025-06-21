@@ -29,9 +29,8 @@ export default function AdminDashboard() {
   const numberResourceDisplay = 5;
 
   useEffect(() => {
-  updateCounts();
-}, []);
-
+    updateCounts();
+  }, []);
 
   useEffect(() => {
     fetchResources(page);
@@ -46,7 +45,7 @@ export default function AdminDashboard() {
       const { data, error } = await supabase
         .from("courses")
         .select("id, name")
-        .order("name", { ascending: true });
+        .order("name", { ascending: false });
 
       if (!error) setDepartments(data || []);
     };
@@ -64,6 +63,8 @@ export default function AdminDashboard() {
       .select(
         `*, profiles!resources_uploader_profile_id_fkey(first_name, last_name, course, semester), subjects(name)`
       )
+      .order("updated_at", { ascending: false })
+
       .range(from, to);
 
     if (status && status !== "ALL") {
@@ -206,7 +207,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Results */}
-          <div>
+          <div >
             {loading ? (
               [...Array(3)].map((_, i) => (
                 <div key={i} className="p-6">
@@ -254,6 +255,7 @@ export default function AdminDashboard() {
                         key={resource.id}
                         resource={resource}
                         onAction={handleAction}
+                        className="mb-4"
                       />
                     ))}
                 </div>
