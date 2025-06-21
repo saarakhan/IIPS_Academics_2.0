@@ -58,9 +58,8 @@ export default function Notes({ canUpload, fetchTrigger }) {
           data.map((note) => ({
             id: note.id,
             title: note.title,
-            semester: `${note.subject?.course?.name || ""} Semester ${
-              note.subject?.semester_number || ""
-            }`,
+            semester: `${note.subject?.course?.name || ""} Semester ${note.subject?.semester_number || ""
+              }`,
             date: note.uploaded_at
               ? new Date(note.uploaded_at).toLocaleDateString()
               : "N/A",
@@ -103,7 +102,7 @@ export default function Notes({ canUpload, fetchTrigger }) {
 
   return (
     <div className="mt-3">
-      <div className="flex flex-col gap-2 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar"> 
+      <div className="flex flex-col gap-2 ">
         {notes.length > 0 ? (
           notes.map((item) => (
             <Card key={item.id}>
@@ -115,7 +114,7 @@ export default function Notes({ canUpload, fetchTrigger }) {
                     </div>
                     <div className="flex flex-col">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-sm sm:text-base break-words">
+                        <h3 className="font-semibold text-sm sm:text-base break-words max-w-full overflow-hidden text-ellipsis whitespace-normal">
                           {item.title}
                         </h3>
                         <span

@@ -188,7 +188,7 @@ export default function ResourceCard({ resource, onAction }) {
         return null;
     }
   };
-  if (!resource || resource.status === "REJECTED") return null;
+  // if (!resource || resource.status === "REJECTED") return null;
 
   return (
     <div className="border-2 border-gray-300 rounded-md p-3 sm:p-4 hover:shadow-[7px_8px_4.8px_rgba(0,0,0,0.1)] bg-white">

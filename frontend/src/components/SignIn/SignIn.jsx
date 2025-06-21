@@ -31,7 +31,7 @@ const SignIn = () => {
       await refreshUserProfile(); // Ensure latest profile
       toast.success("Logged in successfully!");
       setTimeout(() => {
-        navigate("/"); 
+        navigate("/otp-verification");
       }, 1000);
     }
   };
