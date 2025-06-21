@@ -4,46 +4,21 @@ import { FaAngleRight } from "react-icons/fa6";
 import noData from "../../../assets/noData.svg";
 import { UserAuth } from "../../../Context/AuthContext";
 import { supabase } from "../../../supabaseClient";
-import { CalendarIcon, PlusIcon } from "../../../Icons";
-import ResourceUploadModal from "./ResourceUploadModal";
-import toast from "react-hot-toast";
+import { CalendarIcon } from "../../../Icons";
 
 function Card({ children }) {
-  return (
-    <div className="bg-white shadow-sm border-b-2  cursor-pointer">
-      {children}
-    </div>
-  );
+  return <div className="bg-white border-b-2 cursor-pointer">{children}</div>;
 }
 
 function CardContent({ children }) {
-  return (
-    <div className="p-4 flex items-center justify-between ">{children}</div>
-  );
+  return <div className="p-4 flex items-center justify-between">{children}</div>;
 }
-export default function Syllabus({ canUpload }) {
+
+export default function Syllabus({ fetchTrigger }) {
   const { session } = UserAuth();
   const [syllabusFiles, setSyllabusFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [fetchTrigger, setFetchTrigger] = useState(0);
-
-  function handleOpenModal() {
-    if (!canUpload) {
-      toast.error("complete your profile to upload resource");
-      return;
-    }
-    setIsModalOpen(true);
-  }
-  const handleCloseModal = () => setIsModalOpen(false);
-
-  const handleUploadSuccess = useCallback(() => {
-    setFetchTrigger((prev) => prev + 1);
-    setTimeout(() => {
-      handleCloseModal();
-    }, 1500);
-  }, []);
 
   useEffect(() => {
     if (!session?.user?.id) {
@@ -57,18 +32,15 @@ export default function Syllabus({ canUpload }) {
       try {
         const { data, error: fetchError } = await supabase
           .from("resources")
-          .select(
-            `
+          .select(`
             id, title, uploaded_at, status,
             subject:subject_id (
               semester_number,
               course:course_id (name)
             )
-          `
-          )
+          `)
           .eq("uploader_profile_id", session.user.id)
           .eq("resource_type", "SYLLABUS")
-
           .order("uploaded_at", { ascending: false });
 
         if (fetchError) throw fetchError;
@@ -77,18 +49,16 @@ export default function Syllabus({ canUpload }) {
           data.map((syllabus) => ({
             id: syllabus.id,
             title: syllabus.title,
-            semester: `${syllabus.subject?.course?.name || ""} Semester ${
-              syllabus.subject?.semester_number || ""
-            }`,
+            semester: `${syllabus.subject?.course?.name || ""} Semester ${syllabus.subject?.semester_number || ""
+              }`,
             date: syllabus.uploaded_at
               ? new Date(syllabus.uploaded_at).toLocaleDateString()
               : "N/A",
-
             status: syllabus.status,
           }))
         );
       } catch (err) {
-        console.error("Error fetching user syllabus:", err);
+        console.error("Error fetching syllabus:", err);
         setError(err.message || "Failed to fetch syllabus files.");
         setSyllabusFiles([]);
       } finally {
@@ -112,19 +82,12 @@ export default function Syllabus({ canUpload }) {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="text-center py-8">Loading your syllabus files...</div>
-    );
-  }
-
-  if (error) {
-    return <div className="text-center py-8 text-red-500">Error: {error}</div>;
-  }
+  if (loading) return <div className="text-center py-8">Loading your syllabus files...</div>;
+  if (error) return <div className="text-center py-8 text-red-500">Error: {error}</div>;
 
   return (
     <div className="mt-3">
-       <div className="flex flex-col gap-2 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+      <div className="flex flex-col gap-2">
         {syllabusFiles.length > 0 ? (
           syllabusFiles.map((item) => (
             <Card key={item.id}>
@@ -151,16 +114,13 @@ export default function Syllabus({ canUpload }) {
                       <div className="flex flex-col sm:flex-row gap-2 mt-2 text-sm text-[#3B3838]">
                         <span className="flex items-center gap-1">
                           <CalendarIcon className="w-4 h-4" />
-                          <span className="text-xs sm:text-sm">
-                            {item.date}
-                          </span>
+                          <span className="text-xs sm:text-sm">{item.date}</span>
                         </span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 sm:gap-6  sm:mt-0 self-start sm:self-center ml-auto sm:ml-12">
-                    {/* Reward display removed */}
-                    <FaAngleRight className="bg-white shadow-[3px_3px_0px_0px_rgba(0,0,0,0.2)] rounded-full w-5 h-5 sm:w-6 sm:h-6 " />
+                  <div className="flex items-center gap-3 sm:gap-6 self-start sm:self-center ml-auto sm:ml-12">
+                    <FaAngleRight className="border-2 rounded-full w-5 h-5 sm:w-6 sm:h-6 shadow-[3px_4px_4px_rgba(0,0,0,0.25)]" />
                   </div>
                 </div>
               </CardContent>
@@ -182,12 +142,7 @@ export default function Syllabus({ canUpload }) {
           </div>
         )}
       </div>
-      <ResourceUploadModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        onUploadSuccess={handleUploadSuccess}
-        defaultResourceType="SYLLABUS"
-      />
     </div>
   );
 }
+

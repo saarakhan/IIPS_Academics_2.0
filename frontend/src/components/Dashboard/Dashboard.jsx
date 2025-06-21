@@ -56,7 +56,7 @@ const Dashboard = () => {
       const currentProfileCompletion = Math.round((completedFields / totalFields) * 100);
       setProfileCompletion(currentProfileCompletion);
 
-      if (currentProfileCompletion === 100 && currentProfileCompletion.verified === "TRUE") {
+      if (currentProfileCompletion === 100 && profile.verified === true) {
         SetCanUpload(true);
       } else {
         SetCanUpload(false);
@@ -116,7 +116,7 @@ const Dashboard = () => {
         SetCanUpload(true);
         clearInterval(interval);
       }
-    }, 100);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, [session?.user?.id]);
@@ -125,9 +125,7 @@ const Dashboard = () => {
     const file = event.target.files[0];
     if (!file || !session?.user?.id) {
       setAvatarError("No file selected or user not available.");
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      if (fileInputRef.current) fileInputRef.current.value = "";
       return;
     }
 
@@ -136,9 +134,7 @@ const Dashboard = () => {
     const acceptedImageTypes = ["image/jpeg", "image/png", "image/gif"];
     if (!acceptedImageTypes.includes(file.type)) {
       setAvatarError("Invalid file type. Please select a JPG, PNG, or GIF.");
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      if (fileInputRef.current) fileInputRef.current.value = "";
       return;
     }
 
@@ -155,9 +151,7 @@ const Dashboard = () => {
       if (compressedFile.size > 1 * 1024 * 1024) {
         setAvatarError("Compressed file is still too large (max 1MB).");
         setUploadingAvatar(false);
-        if (fileInputRef.current) {
-          fileInputRef.current.value = "";
-        }
+        if (fileInputRef.current) fileInputRef.current.value = "";
         return;
       }
 
@@ -197,9 +191,7 @@ const Dashboard = () => {
       setAvatarError(`Upload failed: ${err.message}`);
     } finally {
       setUploadingAvatar(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
 
@@ -210,7 +202,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="flex flex-col items-center gap-2  w-full ">
+    <div className="flex flex-col items-center gap-2 w-full">
       {/* Header */}
       <div className="w-full bg-[#F4F9FF] p-5">
         <p className="text-center  text-[40px] font-bold">Profile</p>
@@ -269,9 +261,52 @@ const Dashboard = () => {
                 </>
               ) : (
                 "Course Info N/A"
+        
               )}
-            </p>
-          </div>
+              {!uploadingAvatar && session?.user?.id === profileData?.id && (
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="absolute -bottom-1 -right-1 bg-[#C79745] text-white p-1.5 rounded-full shadow-md hover:bg-[#b3863c] transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+                  title="Change profile picture"
+                >
+                  <PlusIcon className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+
+            {avatarError && (
+              <p className="text-xs text-red-500 mb-2 text-center max-w-full break-words">
+                {avatarError}
+              </p>
+            )}
+
+            {/* User info */}
+            <div className="text-center mb-6 w-full">
+              <p className="font-bold text-lg lg:text-xl mb-2 break-words">
+                {loading
+                  ? "Loading..."
+                  : error
+                    ? "Error"
+                    : profileData
+                      ? `${profileData.first_name || ""} ${profileData.last_name || ""
+                        }`.trim() || "User Name"
+                      : "User Name"}
+              </p>
+              <p className="text-[#3B3838] text-sm lg:text-base break-words">
+                {loading ? (
+                  "..."
+                ) : error ? (
+                  "N/A"
+                ) : profileData && profileData.course && profileData.semester ? (
+                  <>
+                    {profileData.course.name} {profileData.semester}
+                    <sup>th</sup> Semester
+                  </>
+                ) : (
+                  "Course Info N/A"
+                )}
+              </p>
+            </div>
 
           {/* Profile Completion */}
           <div className="w-full mb-4">
@@ -284,8 +319,8 @@ const Dashboard = () => {
                 <span className="text-gray-700 font-medium">Profile Completion</span>
               </div>
               <span className="text-[#C79745] font-semibold flex-shrink-0">{loading ? "..." : error ? "N/A" : `${profileCompletion}%`}</span>
+
             </div>
-          </div>
 
           {/* Progress Bar */}
           <div className="w-full mb-6">
@@ -312,11 +347,11 @@ const Dashboard = () => {
                 <div className="flex flex-col items-center">
                   <p className="text-xl lg:text-2xl font-bold">{stats.avgRating}</p>
                   <p className="text-[#C79745] text-xs lg:text-sm">Ratings</p>
+          
                 </div>
-              </div>
-            )}
-            <hr className="border-1 mt-4" />
-          </div>
+              )}
+              <hr className="border-1 mt-4" />
+            </div>
 
           {/* Navigation Buttons */}
           <div className="w-full flex flex-col gap-3">
@@ -331,21 +366,24 @@ const Dashboard = () => {
                 <span>{item.label}</span>
               </button>
             ))}
+
           </div>
-        </div>
 
         {/* Main Content Area */}
         <div className="flex mb-10 flex-col border-2 rounded-xl w-full lg:flex-1 h-[650px] bg-white  shadow-[5px_7px_8px_rgba(0,0,0,0.25)]">
           <div className="p-6 h-full overflow-y-auto">
             {active === "Contributions" ? <Contributions canUpload={canUpload} /> : active === "Rewards" ? <Rewards /> : active === "Downloads" ? <Downloads /> : null}
+        
           </div>
         </div>
       </div>
 
       {/* Profile Completion Modal */}
       <ProfileCompletionModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} initialData={profileData ?? undefined} onProfileUpdate={fetchDashboardData} />
+
     </div>
   );
 };
 
 export default Dashboard;
+
