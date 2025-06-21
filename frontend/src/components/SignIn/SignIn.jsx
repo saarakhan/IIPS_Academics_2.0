@@ -10,7 +10,7 @@ const SignIn = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const { SignInUser, signInWithGoogle, signInWithGitHub } = UserAuth();
+  const { SignInUser, signInWithGoogle, signInWithGitHub, refreshUserProfile } = UserAuth();
   const navigate = useNavigate();
 
   const handleSignIn = async (e) => {
@@ -18,8 +18,7 @@ const SignIn = () => {
     setLoading(true);
     setError(null);
 
-    const { success, data, error: signInError } = await SignInUser(email, password); // Renamed error to avoid conflict
-    setLoading(false);
+    const { success, data, error: signInError } = await SignInUser(email, password); 
 
     if (!success) {
       setError(signInError);
@@ -29,9 +28,10 @@ const SignIn = () => {
         setError(null);
       }, 3000);
     } else {
+      await refreshUserProfile(); // Ensure latest profile
       toast.success("Logged in successfully!");
       setTimeout(() => {
-        navigate("/otp-verification");
+        navigate("/"); 
       }, 1000);
     }
   };
@@ -48,6 +48,7 @@ const SignIn = () => {
       toast.error(googleError || "Google sign-in failed");
       setTimeout(() => setError(null), 3000);
     } else {
+      await refreshUserProfile(); // Ensure latest profile
       toast.success("Signed in with Google!");
       setTimeout(() => {
         navigate("/");
@@ -59,7 +60,7 @@ const SignIn = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const { success, error: githubError } = await signInWithGitHub(); // Renamed error
+    const { success, error: githubError } = await signInWithGitHub(); 
     setLoading(false);
 
     if (!success) {
@@ -68,6 +69,7 @@ const SignIn = () => {
 
       setTimeout(() => setError(null), 3000);
     } else {
+      await refreshUserProfile(); // Ensure latest profile
       toast.success("Signed in with GitHub!");
       setTimeout(() => {
         navigate("/");

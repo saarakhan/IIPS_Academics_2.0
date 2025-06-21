@@ -8,12 +8,16 @@ export default function PreviewModal({ filePath, onClose }) {
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     async function fetchSignedUrl() {
-      // const { data, error } = await supabase.storage.from('uploads').createSignedUrl(file, 60 * 60, { download: false });
+      if (!filePath) {
+        setError('No file path found for this resource.');
+        return;
+      }
       const { data, error } = await supabase.storage.from('uploads').createSignedUrl(filePath, 60 * 60);
-
       if (error) {
         console.error('Error fetching signed URL:', error);
-        setError('Failed to load preview');
+        setError('Failed to load preview: ' + (error.message || error.error_description || 'Unknown error'));
+      } else if (!data?.signedUrl) {
+        setError('No preview available for this file.');
       } else {
         setUrl(data.signedUrl);
       }
