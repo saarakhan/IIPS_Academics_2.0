@@ -14,7 +14,6 @@ const Downloads = () => {
   const [downloadHistory, setDownloadHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // preview state
   const [showPreview, setShowPreview] = useState(false);
   const [previewUrl, setPreviewUrl] = useState(null);
 
@@ -30,16 +29,14 @@ const Downloads = () => {
       try {
         const { data, error: fetchError } = await supabase
           .from('user_download_log')
-          .select(
-            `
+          .select(`
             id, downloaded_at, 
             resource:resource_id (
               title, 
               file_path,
               subject:subject_id (name)
             )
-          `
-          )
+          `)
           .eq('profile_id', session.user.id)
           .order('downloaded_at', { ascending: false });
 
@@ -56,15 +53,7 @@ const Downloads = () => {
 
     fetchDownloads();
   }, [session?.user?.id]);
-  if (loading) {
-    return <div className='text-center py-8'>Loading your download history...</div>;
-  }
 
-  if (error) {
-    return <div className='text-center py-8 text-red-500'>Error: {error}</div>;
-  }
-
-  // Download function
   const downloadFile = async (filePath, title) => {
     const { data, error } = await supabase.storage.from('uploads').download(filePath);
 
@@ -77,9 +66,17 @@ const Downloads = () => {
     saveAs(blob, `iips_academics_${title}.pdf`);
   };
 
+  if (loading) {
+    return <div className='text-center py-8'>Loading your download history...</div>;
+  }
+
+  if (error) {
+    return <div className='text-center py-8 text-red-500'>Error: {error}</div>;
+  }
+
   return (
     <div className='flex flex-col h-full'>
-      {/* Header Section - Fixed height */}
+      {/* Header Section */}
       <div className='pb-4'>
         <p className='text-3xl font-bold'>Your Downloads</p>
         <p className='text-base text-gray-600'>Resources you've downloaded.</p>
@@ -90,22 +87,32 @@ const Downloads = () => {
         {downloadHistory.length > 0 ? (
           <div className='space-y-3'>
             {downloadHistory.map(log => (
-              <div key={log.id} className='bg-white shadow-sm rounded-lg border border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors'>
+              <div
+                key={log.id}
+                className='bg-white shadow-sm rounded-lg border border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors'
+              >
                 <div className='p-4'>
-                  {/* Top section */}
+                  {/* Top Section */}
                   <div className='flex gap-4'>
-                    <div className='flex-shrink-0 p-2 bg-gray-100 rounded-full'>
-                      <CiFileOn className='w-5 h-5' />
+                    <div className='flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full shrink-0'>
+                      <CiFileOn className='w-5 h-5 text-gray-600' />
                     </div>
 
-                    {/* Resource details */}
-                    <div className='flex-grow'>
+                    <div className='flex-grow min-w-0'>
                       <div className='flex flex-col'>
-                        <h3 className='font-semibold text-lg text-gray-800'>{log.resource?.title || 'Resource Title Unavailable'}</h3>
-                        {log.resource?.subject?.name && <p className='text-sm text-gray-500 mt-1'>{log.resource.subject.name}</p>}
+                        <h3 className='font-semibold text-lg text-gray-800 break-words whitespace-normal overflow-hidden'>
+                          {log.resource?.title || 'Resource Title Unavailable'}
+                        </h3>
+                        {log.resource?.subject?.name && (
+                          <p className='text-sm text-gray-500 mt-1 break-words whitespace-normal overflow-hidden'>
+                            {log.resource.subject.name}
+                          </p>
+                        )}
                         <div className='flex items-center text-xs text-gray-500 mt-2'>
-                          <CalendarIcon className='w-3 h-3 mr-1' />
-                          <span>Downloaded {formatDistanceToNow(new Date(log.downloaded_at))} ago</span>
+                          <CalendarIcon className='w-3 h-3 mr-1 shrink-0' />
+                          <span className='truncate'>
+                            Downloaded {formatDistanceToNow(new Date(log.downloaded_at))} ago
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -115,15 +122,17 @@ const Downloads = () => {
                   <div className='flex gap-2 mt-3 ml-12'>
                     <button
                       onClick={() => downloadFile(log.resource?.file_path, log.resource?.title)}
-                      className='flex items-center text-sm text-gray-700 border border-gray-200 px-2.5 py-1 rounded-md hover:bg-gray-200 transition-colors'>
+                      className='flex items-center text-sm text-gray-700 border border-gray-200 px-2.5 py-1 rounded-md hover:bg-gray-200 transition-colors'
+                    >
                       <DownloadIcon className='w-3.5 h-3.5 mr-1.5' />
                       Download again
                     </button>
 
                     <button
-                      // this will create a signed url
                       onClick={async () => {
-                        const { data, error } = await supabase.storage.from('uploads').createSignedUrl(log.resource?.file_path, 60 * 60);
+                        const { data, error } = await supabase.storage
+                          .from('uploads')
+                          .createSignedUrl(log.resource?.file_path, 60 * 60);
 
                         if (error) {
                           console.error('Preview error:', error.message);
@@ -133,7 +142,8 @@ const Downloads = () => {
                         setPreviewUrl(data.signedUrl);
                         setShowPreview(true);
                       }}
-                      className='flex items-center text-sm text-gray-700 border border-gray-200 px-2.5 py-1 rounded-md hover:bg-gray-200 transition-colors'>
+                      className='flex items-center text-sm text-gray-700 border border-gray-200 px-2.5 py-1 rounded-md hover:bg-gray-200 transition-colors'
+                    >
                       <MdArrowOutward className='w-3.5 h-3.5 mr-1.5' />
                       View
                     </button>
@@ -150,10 +160,15 @@ const Downloads = () => {
           </div>
         )}
       </div>
+
+      {/* Preview Modal */}
       {showPreview && previewUrl && (
         <div className='fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4'>
           <div className='relative w-full max-w-5xl rounded-lg shadow-lg bg-white'>
-            <button onClick={() => setShowPreview(false)} className='absolute top-3 right-3 bg-white rounded-full p-1 shadow-md hover:text-red-500'>
+            <button
+              onClick={() => setShowPreview(false)}
+              className='absolute top-3 right-3 bg-white rounded-full p-1 shadow-md hover:text-red-500'
+            >
               ✕
             </button>
             <iframe src={previewUrl} title='Preview' className='w-full h-[80vh] border rounded' />
@@ -165,3 +180,4 @@ const Downloads = () => {
 };
 
 export default Downloads;
+
