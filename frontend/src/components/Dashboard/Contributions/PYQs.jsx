@@ -1,14 +1,13 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import noData from "../../../assets/noData.svg";
 import { FaAngleRight } from "react-icons/fa6";
 import { IoNewspaperOutline } from "react-icons/io5";
 import { UserAuth } from "../../../Context/AuthContext";
 import { supabase } from "../../../supabaseClient";
 import { CalendarIcon, StarIcon } from "../../../Icons";
-import ResourceUploadModal from "./ResourceUploadModal";
 
 function Card({ children }) {
-  return <div className="bg-white shadow-sm border-b-2 cursor-pointer">{children}</div>;
+  return <div className="bg-white border-b-2 cursor-pointer">{children}</div>;
 }
 
 function CardContent({ children }) {
@@ -83,7 +82,7 @@ export default function PYQs({ canUpload, fetchTrigger }) {
 
   return (
     <div className="mt-3">
-     <div className="flex flex-col gap-2 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+      <div className="flex flex-col gap-2">
         {pyqs.length > 0 ? (
           pyqs.map((item) => (
             <Card key={item.id}>
@@ -116,7 +115,7 @@ export default function PYQs({ canUpload, fetchTrigger }) {
                     </div>
                   </div>
                   <div className="flex items-center gap-3 sm:gap-6 self-start sm:self-center ml-auto sm:ml-12">
-                    <FaAngleRight className="bg-white shadow-[3px_3px_0px_rgba(0,0,0,0.2)] rounded-full w-5 h-5 sm:w-6 sm:h-6" />
+                    <FaAngleRight className="border-2 rounded-full w-5 h-5 sm:w-6 sm:h-6 shadow-[3px_4px_4px_rgba(0,0,0,0.25)]" />
                   </div>
                 </div>
               </CardContent>
