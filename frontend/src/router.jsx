@@ -16,6 +16,9 @@ import NotFound from "./components/Error/NotFound.jsx";
 import RequestPasswordReset from "./components/Auth/RequestPasswordReset.jsx";
 import UpdatePassword from "./components/Auth/UpdatePassword.jsx";
 import OtpVerificationPage from "./components/SignIn/OtpVerificationPage.jsx";
+import TeacherDashboardPage from "./components/Teacher/TeacherDashboardPage.jsx";
+import TeacherAdminRoute from "./components/PrivateRoute/TeacherAdminRoute.jsx";
+import Unauthorized from "./components/Error/Unauthorized.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -45,7 +48,16 @@ export const router = createBrowserRouter([
           </AdminRoute>
         ),
       },
+      {
+        path: "teacher-dashboard",
+        element: (
+          <TeacherAdminRoute>
+            <TeacherDashboardPage />
+          </TeacherAdminRoute>
+        ),
+      },
       { path: "404", element: <NotFound /> },
+      { path: "unauthorized", element: <Unauthorized /> },
       { path: "*", element: <Navigate to="/404" /> },
     ],
   },
