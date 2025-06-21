@@ -31,7 +31,7 @@ const SignIn = () => {
     } else {
       toast.success("Logged in successfully!");
       setTimeout(() => {
-        navigate("/otp-verification");
+        navigate("/");
       }, 1000);
     }
   };
