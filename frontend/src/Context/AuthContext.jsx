@@ -166,67 +166,6 @@ export const AuthContextProvider = ({ children }) => {
     };
   }, []);
 
-  useEffect(() => {
-    const ensureProfile = async () => {
-      if (session?.user) {
-        const user = session.user;
-        const { data: existingProfile, error: selectError } = await supabase
-          .from("profiles")
-          .select("id, role")
-          .eq("id", user.id)
-          .single();
-
-        if (selectError && selectError.code !== "PGRST116") {
-          console.error("Error checking for profile:", selectError);
-          return;
-        }
-
-        if (!existingProfile) {
-          // Profile does not exist, create it
-          console.log(
-            `AuthContext: Profile for ${user.id} not found, creating one.`
-          );
-          const { error: insertError } = await supabase
-            .from("profiles")
-            .insert({
-              id: user.id,
-              email: user.email?.toLowerCase(),
-              full_name:
-                user.user_metadata?.full_name ||
-                user.user_metadata?.name ||
-                user.email?.split("@")[0] ||
-                "",
-              avatar_url: user.user_metadata?.avatar_url || "",
-              role: "user",
-            });
-          if (insertError) {
-            console.error("Error creating profile:", insertError);
-          } else {
-            await fetchAndStoreUserProfile(user.id);
-          }
-        } else if (existingProfile && !existingProfile.role) {
-          console.log(
-            `AuthContext: Profile for ${user.id} exists but missing role, updating.`
-          );
-          const { error: updateRoleError } = await supabase
-            .from("profiles")
-            .update({ role: "user" }) 
-            .eq("id", user.id);
-          if (updateRoleError) {
-            console.error("Error updating profile role:", updateRoleError);
-          } else {
-            await fetchAndStoreUserProfile(user.id); 
-          }
-        }
-      }
-    };
-
-    
-    if (session && !loadingAuth) { 
-        ensureProfile();
-    }
-  }, [session, loadingAuth]);
-
   const verifySignupOtp = async (email, token) => {
     setLoadingAuth(true); 
     try {
@@ -235,11 +174,42 @@ export const AuthContextProvider = ({ children }) => {
         email: email,
         token: token,
       });
-
       if (error) throw error;
-      
       console.log("Signup OTP verification successful, session should be established:", data);
-      
+      // After OTP verification, create profile if it doesn't exist
+      const user = data.user;
+      if (user) {
+        const { data: existingProfile, error: selectError } = await supabase
+          .from("profiles")
+          .select("id")
+          .eq("id", user.id)
+          .single();
+        if (!existingProfile) {
+          const fullName = user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split("@")[0] || "";
+          let first_name = "";
+          let last_name = "";
+          if (fullName) {
+            const nameParts = fullName.trim().split(" ");
+            first_name = nameParts[0];
+            last_name = nameParts.slice(1).join(" ");
+          }
+          const { error: insertError } = await supabase
+            .from("profiles")
+            .insert({
+              id: user.id,
+              email: user.email?.toLowerCase(),
+              first_name,
+              last_name,
+              avatar_url: user.user_metadata?.avatar_url || "",
+              role: "user",
+            });
+          if (insertError) {
+            console.error("Error creating profile after OTP verification:", insertError);
+          } else {
+            await fetchAndStoreUserProfile(user.id);
+          }
+        }
+      }
       return { success: true, data };
     } catch (err) {
       console.error("Error verifying signup OTP:", err);

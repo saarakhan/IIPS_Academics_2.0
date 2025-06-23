@@ -12,18 +12,60 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
   const { SignUpNewUser, signInWithGoogle, signInWithGitHub, refreshUserProfile } = UserAuth(); 
   const navigate = useNavigate();
 
+  // Password validation helper
+  const validatePassword = (pwd) => {
+    const specialChar = /[!@#$%^&*(),.?":{}|<>]/;
+    if (pwd.length < 8) return "Password must be at least 8 characters.";
+    if (!specialChar.test(pwd)) return "Password must contain at least one special character.";
+    return "";
+  };
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+    const err = validatePassword(e.target.value);
+    setPasswordError(err);
+    // Also check confirm password if already entered
+    if (confirmPassword && e.target.value !== confirmPassword) {
+      setConfirmPasswordError("Passwords do not match.");
+    } else {
+      setConfirmPasswordError("");
+    }
+  };
+
+  const handleConfirmPasswordChange = (e) => {
+    setConfirmPassword(e.target.value);
+    if (password !== e.target.value) {
+      setConfirmPasswordError("Passwords do not match.");
+    } else {
+      setConfirmPasswordError("");
+    }
+  };
+
   const handleSignUp = async (e) => {
     e.preventDefault();
-    setError(null); 
+    setError(null);
 
     if (!fullName.trim()) {
       setError("Full name is required.");
       toast.error("Full name is required.");
+      setTimeout(() => setError(null), 3000);
+      return;
+    }
+    if (passwordError) {
+      setError(passwordError);
+      toast.error(passwordError);
+      setTimeout(() => setError(null), 3000);
+      return;
+    }
+    if (confirmPasswordError) {
+      setError(confirmPasswordError);
+      toast.error(confirmPasswordError);
       setTimeout(() => setError(null), 3000);
       return;
     }
@@ -33,32 +75,49 @@ const SignUp = () => {
       setTimeout(() => setError(null), 3000);
       return;
     }
-    
-    setLoading(true);
-   
-    const { success, data, error: signUpError } = await SignUpNewUser(email, password, fullName);
-    if (success && data?.user?.id) {
-      
-      const [first_name, ...rest] = fullName.trim().split(" ");
-      const last_name = rest.join(" ");
-      
-      await supabase.from("profiles").update({ first_name, last_name }).eq("id", data.user.id);
-    }
-    setLoading(false);
 
-    if (!success) {
-      setError(signUpError || "Sign up failed. Please try again.");
-      toast.error(signUpError || "Sign up failed. Please try again.");
-      setTimeout(() => setError(null), 3000);
-    } else {
-      await refreshUserProfile(); 
+    setLoading(true);
+    try {
+      const { success, data, error: signUpError } = await SignUpNewUser(email, password, fullName);
+      setLoading(false);
+      if (!success) {
+        let isInvalidEmail = false;
+        let isEmailExists = false;
+        if (signUpError?.toLowerCase().includes("already exists") || signUpError?.toLowerCase().includes("already registered") || signUpError?.toLowerCase().includes("duplicate")) {
+          isEmailExists = true;
+        }
+        if (signUpError?.toLowerCase().includes("email") || signUpError?.toLowerCase().includes("invalid")) {
+          isInvalidEmail = true;
+        }
+        if (signUpError?.toLowerCase().includes("network")) {
+          setError("Network error. Please check your connection and try again.");
+          toast.error("Network error. Please check your connection and try again.");
+        } else if (isEmailExists) {
+          setError("This email is already registered. Please login.");
+          toast.error("This email is already registered. Please login.");
+        } else if (isInvalidEmail) {
+          setError("Invalid email address.");
+          toast.error("Invalid email address.");
+        } else {
+          setError(signUpError || "Sign up failed. Please try again.");
+          toast.error(signUpError || "Sign up failed. Please try again.");
+        }
+        setTimeout(() => setError(null), 3000);
+        return; // Do not navigate if email is invalid or already exists
+      }
+      // Only navigate if signup succeeded and OTP is sent
       toast.success("Registration successful! Please check your email for an OTP to verify your account.");
-      navigate('/otp-verification', { 
-        state: { 
-          email: email, 
-          type: 'signup_confirmation' 
-        } 
+      navigate('/otp-verification', {
+        state: {
+          email: email,
+          type: 'signup_confirmation'
+        }
       });
+    } catch (err) {
+      setLoading(false);
+      setError("Unexpected error. Please try again.");
+      toast.error("Unexpected error. Please try again.");
+      setTimeout(() => setError(null), 3000);
     }
   };
 
@@ -90,7 +149,7 @@ const SignUp = () => {
         <div className="flex flex-col py-2">
           <input
             onChange={(e) => setFullName(e.target.value)}
-            className="p-3 mt-1 border border-gray-300 text-[#2b3333] rounded-md focus:outline-none focus:ring-2 focus:ring-[#C79745]" 
+            className="p-3 mt-1 border border-gray-300 text-[#2b3333] rounded-md focus:outline-none focus:ring-2 focus:ring-[#C79745]"
             type="text"
             name="fullName"
             id="fullName"
@@ -103,7 +162,7 @@ const SignUp = () => {
           <input
             onChange={(e) => setEmail(e.target.value)}
             value={email}
-            className="p-3 mt-1 border border-gray-300 text-[#2b3333] rounded-md focus:outline-none focus:ring-2 focus:ring-[#C79745]" 
+            className="p-3 mt-1 border border-gray-300 text-[#2b3333] rounded-md focus:outline-none focus:ring-2 focus:ring-[#C79745]"
             type="email"
             name="email"
             id="email"
@@ -113,24 +172,29 @@ const SignUp = () => {
         </div>
         <div className="flex flex-col py-2">
           <input
-            onChange={(e) => setPassword(e.target.value)}
-            className="p-3 mt-1 border border-gray-300 text-[#2b3333] rounded-md focus:outline-none focus:ring-2 focus:ring-[#C79745]" 
+            onChange={handlePasswordChange}
+            value={password}
+            className="p-3 mt-1 border border-gray-300 text-[#2b3333] rounded-md focus:outline-none focus:ring-2 focus:ring-[#C79745]"
             name="password"
             id="password"
+            type="password"
             placeholder="Password"
             required
           />
+          {passwordError && <p className="text-red-600 text-xs pt-1">{passwordError}</p>}
         </div>
         <div className="flex flex-col py-2">
           <input
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className="p-3 mt-1 border border-gray-300 text-[#2b3333] rounded-md focus:outline-none focus:ring-2 focus:ring-[#C79745]" 
+            onChange={handleConfirmPasswordChange}
+            value={confirmPassword}
+            className="p-3 mt-1 border border-gray-300 text-[#2b3333] rounded-md focus:outline-none focus:ring-2 focus:ring-[#C79745]"
             type="password"
             name="confirmPassword"
             id="confirmPassword"
             placeholder="Confirm Password"
             required
           />
+          {confirmPasswordError && <p className="text-red-600 text-xs pt-1">{confirmPasswordError}</p>}
         </div>
         <button
           type="submit"
