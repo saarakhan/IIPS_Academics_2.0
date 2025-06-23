@@ -28,7 +28,7 @@ export const router = createBrowserRouter([
       { path: "/", element: <Home /> },
       { path: "signin", element: <SignIn /> },
       { path: "otp-verification", element: <OtpVerificationPage /> },
-      { path: "signup", element: <SignUp /> },
+      // { path: "signup", element: <SignUp /> },
       { path: "request-password-reset", element: <RequestPasswordReset /> },
       { path: "update-password", element: <UpdatePassword /> },
       { path: "academics", element: <Subject /> },

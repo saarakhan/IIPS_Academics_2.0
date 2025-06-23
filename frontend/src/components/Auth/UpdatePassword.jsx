@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../supabaseClient';
 import toast from 'react-hot-toast';
 import { UserAuth } from '../../Context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const UpdatePassword = () => {
   const [password, setPassword] = useState('');
@@ -13,6 +14,7 @@ const UpdatePassword = () => {
   const { session, loadingAuth } = UserAuth(); 
   const [isRecoverySessionActive, setIsRecoverySessionActive] = useState(false);
   const [initialCheckDone, setInitialCheckDone] = useState(false);
+  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -79,7 +81,7 @@ const UpdatePassword = () => {
       setConfirmPassword('');
       setTimeout(() => {
         navigate('/signin'); 
-      }, 3000); 
+      }, 1000); 
     } catch (err) { 
       console.error('Error updating password:', err);
       const errMsg = err.message || 'Failed to update password. The link may have expired or been used already.';
