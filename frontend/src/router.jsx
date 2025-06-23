@@ -19,7 +19,7 @@ import OtpVerificationPage from "./components/SignIn/OtpVerificationPage.jsx";
 import TeacherDashboardPage from "./components/Teacher/TeacherDashboardPage.jsx";
 import TeacherAdminRoute from "./components/PrivateRoute/TeacherAdminRoute.jsx";
 import Unauthorized from "./components/Error/Unauthorized.jsx";
-
+import VerificationDashboard from "./components/Admin/VerificationDashboard.jsx";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -27,8 +27,8 @@ export const router = createBrowserRouter([
     children: [
       { path: "/", element: <Home /> },
       { path: "signin", element: <SignIn /> },
-      { path: "otp-verification", element: <OtpVerificationPage/>},
-      { path: "signup", element: <SignUp /> },
+      { path: "otp-verification", element: <OtpVerificationPage /> },
+      // { path: "signup", element: <SignUp /> },
       { path: "request-password-reset", element: <RequestPasswordReset /> },
       { path: "update-password", element: <UpdatePassword /> },
       { path: "academics", element: <Subject /> },
@@ -45,6 +45,14 @@ export const router = createBrowserRouter([
         element: (
           <AdminRoute>
             <AdminDashboard />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "admin/id-verfication",
+        element: (
+          <AdminRoute>
+            <VerificationDashboard />
           </AdminRoute>
         ),
       },

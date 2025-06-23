@@ -4,6 +4,8 @@ import { UserAuth } from "../../Context/AuthContext";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
 import { supabase } from "../../supabaseClient"; 
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -11,7 +13,8 @@ const SignIn = () => {
   const [loading, setLoading] = useState(false);
   const [fieldError, setFieldError] = useState({ email: '', password: '' });
 
-  const { SignInUser, signInWithGoogle, signInWithGitHub, refreshUserProfile } = UserAuth();
+  const { SignInUser, signInWithGoogle, signInWithGitHub, refreshUserProfile } =
+    UserAuth();
   const navigate = useNavigate();
 
   const handleSignIn = async (e) => {
@@ -185,11 +188,11 @@ const SignIn = () => {
           />
           {fieldError.email && <p className="text-red-600 text-xs pt-1">{fieldError.email}</p>}
         </div>
-        <div className="flex flex-col py-2">
+        <div className="flex flex-col py-2 relative">
           <input
             onChange={(e) => setPassword(e.target.value)}
-            className="p-3 mt-1 border border-gray-300 text-[#2b3333] rounded-md focus:outline-none focus:ring-2 focus:ring-[#C79745]"
-            type="password"
+            className="p-3 pr-10 mt-1 border border-gray-300 text-[#2b3333] rounded-md focus:outline-none focus:ring-2 focus:ring-[#C79745]"
+            type={showPassword ? "text" : "password"}
             name="password"
             id="password"
             placeholder="Password"
@@ -210,10 +213,11 @@ const SignIn = () => {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full mt-4 py-3 rounded-lg text-white transition duration-300 ${loading
-            ? "bg-[#2B3333]/70 cursor-not-allowed"
-            : "bg-[#2B3333] hover:shadow-lg shadow-[#2B3333]"
-            }`}
+          className={`w-full mt-4 py-3 rounded-lg text-white transition duration-300 ${
+            loading
+              ? "bg-[#2B3333]/70 cursor-not-allowed"
+              : "bg-[#2B3333] hover:shadow-lg shadow-[#2B3333]"
+          }`}
         >
           {loading ? (
             <div className="flex justify-center items-center space-x-2">
@@ -293,11 +297,20 @@ const SignIn = () => {
               opacity: 1;
               transform: scale(1);
             }
+            /* Hide Edge's default password reveal button */
+            input::-ms-reveal,
+            input::-ms-clear {
+            display: none;
+          }
+
+            /* Also hide for WebKit just in case */
+            input::-webkit-credentials-auto-fill-button {
+            display: none !important;
           }
         `}
       </style>
     </div>
-  )
+  );
 };
 
 export default SignIn;
