@@ -3,14 +3,17 @@ import { Link, useNavigate } from "react-router-dom";
 import { UserAuth } from "../../Context/AuthContext";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const { SignInUser, signInWithGoogle, signInWithGitHub, refreshUserProfile } = UserAuth();
+  const { SignInUser, signInWithGoogle, signInWithGitHub, refreshUserProfile } =
+    UserAuth();
   const navigate = useNavigate();
 
   const handleSignIn = async (e) => {
@@ -18,7 +21,13 @@ const SignIn = () => {
     setLoading(true);
     setError(null);
 
-    const { success, data, error: signInError } = await SignInUser(email, password);
+
+    const {
+      success,
+      data,
+      error: signInError,
+    } = await SignInUser(email, password);
+
 
     if (!success) {
       setError(signInError);
@@ -108,16 +117,27 @@ const SignIn = () => {
             required
           />
         </div>
-        <div className="flex flex-col py-2">
+        <div className="flex flex-col py-2 relative">
           <input
             onChange={(e) => setPassword(e.target.value)}
-            className="p-3 mt-1 border border-gray-300 text-[#2b3333] rounded-md focus:outline-none focus:ring-2 focus:ring-[#C79745]"
-            type="password"
+            className="p-3 pr-10 mt-1 border border-gray-300 text-[#2b3333] rounded-md focus:outline-none focus:ring-2 focus:ring-[#C79745]"
+            type={showPassword ? "text" : "password"}
             name="password"
             id="password"
             placeholder="Password"
             required
           />
+          <button
+            type="button"
+            onClick={() => setShowPassword((prev) => !prev)}
+            className="absolute right-3 top-[1.6rem] hover:text-[#C79745]"
+          >
+            {showPassword ? (
+              <EyeSlashIcon className="h-5 w-5" />
+            ) : (
+              <EyeIcon className="h-5 w-5" />
+            )}
+          </button>
           <div className="text-right mt-1">
             <Link
               to="/request-password-reset"
@@ -131,10 +151,11 @@ const SignIn = () => {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full mt-4 py-3 rounded-lg text-white transition duration-300 ${loading
-            ? "bg-[#2B3333]/70 cursor-not-allowed"
-            : "bg-[#2B3333] hover:shadow-lg shadow-[#2B3333]"
-            }`}
+          className={`w-full mt-4 py-3 rounded-lg text-white transition duration-300 ${
+            loading
+              ? "bg-[#2B3333]/70 cursor-not-allowed"
+              : "bg-[#2B3333] hover:shadow-lg shadow-[#2B3333]"
+          }`}
         >
           {loading ? (
             <div className="flex justify-center items-center space-x-2">
@@ -214,11 +235,20 @@ const SignIn = () => {
               opacity: 1;
               transform: scale(1);
             }
+            /* Hide Edge's default password reveal button */
+            input::-ms-reveal,
+            input::-ms-clear {
+            display: none;
+          }
+
+            /* Also hide for WebKit just in case */
+            input::-webkit-credentials-auto-fill-button {
+            display: none !important;
           }
         `}
       </style>
     </div>
-  )
+  );
 };
 
 export default SignIn;
