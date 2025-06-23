@@ -21,11 +21,13 @@ const SignIn = () => {
     setLoading(true);
     setError(null);
 
+
     const {
       success,
       data,
       error: signInError,
     } = await SignInUser(email, password);
+
 
     if (!success) {
       setError(signInError);
@@ -35,8 +37,9 @@ const SignIn = () => {
         setError(null);
       }, 3000);
     } else {
-      await refreshUserProfile(); // Ensure latest profile
+      // await refreshUserProfile(); // Ensure latest profile
       toast.success("Logged in successfully!");
+      setLoading(false);
       setTimeout(() => {
         navigate("/");
       }, 1000);

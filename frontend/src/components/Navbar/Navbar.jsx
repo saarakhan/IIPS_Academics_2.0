@@ -170,12 +170,7 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              {/* <Link
-                to="/signup"
-                className="bg-[#2B3333] text-[#F3F6F2] px-6 py-2 rounded-lg text-sm hover:bg-black transition-colors"
-              >
-                Sign Up
-              </Link> */}
+
               <Link
                 to="/signin"
                 className="bg-[#2B3333] text-[#F3F6F2] px-6 py-2 rounded-lg text-sm hover:bg-black transition-colors"

@@ -27,12 +27,7 @@ const SignUp = () => {
       setTimeout(() => setError(null), 3000);
       return;
     }
-    if (password !== confirmPassword) {
-      setError("Passwords do not match.");
-      toast.error("Passwords do not match.");
-      setTimeout(() => setError(null), 3000);
-      return;
-    }
+    
     
     setLoading(true);
    
@@ -43,7 +38,7 @@ const SignUp = () => {
       const last_name = rest.join(" ");
       
       await supabase.from("profiles").update({ first_name, last_name }).eq("id", data.user.id);
-    }
+    } 
     setLoading(false);
 
     if (!success) {
@@ -53,12 +48,12 @@ const SignUp = () => {
     } else {
       await refreshUserProfile(); 
       toast.success("Registration successful! Please check your email for an OTP to verify your account.");
-      navigate('/otp-verification', { 
-        state: { 
-          email: email, 
-          type: 'signup_confirmation' 
-        } 
-      });
+      // navigate('/otp-verification', { 
+      //   state: { 
+      //     email: email, 
+      //     type: 'signup_confirmation' 
+      //   } 
+      // });
     }
   };
 
@@ -115,6 +110,7 @@ const SignUp = () => {
           <input
             onChange={(e) => setPassword(e.target.value)}
             className="p-3 mt-1 border border-gray-300 text-[#2b3333] rounded-md focus:outline-none focus:ring-2 focus:ring-[#C79745]" 
+            type="password"
             name="password"
             type="password"
             id="password"
