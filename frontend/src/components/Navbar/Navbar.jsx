@@ -170,12 +170,12 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              <Link
+              {/* <Link
                 to="/signup"
                 className="bg-[#2B3333] text-[#F3F6F2] px-6 py-2 rounded-lg text-sm hover:bg-black transition-colors"
               >
                 Sign Up
-              </Link>
+              </Link> */}
               <Link
                 to="/signin"
                 className="bg-[#2B3333] text-[#F3F6F2] px-6 py-2 rounded-lg text-sm hover:bg-black transition-colors"
@@ -295,13 +295,13 @@ export default function Navbar() {
               </div>
             ) : (
               <div className="flex flex-col space-y-2"> {/* */}
-                <Link
+                {/* <Link
                   to="/signup"
                   className="block bg-[#2B3333] text-white hover:bg-black px-4 py-2 rounded text-sm text-center"
                   onClick={() => setMenuOpen(false)}
                 >
                   Sign Up
-                </Link>
+                </Link> */}
                 <Link
                   to="/signin"
                   className="block bg-[#2B3333] text-white hover:bg-black px-4 py-2 rounded text-sm text-center"
