@@ -112,7 +112,7 @@ const SignUp = () => {
             className="p-3 mt-1 border border-gray-300 text-[#2b3333] rounded-md focus:outline-none focus:ring-2 focus:ring-[#C79745]" 
             type="password"
             name="password"
-            type="password"
+            // type="password"
             id="password"
             placeholder="Password"
             required
