@@ -18,19 +18,22 @@ const VerificationDashboard = () => {
   const [filterType, setFilterType] = useState("pending");
   //   pagination
   const [page, setPage] = useState(1);
-  const profilesPerPage = 5;
+  const profilesPerPage = 1;
   const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
   // fetch profile
-  const fetchProfiles = async (reset = false) => {
+  const fetchProfiles = async (reset = false, pageOverride = null) => {
     setLoadingMore(true);
-    let query = supabase.from("profiles").select("*").order("created_at", { ascending: false });
+    const currentPage = pageOverride ?? page;
+
+    let query = supabase.from("profiles").select("*").order("updated_at", { ascending: false }).not("idcard_url", "is", null);
 
     if (filterType === "pending") query = query.is("verified", null);
     else if (filterType === "approved") query = query.eq("verified", true);
     else if (filterType === "rejected") query = query.eq("verified", false);
 
-    query = query.range((page - 1) * profilesPerPage, page * profilesPerPage - 1);
+    query = query.range((currentPage - 1) * profilesPerPage, currentPage * profilesPerPage - 1);
 
     const { data, error } = await query;
 
@@ -39,6 +42,8 @@ const VerificationDashboard = () => {
     } else {
       setProfiles(prev => (reset ? data : [...prev, ...data]));
     }
+
+    setHasMore(data?.length === profilesPerPage);
     setLoadingMore(false);
   };
 
@@ -212,27 +217,44 @@ const VerificationDashboard = () => {
                     <div className="flex gap-2 flex-wrap sm:flex-nowrap">{filterType === "pending" && getActionButtons(profile, setPreviewProfile, handleVerify)}</div>
                   </div>
 
-                  {previewProfile?.id === profile.id && (
-                    <div className="fixed inset-0 bg-white/10 backdrop-blur-md flex justify-center items-center z-50">
-                      <div className="bg-white p-4 rounded-lg w-3/4 h-3/4 relative">
-                        <button onClick={() => setPreviewProfile(null)} className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded font-bold">
-                          ✕
-                        </button>
-                        {!previewProfile.idcard_url ? <p>Loading preview...</p> : <iframe src={previewProfile.idcard_url} className="w-full h-full" title="ID Preview" frameBorder="0" />}
+                  {previewProfile?.id === profile.id &&
+                    (!previewProfile?.idcard_url ? (
+                      <div className="fixed inset-0 z-50 flex items-center justify-center bg-transparent backdrop-blur-sm">
+                        <div className="bg-white rounded-2xl shadow-xl p-4 max-w-lg w-full relative">
+                          <button onClick={() => setPreviewProfile(false)} className="absolute top-2 right-2 text-gray-600 hover:text-black text-xl">
+                            ✕
+                          </button>
+                          <h2 className="text-xl font-semibold mb-4">ID Card Preview</h2>
+                          <div className="w-full h-[500px] flex justify-center items-center overflow-hidden">
+                            <p className="text-red-500">Failed to load Preview</p>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    ) : (
+                      <div className="fixed inset-0 z-50 flex items-center justify-center bg-transparent backdrop-blur-sm">
+                        <div className="bg-white rounded-2xl shadow-xl p-4 max-w-lg w-full relative">
+                          <button onClick={() => setPreviewProfile(false)} className="absolute top-2 right-2 text-gray-600 hover:text-black text-xl">
+                            ✕
+                          </button>
+                          <h2 className="text-xl font-semibold mb-4">ID Card Preview</h2>
+                          <div className="w-full h-[500px] flex justify-center items-center overflow-hidden">
+                            <img src={previewProfile.idcard_url} alt="ID Preview" className="max-w-full max-h-full object-contain" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                 </div>
               ))
             )}
 
-            {profiles.length > 0 && (
+            {profiles.length > 0 && hasMore && (
               <div className="text-center mt-6">
                 <button
                   disabled={loadingMore}
                   onClick={() => {
-                    setPage(prev => prev + 1);
-                    fetchProfiles();
+                    const nextPage = page + 1;
+                    fetchProfiles(false, nextPage);
+                    setPage(nextPage);
                   }}
                   className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 disabled:opacity-50">
                   {loadingMore ? "Loading..." : "Load More"}
