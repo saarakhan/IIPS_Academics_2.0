@@ -18,7 +18,7 @@ const SignIn = () => {
     setLoading(true);
     setError(null);
 
-    const { success, data, error: signInError } = await SignInUser(email, password); 
+    const { success, data, error: signInError } = await SignInUser(email, password);
 
     if (!success) {
       setError(signInError);
@@ -28,10 +28,11 @@ const SignIn = () => {
         setError(null);
       }, 3000);
     } else {
-      await refreshUserProfile(); // Ensure latest profile
+      // await refreshUserProfile(); // Ensure latest profile
       toast.success("Logged in successfully!");
+      setLoading(false);
       setTimeout(() => {
-        navigate("/otp-verification");
+        navigate("/");
       }, 1000);
     }
   };
@@ -60,7 +61,7 @@ const SignIn = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const { success, error: githubError } = await signInWithGitHub(); 
+    const { success, error: githubError } = await signInWithGitHub();
     setLoading(false);
 
     if (!success) {

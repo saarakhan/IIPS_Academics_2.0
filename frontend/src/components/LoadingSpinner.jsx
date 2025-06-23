@@ -1,5 +1,3 @@
-import React from 'react';
-
 const LoadingSpinner = ({ message = 'Loading...', small = false }) => (
   <div className={`flex flex-col items-center justify-center ${small ? '' : 'py-8'}`}>
     <svg
