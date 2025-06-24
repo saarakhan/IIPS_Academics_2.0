@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { UserAuth } from "../../Context/AuthContext";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
-import { supabase } from "../../supabaseClient"; 
+import { supabase } from "../../supabaseClient";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 const SignIn = () => {
@@ -11,7 +11,8 @@ const SignIn = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [fieldError, setFieldError] = useState({ email: '', password: '' });
+  const [fieldError, setFieldError] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
 
   const { SignInUser, signInWithGoogle, signInWithGitHub, refreshUserProfile } =
     UserAuth();
@@ -21,20 +22,24 @@ const SignIn = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    setFieldError({ email: '', password: '' });
+    setFieldError({ email: "", password: "" });
 
     if (!email.trim()) {
-      setFieldError((prev) => ({ ...prev, email: 'Email is required.' }));
+      setFieldError((prev) => ({ ...prev, email: "Email is required." }));
       setLoading(false);
       return;
     }
     if (!password) {
-      setFieldError((prev) => ({ ...prev, password: 'Password is required.' }));
+      setFieldError((prev) => ({ ...prev, password: "Password is required." }));
       setLoading(false);
       return;
     }
 
-    const { success, data, error: signInError } = await SignInUser(email, password);
+    const {
+      success,
+      data,
+      error: signInError,
+    } = await SignInUser(email, password);
     setLoading(false);
 
     // Check if user exists in the database (profile table)
@@ -52,32 +57,34 @@ const SignIn = () => {
     }
 
     if (!success) {
-      let errMsg = signInError || 'Login failed';
-      if (signInError?.toLowerCase().includes('network')) {
-        errMsg = 'Network error. Please check your connection and try again.';
-      } else if (signInError?.toLowerCase().includes('invalid login credentials')) {
-        errMsg = 'Incorrect email or password.';
-      } else if (signInError?.toLowerCase().includes('email')) {
-        errMsg = 'Invalid email address.';
-      } else if (signInError?.toLowerCase().includes('password')) {
-        errMsg = 'Incorrect password.';
+      let errMsg = signInError || "Login failed";
+      if (signInError?.toLowerCase().includes("network")) {
+        errMsg = "Network error. Please check your connection and try again.";
+      } else if (
+        signInError?.toLowerCase().includes("invalid login credentials")
+      ) {
+        errMsg = "Incorrect email or password.";
+      } else if (signInError?.toLowerCase().includes("email")) {
+        errMsg = "Invalid email address.";
+      } else if (signInError?.toLowerCase().includes("password")) {
+        errMsg = "Incorrect password.";
       }
       setError(errMsg);
       toast.error(errMsg);
       setTimeout(() => setError(null), 3000);
       return;
-    } 
+    }
     if (success && !userExists) {
-      setError('No account found for this email. Please sign up first.');
-      toast.error('No account found for this email. Please sign up first.');
+      setError("No account found for this email. Please sign up first.");
+      toast.error("No account found for this email. Please sign up first.");
       setTimeout(() => setError(null), 4000);
       return;
     }
     if (success && userExists) {
       await refreshUserProfile();
-      toast.success('Logged in successfully!');
+      toast.success("Logged in successfully!");
       setTimeout(() => {
-        navigate("/"); 
+        navigate("/");
       }, 1000);
     }
   };
@@ -96,7 +103,9 @@ const SignIn = () => {
       return;
     }
     // Check if user exists in profiles table after OAuth
-    const session = supabase.auth.getSession ? (await supabase.auth.getSession()).data.session : null;
+    const session = supabase.auth.getSession
+      ? (await supabase.auth.getSession()).data.session
+      : null;
     const userId = session?.user?.id;
     if (userId) {
       const { data: profileData, error: profileError } = await supabase
@@ -105,8 +114,8 @@ const SignIn = () => {
         .eq("id", userId)
         .single();
       if (!profileData || profileError) {
-        setError('No account found for this email. Please sign up first.');
-        toast.error('No account found for this email. Please sign up first.');
+        setError("No account found for this email. Please sign up first.");
+        toast.error("No account found for this email. Please sign up first.");
         setTimeout(() => setError(null), 4000);
         await supabase.auth.signOut(); // Sign out the OAuth session
         return;
@@ -133,7 +142,9 @@ const SignIn = () => {
       return;
     }
     // Check if user exists in profiles table after OAuth
-    const session = supabase.auth.getSession ? (await supabase.auth.getSession()).data.session : null;
+    const session = supabase.auth.getSession
+      ? (await supabase.auth.getSession()).data.session
+      : null;
     const userId = session?.user?.id;
     if (userId) {
       const { data: profileData, error: profileError } = await supabase
@@ -142,8 +153,8 @@ const SignIn = () => {
         .eq("id", userId)
         .single();
       if (!profileData || profileError) {
-        setError('No account found for this email. Please sign up first.');
-        toast.error('No account found for this email. Please sign up first.');
+        setError("No account found for this email. Please sign up first.");
+        toast.error("No account found for this email. Please sign up first.");
         setTimeout(() => setError(null), 4000);
         await supabase.auth.signOut(); // Sign out the OAuth session
         return;
@@ -186,7 +197,9 @@ const SignIn = () => {
             required
             value={email}
           />
-          {fieldError.email && <p className="text-red-600 text-xs pt-1">{fieldError.email}</p>}
+          {fieldError.email && (
+            <p className="text-red-600 text-xs pt-1">{fieldError.email}</p>
+          )}
         </div>
         <div className="flex flex-col py-2 relative">
           <input
@@ -199,8 +212,21 @@ const SignIn = () => {
             required
             value={password}
           />
-          {fieldError.password && <p className="text-red-600 text-xs pt-1">{fieldError.password}</p>}
+          {fieldError.password && (
+            <p className="text-red-600 text-xs pt-1">{fieldError.password}</p>
+          )}
           <div className="text-right mt-1">
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute right-3 top-7 text-[#2B3333] hover:text-[#C79745]"
+            >
+              {showPassword ? (
+                <EyeSlashIcon className="h-5 w-5" />
+              ) : (
+                <EyeIcon className="h-5 w-5" />
+              )}
+            </button>
             <Link
               to="/request-password-reset"
               className="text-sm text-[#C79745] hover:text-[#b3863c] hover:underline"
