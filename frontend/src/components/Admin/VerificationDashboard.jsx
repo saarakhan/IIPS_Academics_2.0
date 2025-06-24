@@ -6,19 +6,12 @@ import { MdAdminPanelSettings, MdVisibility, MdCheck, MdClose, MdPerson, MdOutli
 
 const VerificationDashboard = () => {
   const navigate = useNavigate();
-  const [counts, setCounts] = useState({
-    total: 0,
-    approved: 0,
-    rejected: 0,
-    pending: 0,
-  });
-
   const [profiles, setProfiles] = useState([]);
   const [previewProfile, setPreviewProfile] = useState(null);
   const [filterType, setFilterType] = useState("pending");
   //   pagination
   const [page, setPage] = useState(1);
-  const profilesPerPage = 1;
+  const profilesPerPage = 5;
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
@@ -56,35 +49,12 @@ const VerificationDashboard = () => {
     } else {
       setPage(1);
       fetchProfiles(true);
-      updateCounts();
-    }
-  };
-
-  //   for status card
-  const updateCounts = async () => {
-    try {
-      const [total, approved, rejected, pending] = await Promise.all([
-        supabase.from("profiles").select("*", { count: "exact", head: true }),
-        supabase.from("profiles").select("*", { count: "exact", head: true }).eq("verified", true),
-        supabase.from("profiles").select("*", { count: "exact", head: true }).eq("verified", false),
-        supabase.from("profiles").select("*", { count: "exact", head: true }).is("verified", null),
-      ]);
-
-      setCounts({
-        total: total.count || 0,
-        approved: approved.count || 0,
-        rejected: rejected.count || 0,
-        pending: pending.count || 0,
-      });
-    } catch (err) {
-      console.error("Error updating resource counts:", err);
     }
   };
 
   useEffect(() => {
     setPage(1);
     fetchProfiles(true);
-    updateCounts();
   }, [filterType]);
 
   //   styling badge
@@ -145,7 +115,7 @@ const VerificationDashboard = () => {
           </button>
         </div>
 
-        <StatusSummary counts={counts} />
+        {/* <StatusSummary counts={counts} /> */}
 
         <div className="bg-white rounded-md border-2 border-gray-300 shadow-[7px_8px_4.8px_rgba(0,0,0,0.1)] mt-8">
           <div className="px-6 py-4 border-b border-gray-200 flex items-center gap-2">
