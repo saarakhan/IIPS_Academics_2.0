@@ -93,34 +93,46 @@ export default function Navbar() {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex space-x-2 items-center text-sm">
-          {
-            ["Home", "Academics", "Placements", "Contact", "Contributors"].map(
-              (item) => (
-                <Link
-                  key={item}
-                  to={`/${item.toLowerCase() === "home" ? "" : item.toLowerCase()}`}
-                  className={`px-4 py-2 font-medium rounded-md transition-all whitespace-nowrap ${pathMatch(item) ? "bg-[#F5F5F5] text-[#2B3333]" : "text-[#2B3333] hover:bg-[#F5F5F5]"}`}
-                >
-                  {item}
-                </Link>
-              )
+          {["Home", "Academics", "Placements", "Contact", "Contributors"].map(
+            (item) => (
+              <Link
+                key={item}
+                to={`/${
+                  item.toLowerCase() === "home" ? "" : item.toLowerCase()
+                }`}
+                className={`px-4 py-2 font-medium rounded-md transition-all whitespace-nowrap ${
+                  pathMatch(item)
+                    ? "bg-[#F5F5F5] text-[#2B3333]"
+                    : "text-[#2B3333] hover:bg-[#F5F5F5]"
+                }`}
+              >
+                {item}
+              </Link>
             )
-          }
+          )}
           {session && profile?.role === "teacher" && (
             <>
               <Link
                 to="/teacher-dashboard"
-                className={`px-4 py-2 font-medium rounded-md transition-all whitespace-nowrap ${pathMatch("teacher-dashboard") ? "bg-[#F5F5F5] text-[#2B3333]" : "text-[#2B3333] hover:bg-[#F5F5F5]"}`}
+                className={`px-4 py-2 font-medium rounded-md transition-all whitespace-nowrap ${
+                  pathMatch("teacher-dashboard")
+                    ? "bg-[#F5F5F5] text-[#2B3333]"
+                    : "text-[#2B3333] hover:bg-[#F5F5F5]"
+                }`}
               >
                 Teacher Dashboard
               </Link>
             </>
-          ) } 
+          )}
           {/* Admin Panel link remains for admin */}
           {session && profile && profile.role === "admin" && (
             <Link
               to="/admin"
-              className={`px-4 py-2 font-medium rounded-md transition-all whitespace-nowrap ${pathMatch("admin") ? "bg-[#F5F5F5] text-[#2B3333]" : "text-[#2B3333] hover:bg-[#F5F5F5]"}`}
+              className={`px-4 py-2 font-medium rounded-md transition-all whitespace-nowrap ${
+                pathMatch("admin")
+                  ? "bg-[#F5F5F5] text-[#2B3333]"
+                  : "text-[#2B3333] hover:bg-[#F5F5F5]"
+              }`}
             >
               Admin Panel
             </Link>
@@ -146,10 +158,7 @@ export default function Navbar() {
             </>
           ) : session ? (
             <>
-              <Link
-                to="/dashboard"
-                className="flex items-center space-x-2"
-              >
+              <Link to="/dashboard" className="flex items-center space-x-2">
                 <Avatar alt={name || "User"} src={avatarUrl || undefined} />{" "}
                 <span>{name || "Profile"}</span>
               </Link>
@@ -165,6 +174,13 @@ export default function Navbar() {
             </>
           ) : (
             <>
+              <Link
+                to="/signup"
+                className="block bg-[#2B3333] text-white hover:bg-black px-4 py-2 rounded-lg text-sm text-center"
+                onClick={() => setMenuOpen(false)}
+              >
+                Sign Up
+              </Link>
               <Link
                 to="/signin"
                 className="bg-[#2B3333] text-[#F3F6F2] px-6 py-2 rounded-lg text-sm hover:bg-black transition-colors"
@@ -216,8 +232,14 @@ export default function Navbar() {
               (item) => (
                 <Link
                   key={item}
-                  to={`/${item.toLowerCase() === "home" ? "" : item.toLowerCase()}`}
-                  className={`block px-4 py-2 rounded-md transition-all ${pathMatch(item) ? "bg-[#2B3333] text-white" : "text-[#2B3333] hover:bg-[#2B3333] hover:text-white"}`}
+                  to={`/${
+                    item.toLowerCase() === "home" ? "" : item.toLowerCase()
+                  }`}
+                  className={`block px-4 py-2 rounded-md transition-all ${
+                    pathMatch(item)
+                      ? "bg-[#2B3333] text-white"
+                      : "text-[#2B3333] hover:bg-[#2B3333] hover:text-white"
+                  }`}
                   onClick={() => setMenuOpen(false)}
                 >
                   {item}
@@ -229,7 +251,11 @@ export default function Navbar() {
           {session && profile && profile.role === "admin" && (
             <Link
               to="/admin"
-              className={`block px-4 py-2 rounded-md transition-all ${pathMatch("admin") ? "bg-[#2B3333] text-white" : "text-[#2B3333] hover:bg-[#2B3333] hover:text-white"}`}
+              className={`block px-4 py-2 rounded-md transition-all ${
+                pathMatch("admin")
+                  ? "bg-[#2B3333] text-white"
+                  : "text-[#2B3333] hover:bg-[#2B3333] hover:text-white"
+              }`}
               onClick={() => setMenuOpen(false)}
             >
               Admin Panel
@@ -261,7 +287,11 @@ export default function Navbar() {
             ) : session ? (
               <div className="flex flex-col items-start space-y-2">
                 <Link
-                  to={profile && profile.role === "admin" ? "/admin" : "/dashboard"}
+                  to={
+                    profile && profile.role === "admin"
+                      ? "/admin"
+                      : "/dashboard"
+                  }
                   className="flex items-center space-x-2 px-4 py-2 text-[#2B3333] hover:bg-[#C79745] rounded-md w-full"
                   onClick={() => setMenuOpen(false)}
                 >
@@ -283,7 +313,9 @@ export default function Navbar() {
                 </button>
               </div>
             ) : (
-              <div className="flex flex-col space-y-2"> {/* */}
+              <div className="flex flex-col space-y-2">
+                {" "}
+                {/* */}
                 <Link
                   to="/signup"
                   className="block bg-[#2B3333] text-white hover:bg-black px-4 py-2 rounded text-sm text-center"

@@ -53,7 +53,7 @@ export default function RoadMap() {
       </div>
 
       {/* Timeline - Desktop */}
-      <div className="hidden md:block max-w-6xl mx-auto relative">
+      <div className="hidden md:block max-w-6xl mx-auto relative ">
         <div className="absolute left-1/2 transform -translate-x-1/2 top-0 h-full w-1 bg-gradient-to-b from-[#3B82F6] via-[#8B5CF6] to-[#F59E0B] rounded-full"></div>
 
         <div className="relative">
@@ -98,7 +98,7 @@ export default function RoadMap() {
                 className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 rounded-full border-4 border-white shadow-md"
                 style={{
                   backgroundColor: step.color,
-                  top: `${index *17 + 3}rem`,
+                  top: `${index * 17 + 3}rem`,
                 }}
               ></div>
             </div>
@@ -107,30 +107,32 @@ export default function RoadMap() {
       </div>
 
       {/* Timeline - Mobile */}
-      <div className="md:hidden relative border-l-2 border-gray-200 pl-8 ml-4 max-w-md mx-auto">
-        {steps.map((step, index) => (
-          <div key={index} className="mb-12 relative">
-            <div
-              className="w-10 h-10 rounded-full flex items-center justify-center text-white absolute -left-5 top-0 shadow-lg"
-              style={{ backgroundColor: step.color }}
-            >
-              <step.icon size={18} />
-            </div>
-            <div
-              className="p-6 rounded-xl shadow-md bg-white border-t-4"
-              style={{ borderColor: step.color }}
-            >
-              <h3 className="text-xl font-bold">{step.title}</h3>
-              <p className="mt-2 text-gray-700">{step.desc}</p>
-              <span
-                className="text-xs font-semibold mt-2 inline-block"
-                style={{ color: step.color }}
+      <div className="md:hidden flex justify-center">
+        <div className="relative md:border-l-2 -ml-4 md:ml-0 border-gray-200 pl-8 max-w-md w-full">
+          {steps.map((step, index) => (
+            <div key={index} className="mb-12 relative">
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center text-white absolute -left-5 top-0 shadow-lg"
+                style={{ backgroundColor: step.color }}
               >
-                Step {step.step}
-              </span>
+                <step.icon size={18} />
+              </div>
+              <div
+                className="p-6 rounded-xl shadow-md bg-white border-t-4"
+                style={{ borderColor: step.color }}
+              >
+                <h3 className="text-xl font-bold">{step.title}</h3>
+                <p className="mt-2 text-gray-700">{step.desc}</p>
+                <span
+                  className="text-xs font-semibold mt-2 inline-block"
+                  style={{ color: step.color }}
+                >
+                  Step {step.step}
+                </span>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
