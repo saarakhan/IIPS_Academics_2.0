@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import PYQs from "./PYQs";
 import Syllabus from "./Syllabus";
 import Notes from "./Notes";
@@ -6,7 +6,7 @@ import ResourceUploadModal from "./ResourceUploadModal";
 import { PlusIcon } from "../../../Icons";
 import toast from "react-hot-toast";
 
-const Contributions = ({ canUpload }) => {
+const Contributions = ({ canUpload, loading }) => {
   const [activeTab, setActiveTab] = useState("Notes");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [fetchTrigger, setFetchTrigger] = useState(0);
@@ -24,7 +24,7 @@ const Contributions = ({ canUpload }) => {
   const handleCloseModal = () => setIsModalOpen(false);
 
   const handleUploadSuccess = () => {
-    setFetchTrigger(prev => prev + 1);
+    setFetchTrigger((prev) => prev + 1);
     setTimeout(() => {
       handleCloseModal();
     }, 1500);
@@ -60,6 +60,10 @@ const Contributions = ({ canUpload }) => {
               Resources you've shared with the community.
             </p>
           </div>
+          {!loading && !canUpload && (
+            <p className="text-sm text-red-500 font-medium"></p>
+          )}
+
           {canUpload ? (
             <button
               onClick={handleUploadClick}
@@ -69,15 +73,13 @@ const Contributions = ({ canUpload }) => {
               Upload New {activeTab}
             </button>
           ) : (
-            <p className="text-sm text-yellow-600 mt-4">
-              Complete profile & wait for admin verification before uploading.
-            </p>
+            <> </>
           )}
         </div>
 
         {/* Tabs */}
         <div className="grid grid-cols-3 gap-2 p-1 mt-4 border-2 rounded-sm w-full">
-          {tabs.map(tab => (
+          {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
