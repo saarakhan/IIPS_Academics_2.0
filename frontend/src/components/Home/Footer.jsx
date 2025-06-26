@@ -59,7 +59,7 @@ export default function Footer() {
               {["Study Material", "Previous Year Papers", "Syllabus", "Timetable"].map((item) => (
                 <li key={item}>
                   <Link
-                    to={`/${item.toLowerCase().replace(" ", "-")}`}
+                    to="academics"
                     className="text-gray-400 hover:text-[#C79745] transition-colors block"
                   >
                     {item}
@@ -75,7 +75,7 @@ export default function Footer() {
               {["Help Center", "Guidelines", "Report Issue", "Feedback"].map((support) => (
                 <li key={support}>
                   <a
-                    href="#"
+                    href="Contact"
                     className="text-gray-400 hover:text-[#C79745] transition-colors block"
                   >
                     {support}

@@ -1,11 +1,8 @@
-import StatusSummary from "./StatusSummary";
 import { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
-import { useNavigate } from "react-router-dom";
-import { MdAdminPanelSettings, MdVisibility, MdCheck, MdClose, MdPerson, MdOutlineBadge, MdOutlineSubject } from "react-icons/md";
+import { MdVisibility, MdCheck, MdClose, MdPerson, MdOutlineBadge, MdOutlineSubject } from "react-icons/md";
 
 const VerificationDashboard = () => {
-  const navigate = useNavigate();
   const [profiles, setProfiles] = useState([]);
   const [previewProfile, setPreviewProfile] = useState(null);
   const [filterType, setFilterType] = useState("pending");
@@ -107,12 +104,12 @@ const VerificationDashboard = () => {
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-green-100 text-green-800">Admin Verification Dashboard</span>
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-yellow-100 text-yellow-800">ID Review</span>
           </div>
-          <button
+          {/* <button
             onClick={() => navigate("/admin")}
             className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg shadow-md transition-all duration-200">
             <MdAdminPanelSettings className="text-xl" />
             Back to Admin
-          </button>
+          </button> */}
         </div>
 
         {/* <StatusSummary counts={counts} /> */}
