@@ -143,7 +143,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center space-x-4">
           {session && profile?.role === "teacher" ? (
             <>
-              <div className="flex items-center space-x-2 select-none cursor-default">
+              <div className="flex items-center space-x-2 select-none cursor-default ">
                 <Avatar alt={name || "User"} src={avatarUrl || undefined} />
                 <span>{name}</span>
               </div>
@@ -206,10 +206,10 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="md:hidden bg-white shadow-lg rounded-b-lg px-4 py-3 space-y-2 text-sm">
+        <div className="md:hidden bg-white shadow-lg rounded-b-lg px-4 py-3 space-y-2 text-sm ">
           {session && profile?.role === "teacher" ? (
             <>
-              <div className="flex items-center space-x-2 px-4 py-2 text-[#2B3333] select-none cursor-default">
+              {/* <div className="flex items-center space-x-2 px-4 py-2 text-[#2B3333] select-none cursor-default border border-green-700">
                 <Avatar
                   alt={name || "User"}
                   src={avatarUrl || undefined}
@@ -225,7 +225,7 @@ export default function Navbar() {
                 className="bg-[#2B3333] text-[#F3F6F2] hover:bg-black px-4 py-2 rounded text-sm w-full"
               >
                 Logout
-              </button>
+              </button> */}
             </>
           ) : (
             ["Home", "Academics", "Placements", "Contact", "Contributors"].map(
