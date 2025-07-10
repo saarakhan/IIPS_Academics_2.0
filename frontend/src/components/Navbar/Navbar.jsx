@@ -97,14 +97,12 @@ export default function Navbar() {
             (item) => (
               <Link
                 key={item}
-                to={`/${
-                  item.toLowerCase() === "home" ? "" : item.toLowerCase()
-                }`}
-                className={`px-4 py-2 font-medium rounded-md transition-all whitespace-nowrap ${
-                  pathMatch(item)
+                to={`/${item.toLowerCase() === "home" ? "" : item.toLowerCase()
+                  }`}
+                className={`px-4 py-2 font-medium rounded-md transition-all whitespace-nowrap ${pathMatch(item)
                     ? "bg-[#F5F5F5] text-[#2B3333]"
                     : "text-[#2B3333] hover:bg-[#F5F5F5]"
-                }`}
+                  }`}
               >
                 {item}
               </Link>
@@ -114,11 +112,10 @@ export default function Navbar() {
             <>
               <Link
                 to="/teacher-dashboard"
-                className={`px-4 py-2 font-medium rounded-md transition-all whitespace-nowrap ${
-                  pathMatch("teacher-dashboard")
+                className={`px-4 py-2 font-medium rounded-md transition-all whitespace-nowrap ${pathMatch("teacher-dashboard")
                     ? "bg-[#F5F5F5] text-[#2B3333]"
                     : "text-[#2B3333] hover:bg-[#F5F5F5]"
-                }`}
+                  }`}
               >
                 Teacher Dashboard
               </Link>
@@ -128,18 +125,17 @@ export default function Navbar() {
           {session && profile && profile.role === "admin" && (
             <Link
               to="/admin"
-              className={`px-4 py-2 font-medium rounded-md transition-all whitespace-nowrap ${
-                pathMatch("admin")
+              className={`px-4 py-2 font-medium rounded-md transition-all whitespace-nowrap ${pathMatch("admin")
                   ? "bg-[#F5F5F5] text-[#2B3333]"
                   : "text-[#2B3333] hover:bg-[#F5F5F5]"
-              }`}
+                }`}
             >
               Admin Panel
             </Link>
           )}
         </div>
 
-        {/* Profile/Logout/Signup/Login (unchanged) */}
+        {/* Profile/Logout/Signup/Login  */}
         <div className="hidden md:flex items-center space-x-4">
           {session && profile?.role === "teacher" ? (
             <>
@@ -232,14 +228,12 @@ export default function Navbar() {
               (item) => (
                 <Link
                   key={item}
-                  to={`/${
-                    item.toLowerCase() === "home" ? "" : item.toLowerCase()
-                  }`}
-                  className={`block px-4 py-2 rounded-md transition-all ${
-                    pathMatch(item)
+                  to={`/${item.toLowerCase() === "home" ? "" : item.toLowerCase()
+                    }`}
+                  className={`block px-4 py-2 rounded-md transition-all ${pathMatch(item)
                       ? "bg-[#2B3333] text-white"
                       : "text-[#2B3333] hover:bg-[#2B3333] hover:text-white"
-                  }`}
+                    }`}
                   onClick={() => setMenuOpen(false)}
                 >
                   {item}
@@ -251,11 +245,10 @@ export default function Navbar() {
           {session && profile && profile.role === "admin" && (
             <Link
               to="/admin"
-              className={`block px-4 py-2 rounded-md transition-all ${
-                pathMatch("admin")
+              className={`block px-4 py-2 rounded-md transition-all ${pathMatch("admin")
                   ? "bg-[#2B3333] text-white"
                   : "text-[#2B3333] hover:bg-[#2B3333] hover:text-white"
-              }`}
+                }`}
               onClick={() => setMenuOpen(false)}
             >
               Admin Panel
