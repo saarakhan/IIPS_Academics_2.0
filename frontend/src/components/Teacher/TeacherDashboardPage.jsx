@@ -5,13 +5,12 @@ import TeacherResourceUploadModal from "./TeacherResourceUploadModal";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { supabase } from "../../supabaseClient";
 import { BookIcon, CalendarIcon, StarIcon } from "../../Icons";
-import { SiBookstack } from "react-icons/si";
-import { IoNewspaperOutline } from "react-icons/io5";
 import noData from "../../assets/noData.svg";
 import ResourceCard from "../Admin/ResourceCard";
 import StatusSummary from "../Admin/StatusSummary";
 import ResourceFilter from "../Admin/ResourceFilter";
-
+import PreviewModal from "../Admin/PreviewModal";
+import { MdVisibility } from "react-icons/md";
 const getStatusColor = (status) => {
   switch (status) {
     case "PENDING":
@@ -41,6 +40,8 @@ const TeacherDashboardPage = () => {
   const [view, setView] = useState("ALL"); // NEW: "ALL" or "MINE"
   const [uploadedResources, setUploadedResources] = useState([]);
   const [isLoadingResources, setIsLoadingResources] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const [resources, setResources] = useState([]);
   const [filtered, setFiltered] = useState([]);
@@ -93,7 +94,8 @@ const TeacherDashboardPage = () => {
           resource_type,
           status,
           uploaded_at,
-          subject:subject_id ( name, code ),
+          file_path,
+          subject:subject_id ( name, code, semester_number),
           course:subject_id ( course:course_id ( name ) )
         `
         )
@@ -343,51 +345,88 @@ const TeacherDashboardPage = () => {
           <div className="flex flex-col gap-2 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
             {activeTab === "Notes" &&
               (notes.length > 0 ? (
-                notes.map((item) => (
-                  <Card key={item.id}>
-                    <CardContent>
-                      <div className="flex flex-col sm:flex-row sm:items-start gap-4 w-full justify-between">
-                        <div className="flex gap-3 items-start">
-                          <div className="p-2 bg-gray-200 rounded-full shrink-0">
-                            <BookIcon className="w-5 h-5" />
-                          </div>
-                          <div className="flex flex-col">
-                            <div className="flex items-center gap-2">
-                              <h3 className="font-semibold text-sm sm:text-base break-words">
-                                {item.title}
-                              </h3>
-                              <span
-                                className={`px-2 py-0.5 text-xs rounded-full font-medium ${getStatusColor(
-                                  item.status
-                                )}`}
-                              >
-                                {item.status}
-                              </span>
+                <>
+                  {notes.map((item) => (
+                    <Card key={item.id}>
+                      <CardContent>
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full">
+                          {/* Left Content */}
+                          <div className="flex items-start gap-3 flex-grow w-full">
+                            <div className="p-2 bg-gray-200 rounded-full shrink-0">
+                              <BookIcon className="w-5 h-5" />
                             </div>
-                            <p className="text-sm text-[#3B3838]">
-                              {item.subject?.course?.name || ""}{" "}
-                              {item.subject?.name
-                                ? `- ${item.subject.name}`
-                                : ""}
-                            </p>
-                            <div className="flex flex-col sm:flex-row gap-2 mt-2 text-sm text-[#3B3838]">
-                              <span className="flex items-center gap-1">
-                                <CalendarIcon className="w-4 h-4" />
-                                <span className="text-xs sm:text-sm">
-                                  {item.uploaded_at
-                                    ? new Date(
-                                        item.uploaded_at
-                                      ).toLocaleDateString()
-                                    : "N/A"}
+                            <div className="flex flex-col w-full">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <h3 className="font-semibold text-sm sm:text-base break-words">
+                                  {item.title}
+                                </h3>
+                                <span
+                                  className={`px-2 py-0.5 text-xs rounded-full font-medium ${getStatusColor(
+                                    item.status
+                                  )}`}
+                                >
+                                  {item.status}
                                 </span>
-                              </span>
+                              </div>
+
+                              <div className="flex gap-4 flex-wrap">
+                                <p className="text-sm text-[#3B3838]">
+                                  {item.subject?.course?.name || ""}{" "}
+                                  {item.subject?.name
+                                    ? `- ${item.subject.name}`
+                                    : ""}
+                                </p>
+                                <p className="text-sm text-[#3B3838]">
+                                  {item.subject?.semester_number
+                                    ? `Semester - ${item.subject.semester_number}`
+                                    : ""}
+                                </p>
+                              </div>
+
+                              <div className="flex gap-2 mt-2 text-sm text-[#3B3838]">
+                                <span className="flex items-center gap-1">
+                                  <CalendarIcon className="w-4 h-4" />
+                                  <span className="text-xs sm:text-sm">
+                                    {item.uploaded_at
+                                      ? new Date(
+                                          item.uploaded_at
+                                        ).toLocaleDateString()
+                                      : "N/A"}
+                                  </span>
+                                </span>
+                              </div>
                             </div>
+                          </div>
+
+                          {/* Preview Button */}
+                          <div className="mt-4 sm:mt-0 ml-10 sm:ml-0">
+                            <button
+                              onClick={() => {
+                                setSelectedFile(item.file_path);
+                                setShowPreview(true);
+                              }}
+                              className="inline-flex items-center text-sm font-medium text-[#2B3333] border border-[#2B3333] hover:bg-[#2B3333] hover:text-white transition px-3 py-1 rounded"
+                            >
+                              <MdVisibility className="w-4 h-4 mr-1" />
+                              Preview
+                            </button>
                           </div>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
+                      </CardContent>
+                    </Card>
+                  ))}
+
+                  {/* Modal (only rendered once outside the loop) */}
+                  {showPreview && selectedFile && (
+                    <PreviewModal
+                      filePath={selectedFile}
+                      onClose={() => {
+                        setShowPreview(false);
+                        setSelectedFile(null);
+                      }}
+                    />
+                  )}
+                </>
               ) : (
                 <div className="w-full justify-center flex flex-col items-center text-center ">
                   <img
@@ -402,51 +441,86 @@ const TeacherDashboardPage = () => {
               ))}
             {activeTab === "PYQs" &&
               (pyqs.length > 0 ? (
-                pyqs.map((item) => (
-                  <Card key={item.id}>
-                    <CardContent>
-                      <div className="flex flex-col sm:flex-row sm:items-start gap-4 w-full justify-between">
-                        <div className="flex gap-3 items-start">
-                          <div className="p-2 bg-gray-200 rounded-full shrink-0">
-                            <IoNewspaperOutline className="w-5 h-5" />
-                          </div>
-                          <div className="flex flex-col">
-                            <div className="flex items-center gap-2">
-                              <h3 className="font-semibold text-sm sm:text-base break-words">
-                                {item.title}
-                              </h3>
-                              <span
-                                className={`px-2 py-0.5 text-xs rounded-full font-medium ${getStatusColor(
-                                  item.status
-                                )}`}
-                              >
-                                {item.status}
-                              </span>
+                <>
+                  {pyqs.map((item) => (
+                    <Card key={item.id}>
+                      <CardContent>
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full">
+                          {/* Left Content */}
+                          <div className="flex items-start gap-3 flex-grow w-full">
+                            <div className="p-2 bg-gray-200 rounded-full shrink-0">
+                              <BookIcon className="w-5 h-5" />
                             </div>
-                            <p className="text-sm text-[#3B3838]">
-                              {item.subject?.course?.name || ""}{" "}
-                              {item.subject?.name
-                                ? `- ${item.subject.name}`
-                                : ""}
-                            </p>
-                            <div className="flex flex-col sm:flex-row gap-2 mt-2 text-sm text-[#3B3838]">
-                              <span className="flex items-center gap-1">
-                                <CalendarIcon className="w-4 h-4" />
-                                <span className="text-xs sm:text-sm">
-                                  {item.uploaded_at
-                                    ? new Date(
-                                        item.uploaded_at
-                                      ).toLocaleDateString()
-                                    : "N/A"}
+                            <div className="flex flex-col w-full">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <h3 className="font-semibold text-sm sm:text-base break-words">
+                                  {item.title}
+                                </h3>
+                                <span
+                                  className={`px-2 py-0.5 text-xs rounded-full font-medium ${getStatusColor(
+                                    item.status
+                                  )}`}
+                                >
+                                  {item.status}
                                 </span>
-                              </span>
+                              </div>
+
+                              <div className="flex gap-4 flex-wrap">
+                                <p className="text-sm text-[#3B3838]">
+                                  {item.subject?.course?.name || ""}{" "}
+                                  {item.subject?.name
+                                    ? `- ${item.subject.name}`
+                                    : ""}
+                                </p>
+                                <p className="text-sm text-[#3B3838]">
+                                  {item.subject?.semester_number
+                                    ? `Semester - ${item.subject.semester_number}`
+                                    : ""}
+                                </p>
+                              </div>
+
+                              <div className="flex gap-2 mt-2 text-sm text-[#3B3838]">
+                                <span className="flex items-center gap-1">
+                                  <CalendarIcon className="w-4 h-4" />
+                                  <span className="text-xs sm:text-sm">
+                                    {item.uploaded_at
+                                      ? new Date(
+                                          item.uploaded_at
+                                        ).toLocaleDateString()
+                                      : "N/A"}
+                                  </span>
+                                </span>
+                              </div>
                             </div>
+                          </div>
+
+                          {/* Preview Button */}
+                          <div className="mt-4 sm:mt-0 ml-10 sm:ml-0">
+                            <button
+                              onClick={() => {
+                                setSelectedFile(item.file_path);
+                                setShowPreview(true);
+                              }}
+                              className="inline-flex items-center text-sm font-medium text-[#2B3333] border border-[#2B3333] hover:bg-[#2B3333] hover:text-white transition px-3 py-1 rounded"
+                            >
+                              <MdVisibility className="w-4 h-4 mr-1" />
+                              Preview
+                            </button>
                           </div>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
+                      </CardContent>
+                    </Card>
+                  ))}
+                  {showPreview && selectedFile && (
+                    <PreviewModal
+                      filePath={selectedFile}
+                      onClose={() => {
+                        setShowPreview(false);
+                        setSelectedFile(null);
+                      }}
+                    />
+                  )}
+                </>
               ) : (
                 <div className="w-full justify-center flex flex-col items-center text-center ">
                   <img
@@ -461,51 +535,86 @@ const TeacherDashboardPage = () => {
               ))}
             {activeTab === "Syllabus" &&
               (syllabus.length > 0 ? (
-                syllabus.map((item) => (
-                  <Card key={item.id}>
-                    <CardContent>
-                      <div className="flex flex-col sm:flex-row sm:items-start gap-4 w-full justify-between">
-                        <div className="flex gap-3 items-start">
-                          <div className="p-2 bg-gray-200 rounded-full shrink-0">
-                            <SiBookstack className="w-5 h-5" />
-                          </div>
-                          <div className="flex flex-col">
-                            <div className="flex items-center gap-2">
-                              <h3 className="font-semibold text-sm sm:text-base break-words">
-                                {item.title}
-                              </h3>
-                              <span
-                                className={`px-2 py-0.5 text-xs rounded-full font-medium ${getStatusColor(
-                                  item.status
-                                )}`}
-                              >
-                                {item.status}
-                              </span>
+                <>
+                  {syllabus.map((item) => (
+                    <Card key={item.id}>
+                      <CardContent>
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full">
+                          {/* Left Content */}
+                          <div className="flex items-start gap-3 flex-grow w-full">
+                            <div className="p-2 bg-gray-200 rounded-full shrink-0">
+                              <BookIcon className="w-5 h-5" />
                             </div>
-                            <p className="text-sm text-[#3B3838]">
-                              {item.subject?.course?.name || ""}{" "}
-                              {item.subject?.name
-                                ? `- ${item.subject.name}`
-                                : ""}
-                            </p>
-                            <div className="flex flex-col sm:flex-row gap-2 mt-2 text-sm text-[#3B3838]">
-                              <span className="flex items-center gap-1">
-                                <CalendarIcon className="w-4 h-4" />
-                                <span className="text-xs sm:text-sm">
-                                  {item.uploaded_at
-                                    ? new Date(
-                                        item.uploaded_at
-                                      ).toLocaleDateString()
-                                    : "N/A"}
+                            <div className="flex flex-col w-full">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <h3 className="font-semibold text-sm sm:text-base break-words">
+                                  {item.title}
+                                </h3>
+                                <span
+                                  className={`px-2 py-0.5 text-xs rounded-full font-medium ${getStatusColor(
+                                    item.status
+                                  )}`}
+                                >
+                                  {item.status}
                                 </span>
-                              </span>
+                              </div>
+
+                              <div className="flex gap-4 flex-wrap">
+                                <p className="text-sm text-[#3B3838]">
+                                  {item.subject?.course?.name || ""}{" "}
+                                  {item.subject?.name
+                                    ? `- ${item.subject.name}`
+                                    : ""}
+                                </p>
+                                <p className="text-sm text-[#3B3838]">
+                                  {item.subject?.semester_number
+                                    ? `Semester - ${item.subject.semester_number}`
+                                    : ""}
+                                </p>
+                              </div>
+
+                              <div className="flex gap-2 mt-2 text-sm text-[#3B3838]">
+                                <span className="flex items-center gap-1">
+                                  <CalendarIcon className="w-4 h-4" />
+                                  <span className="text-xs sm:text-sm">
+                                    {item.uploaded_at
+                                      ? new Date(
+                                          item.uploaded_at
+                                        ).toLocaleDateString()
+                                      : "N/A"}
+                                  </span>
+                                </span>
+                              </div>
                             </div>
+                          </div>
+
+                          {/* Preview Button */}
+                          <div className="mt-4 sm:mt-0 ml-10 sm:ml-0">
+                            <button
+                              onClick={() => {
+                                setSelectedFile(item.file_path);
+                                setShowPreview(true);
+                              }}
+                              className="inline-flex items-center text-sm font-medium text-[#2B3333] border border-[#2B3333] hover:bg-[#2B3333] hover:text-white transition px-3 py-1 rounded"
+                            >
+                              <MdVisibility className="w-4 h-4 mr-1" />
+                              Preview
+                            </button>
                           </div>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
+                      </CardContent>
+                    </Card>
+                  ))}
+                  {showPreview && selectedFile && (
+                    <PreviewModal
+                      filePath={selectedFile}
+                      onClose={() => {
+                        setShowPreview(false);
+                        setSelectedFile(null);
+                      }}
+                    />
+                  )}
+                </>
               ) : (
                 <div className="w-full justify-center flex flex-col items-center text-center ">
                   <img

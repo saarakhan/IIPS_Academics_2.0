@@ -33,14 +33,14 @@ const ResourceCard = ({ resource }) => {
           </span>
         ))}
       </div>
-     <div className='text-sm text-gray-600 flex flex-wrap gap-3'>
-        👤 {resource.uploadedBy}
-        📅 {resource.date}
-        📄 {resource.size}
-        📥 {resource.downloads} Downloads
-        ⭐ {resource.rating}/5.0
-        👩‍🏫 {resource.instructor}
-      </div>
+      {/* <div className='text-sm text-gray-600 flex flex-wrap gap-3 '>
+          👤 {resource.uploadedBy}
+          📅 {resource.date}
+          📄 {resource.size}
+          📥 {resource.downloads} Downloads
+          ⭐ {resource.rating}/5.0
+          👩‍🏫 {resource.instructor}
+        </div> */}
 
       {/* Footer Icons */}
       {/* <div className='flex gap-4 justify-end text-gray-500'>

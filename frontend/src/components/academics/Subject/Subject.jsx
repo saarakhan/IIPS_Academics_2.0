@@ -191,7 +191,7 @@ function Subject() {
                 {/* Load More Button rather than infinite scrolling */}
                 {hasMore && (
                   <div className='flex justify-center'>
-                    <button onClick={loadMoreSubjects} disabled={loading} className='px-6 py-2 bg-[#2B3333] text-white rounded-md hover:bg-black transition disabled:opacity-50'>
+                    <button onClick={loadMoreSubjects} disabled={loading} className='px-6 py-2 bg-[#2B3333] text-white rounded-md  hover:bg-black transition disabled:opacity-50'>
                       {loading ? 'Loading...' : 'Load More'}
                     </button>
                   </div>

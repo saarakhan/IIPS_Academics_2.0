@@ -120,7 +120,7 @@ function SubjectDetail() {
   const totalItems = notes.length + pyqs.length + syllabus.length;
 
   return (
-    <div className='min-h-screen flex flex-col bg-gradient-to-b from-[#f5f7fa] to-[#f0f4f8]'>
+    <div className='min-h-screen flex flex-col bg-gradient-to-b from-[#f5f7fa] to-[#f0f4f8] '>
       <Header subject={subject} />
       <div className='container max-w-10xl mx-auto py-6 px-6 flex-grow'>
         <SubjectInfo subject={subject} />

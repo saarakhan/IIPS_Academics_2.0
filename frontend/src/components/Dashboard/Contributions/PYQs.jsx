@@ -5,6 +5,8 @@ import { IoNewspaperOutline } from "react-icons/io5";
 import { UserAuth } from "../../../Context/AuthContext";
 import { supabase } from "../../../supabaseClient";
 import { CalendarIcon, StarIcon } from "../../../Icons";
+import PreviewModal from "../../Admin/PreviewModal";
+import { MdVisibility } from "react-icons/md";
 
 function Card({ children }) {
   return <div className="bg-white border-b-2 cursor-pointer">{children}</div>;
@@ -20,6 +22,9 @@ export default function PYQs({ canUpload, fetchTrigger }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [showPreview, setShowPreview] = useState(false); 
+  const [selectedFile, setSelectedFile] = useState(null);
+
   useEffect(() => {
     if (!session?.user?.id) return setLoading(false);
 
@@ -30,7 +35,7 @@ export default function PYQs({ canUpload, fetchTrigger }) {
         const { data, error: fetchError } = await supabase
           .from("resources")
           .select(`
-            id, title, uploaded_at, rating_average, status,
+            id, title, uploaded_at, rating_average, status, file_path,
             subject:subject_id (
               semester_number,
               course:course_id (name)
@@ -46,6 +51,7 @@ export default function PYQs({ canUpload, fetchTrigger }) {
           data.map((pyq) => ({
             id: pyq.id,
             title: pyq.title,
+            file_path: pyq.file_path, 
             semester: `${pyq.subject?.course?.name || ""} Semester ${pyq.subject?.semester_number || ""}`,
             date: pyq.uploaded_at ? new Date(pyq.uploaded_at).toLocaleDateString() : "N/A",
             status: pyq.status,
@@ -88,7 +94,7 @@ export default function PYQs({ canUpload, fetchTrigger }) {
             <Card key={item.id}>
               <CardContent>
                 <div className="flex flex-col sm:flex-row sm:items-start gap-4 w-full justify-between">
-                  <div className="flex gap-3 items-start">
+                  <div className="flex gap-3 items-start flex-grow">
                     <div className="p-2 bg-gray-200 rounded-full shrink-0">
                       <IoNewspaperOutline className="w-5 h-5" />
                     </div>
@@ -114,8 +120,19 @@ export default function PYQs({ canUpload, fetchTrigger }) {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 sm:gap-6 self-start sm:self-center ml-auto sm:ml-12">
-                    <FaAngleRight className="border-2 rounded-full w-5 h-5 sm:w-6 sm:h-6 shadow-[3px_4px_4px_rgba(0,0,0,0.25)]" />
+
+                  <div className="flex items-center gap-3 sm:gap-6 self-start ml-10 sm:ml-12">
+                    <button
+                      onClick={() => {
+                        setSelectedFile(item.file_path);
+                        setShowPreview(true);
+                      }}
+                      className="inline-flex items-center text-sm font-medium text-[#2B3333] border border-[#2B3333] hover:bg-[#2B3333] hover:text-white transition px-3 py-1 rounded"
+                    >
+                      <MdVisibility className="w-4 h-4 mr-1" />
+                      Preview
+                    </button>
+                    {/* <FaAngleRight className="border-2 rounded-full w-5 h-5 sm:w-6 sm:h-6 shadow-[3px_4px_4px_rgba(0,0,0,0.25)]" /> */}
                   </div>
                 </div>
               </CardContent>
@@ -129,7 +146,16 @@ export default function PYQs({ canUpload, fetchTrigger }) {
           </div>
         )}
       </div>
+
+      {showPreview && selectedFile && (
+        <PreviewModal
+          filePath={selectedFile}
+          onClose={() => {
+            setShowPreview(false);
+            setSelectedFile(null);
+          }}
+        />
+      )}
     </div>
   );
 }
-
