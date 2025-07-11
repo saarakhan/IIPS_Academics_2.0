@@ -1,23 +1,21 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { BookIcon, CalendarIcon, StarIcon } from "../../../Icons";
 import { FaAngleRight } from "react-icons/fa6";
 import noData from "../../../assets/noData.svg";
 import { UserAuth } from "../../../Context/AuthContext";
 import { supabase } from "../../../supabaseClient";
-import ResourceUploadModal from "./ResourceUploadModal";
-import toast from "react-hot-toast";
+import PreviewModal from "../../Admin/PreviewModal";
+import { MdVisibility } from "react-icons/md";
 
 function Card({ children }) {
   return (
-    <div className="bg-white border-b-2  cursor-pointer">
-      {children}
-    </div>
+    <div className="bg-white border-b-2 cursor-pointer">{children}</div>
   );
 }
 
 function CardContent({ children }) {
   return (
-    <div className="p-4 flex items-center justify-between  ">{children}</div>
+    <div className="p-4 flex items-center justify-between">{children}</div>
   );
 }
 
@@ -26,6 +24,9 @@ export default function Notes({ canUpload, fetchTrigger }) {
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [showPreview, setShowPreview] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
     if (!session?.user?.id) {
@@ -41,7 +42,7 @@ export default function Notes({ canUpload, fetchTrigger }) {
           .from("resources")
           .select(
             `
-            id, title, uploaded_at, rating_average, status, 
+            id, title, uploaded_at, rating_average, status, file_path
             subject:subject_id (
               semester_number,
               course:course_id (name)
@@ -58,8 +59,10 @@ export default function Notes({ canUpload, fetchTrigger }) {
           data.map((note) => ({
             id: note.id,
             title: note.title,
-            semester: `${note.subject?.course?.name || ""} Semester ${note.subject?.semester_number || ""
-              }`,
+            file_path: note.file_path, 
+            semester: `${note.subject?.course?.name || ""} Semester ${
+              note.subject?.semester_number || ""
+            }`,
             date: note.uploaded_at
               ? new Date(note.uploaded_at).toLocaleDateString()
               : "N/A",
@@ -102,13 +105,13 @@ export default function Notes({ canUpload, fetchTrigger }) {
 
   return (
     <div className="mt-3">
-      <div className="flex flex-col gap-2 ">
+      <div className="flex flex-col gap-2">
         {notes.length > 0 ? (
           notes.map((item) => (
             <Card key={item.id}>
               <CardContent>
                 <div className="flex flex-col sm:flex-row sm:items-start gap-4 w-full justify-between">
-                  <div className="flex gap-3 items-start">
+                  <div className="flex gap-3 items-start flex-grow">
                     <div className="p-2 bg-gray-200 rounded-full shrink-0">
                       <BookIcon className="w-5 h-5" />
                     </div>
@@ -125,7 +128,7 @@ export default function Notes({ canUpload, fetchTrigger }) {
                           {item.status}
                         </span>
                       </div>
-                      <p className="text-sm text-[#3B3838]">{item.semester}</p>
+                      <p className="text-sm text-[#3B3838]">{item.semester} </p>
                       <div className="flex flex-col sm:flex-row gap-2 mt-2 text-sm text-[#3B3838]">
                         <span className="flex items-center gap-1">
                           <CalendarIcon className="w-4 h-4" />
@@ -148,8 +151,20 @@ export default function Notes({ canUpload, fetchTrigger }) {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 sm:gap-6  sm:mt-0 self-start sm:self-center ml-auto sm:ml-12">
-                    <FaAngleRight className="border-2 rounded-full w-5 h-5 sm:w-6 sm:h-6 shadow-[3px_4px_4px_rgba(0,0,0,0.25)] " />
+
+                  <div className="flex items-center gap-3 sm:gap-6 sm:mt-0 self-start ml-10 sm:ml-12">
+                    <button
+                      onClick={() => {
+                        setSelectedFile(item.file_path);
+                        setShowPreview(true);
+                      }}
+                      className="inline-flex items-center text-sm font-medium text-[#2B3333] border border-[#2B3333] hover:bg-[#2B3333] hover:text-white transition px-3 py-1 rounded"
+                    >
+                      <MdVisibility className="w-4 h-4 mr-1" />
+                      Preview
+                    </button>
+
+                    {/* <FaAngleRight className="border-2 rounded-full w-5 h-5 sm:w-6 sm:h-6 shadow-[3px_4px_4px_rgba(0,0,0,0.25)] " /> */}
                   </div>
                 </div>
               </CardContent>
@@ -171,7 +186,16 @@ export default function Notes({ canUpload, fetchTrigger }) {
           </div>
         )}
       </div>
+
+      {showPreview && selectedFile && (
+        <PreviewModal
+          filePath={selectedFile}
+          onClose={() => {
+            setShowPreview(false);
+            setSelectedFile(null);
+          }}
+        />
+      )}
     </div>
   );
 }
-
