@@ -57,7 +57,7 @@ export default function StatusSummary({ counts, onStatusClick }) {
         <div
           key={stat.key}
           onClick={() => onStatusClick?.(stat.key)}
-          className="rounded-md border-2 border-gray-300 p-5 shadow-[7px_8px_4.8px_rgba(0,0,0,0.1)] transition-all hover:shadow-md bg-white">
+          className="rounded-md border-2 border-gray-300 p-5 shadow-[4px_4px_3px_rgba(0,0,0,0.0.5)] transition-all hover:shadow-md bg-white">
           <div className="flex items-center gap-4">
             <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-100">{stat.icon}</div>
             <div className="flex-1">
