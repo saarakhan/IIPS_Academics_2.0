@@ -9,15 +9,9 @@ function SubjectCard({ subject, onClick }) {
     <div
       className="relative group bg-white rounded-lg overflow-hidden border border-gray-100 w-full transition-all duration-300 flex flex-col"
       style={{
-        boxShadow: "14px 11px 8px rgba(0, 0, 0, 0.1)",
+        boxShadow: "10px 7px 8px rgba(0, 0, 0, 0.1)",
         minHeight: "440px",
         maxHeight: "440px",
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = "18px 15px 12px rgba(0, 0, 0, 0.15)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow = "14px 11px 8px rgba(0, 0, 0, 0.1)";
       }}
     >
       {/* Header */}

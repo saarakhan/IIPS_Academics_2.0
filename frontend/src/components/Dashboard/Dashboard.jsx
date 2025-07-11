@@ -220,7 +220,7 @@ const Dashboard = () => {
 
   const menuItems = [
     { label: "Contributions", icon: <ChevronUpIcon /> },
-    { label: "Rewards", icon: <StarIcon size={16} /> },
+    // { label: "Rewards", icon: <StarIcon size={16} /> },
     { label: "Downloads", icon: <DownloadIcon size={16} /> },
   ];
 
@@ -417,9 +417,11 @@ const Dashboard = () => {
           <div className="p-6 h-full overflow-y-auto">
             {active === "Contributions" ? (
               <Contributions canUpload={canUpload} loading={loading} />
-            ) : active === "Rewards" ? (
-              <Rewards />
-            ) : (
+            ) : 
+            // active === "Rewards" ? (
+            //   <Rewards />
+            // ) : 
+            (
               <Downloads />
             )}
           </div>

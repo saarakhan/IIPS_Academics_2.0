@@ -19,6 +19,11 @@ function App() {
 
   const hideLayout = hideLayoutPaths.includes(location.pathname);
 
+  useEffect(() => {
+    // Scroll to top whenever pathname changes
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   // play video only once
   useEffect(() => {
     const hasSeenVideo = sessionStorage.getItem("hasSeenWelcomeVideo");
