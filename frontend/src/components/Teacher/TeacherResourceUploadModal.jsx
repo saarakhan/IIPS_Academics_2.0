@@ -196,7 +196,7 @@ const TeacherResourceUploadModal = ({ isOpen, onClose, onResourceUploaded }) => 
         status: 'APPROVED',
         uploaded_at: currentTime,
         approved_at: currentTime,
-        approved_by_admin_id: userId,
+        // approved_by_admin_id: userId,
       };
       
       const { error: insertError } = await supabase

@@ -78,15 +78,15 @@ const VerificationDashboard = () => {
       <div className="flex gap-1 sm:gap-2 flex-wrap">
         <button onClick={() => setPreviewProfile(profile)} className={`${baseButtonClass} bg-white text-[#2B3333]`} aria-label="Preview">
           <MdVisibility className={iconButtonClass} />
-          <span className="sr-only sm:not-sr-only sm:ml-1">Preview</span>
+          {/* <span className="sr-only sm:not-sr-only sm:ml-1">Preview</span> */}
         </button>
         <button onClick={() => handleVerify(profile.id, true)} className={`${baseButtonClass} bg-green-500 text-white border-green-600 hover:bg-green-600`} aria-label="Approve">
           <MdCheck className={iconButtonClass} />
-          <span className="sr-only sm:not-sr-only sm:ml-1">Approve</span>
+          {/* <span className="sr-only sm:not-sr-only sm:ml-1">Approve</span> */}
         </button>
         <button onClick={() => handleVerify(profile.id, false)} className={`${baseButtonClass} bg-red-500 text-white border-red-600 hover:bg-red-600`} aria-label="Reject">
           <MdClose className={iconButtonClass} />
-          <span className="sr-only sm:not-sr-only sm:ml-1">Reject</span>
+          {/* <span className="sr-only sm:not-sr-only sm:ml-1">Reject</span> */}
         </button>
       </div>
     );
