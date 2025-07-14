@@ -38,31 +38,19 @@ function CardContent({ children }) {
 const TeacherDashboardPage = () => {
   const { session, user, profile } = UserAuth();
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-  const [view, setView] = useState("ALL"); // NEW: "ALL" or "MINE"
+  const [view, setView] = useState("ALL");
   const [uploadedResources, setUploadedResources] = useState([]);
   const [isLoadingResources, setIsLoadingResources] = useState(false);
-
   const [resources, setResources] = useState([]);
   const [filtered, setFiltered] = useState([]);
-  const [counts, setCounts] = useState({
-    total: 0,
-    approved: 0,
-    rejected: 0,
-    pending: 0,
-  });
-  const [filters, setFilters] = useState({
-    status: "PENDING",
-    subject: "",
-    contributor: "",
-    course: "",
-  });
+  const [counts, setCounts] = useState({ total: 0, approved: 0, rejected: 0, pending: 0 });
+  const [filters, setFilters] = useState({ status: "PENDING", subject: "", contributor: "", course: "" });
   const [departments, setDepartments] = useState([]);
   const [activeStatus, setActiveStatus] = useState("PENDING");
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const numberResourceDisplay = 5;
   const [loading, setLoading] = useState(false);
-
   const [fetchError, setFetchError] = useState(null);
   const [activeTab, setActiveTab] = useState("Notes");
   const tabs = ["Notes", "PYQs", "Syllabus"];
@@ -78,6 +66,55 @@ const TeacherDashboardPage = () => {
     }
   }
 
+  // Helper: fetch subject IDs for this teacher
+  const fetchTeacherSubjectIds = async (teacherId) => {
+    const { data, error } = await supabase
+      .from("subjects")
+      .select("id")
+      .eq("teacher_id", teacherId);
+    if (error) {
+      console.error("Error fetching teacher's subjects:", error);
+      return [];
+    }
+    return data.map((s) => s.id);
+  };
+
+  // Fetch resources for teacher's subjects (ALL view)
+  const fetchTeacherSubjectResources = async (status = "PENDING", page = 0, currentFilters = filters) => {
+    setLoading(true);
+    if (!profile?.id) {
+      setResources([]);
+      setFiltered([]);
+      setLoading(false);
+      return;
+    }
+    const subjectIds = await fetchTeacherSubjectIds(profile.id);
+    if (!subjectIds.length) {
+      setResources([]);
+      setFiltered([]);
+      setLoading(false);
+      return;
+    }
+    const from = page * numberResourceDisplay;
+    const to = from + numberResourceDisplay - 1;
+    let query = supabase
+      .from("resources")
+      .select(`*, profiles!resources_uploader_profile_id_fkey(first_name, last_name, course, semester), subjects(name)`)
+      .in("subject_id", subjectIds)
+      .order("updated_at", { ascending: false })
+      .range(from, to);
+    if (status && status !== "ALL") query = query.eq("status", status);
+    const { data, error } = await query;
+    if (!error) {
+      const all = page === 0 ? data : [...resources, ...data];
+      setResources(all);
+      applyFilters(all, currentFilters);
+      setHasMore(data.length >= numberResourceDisplay);
+    }
+    setLoading(false);
+  };
+
+  // Fetch teacher resources
   const fetchTeacherResources = async () => {
     const userId = session?.user?.id || user?.id;
     if (!userId) return;
@@ -110,35 +147,29 @@ const TeacherDashboardPage = () => {
     }
   };
 
-  const fetchResources = async (
-    status = "PENDING",
-    page = 0,
-    currentFilters = filters
-  ) => {
-    setLoading(true);
-    const from = page * numberResourceDisplay;
-    const to = from + numberResourceDisplay - 1;
-
-    let query = supabase
-      .from("resources")
-      .select(
-        `*, profiles!resources_uploader_profile_id_fkey(first_name, last_name, course, semester), subjects(name)`
-      )
-      .order("updated_at", { ascending: false })
-      .range(from, to);
-
-    if (status && status !== "ALL") query = query.eq("status", status);
-
-    const { data, error } = await query;
-
-    if (!error) {
-      const all = page === 0 ? data : [...resources, ...data];
-      setResources(all);
-      applyFilters(all, currentFilters);
-      setHasMore(data.length >= numberResourceDisplay);
+  // Update counts for teacher's subjects
+  const updateCounts = async () => {
+    if (!profile?.id) {
+      setCounts({ total: 0, approved: 0, rejected: 0, pending: 0 });
+      return;
     }
-
-    setLoading(false);
+    const subjectIds = await fetchTeacherSubjectIds(profile.id);
+    if (!subjectIds.length) {
+      setCounts({ total: 0, approved: 0, rejected: 0, pending: 0 });
+      return;
+    }
+    const [total, approved, rejected, pending] = await Promise.all([
+      supabase.from("resources").select("*", { count: "exact", head: true }).in("subject_id", subjectIds),
+      supabase.from("resources").select("*", { count: "exact", head: true }).in("subject_id", subjectIds).eq("status", "APPROVED"),
+      supabase.from("resources").select("*", { count: "exact", head: true }).in("subject_id", subjectIds).eq("status", "REJECTED"),
+      supabase.from("resources").select("*", { count: "exact", head: true }).in("subject_id", subjectIds).eq("status", "PENDING"),
+    ]);
+    setCounts({
+      total: total.count || 0,
+      approved: approved.count || 0,
+      rejected: rejected.count || 0,
+      pending: pending.count || 0,
+    });
   };
 
   const applyFilters = (data, { status, subject, contributor, course }) => {
@@ -163,56 +194,31 @@ const TeacherDashboardPage = () => {
     setFiltered(filtered);
   };
 
-  const updateCounts = async () => {
-    const [total, approved, rejected, pending] = await Promise.all([
-      supabase.from("resources").select("*", { count: "exact", head: true }),
-      supabase
-        .from("resources")
-        .select("*", { count: "exact", head: true })
-        .eq("status", "APPROVED"),
-      supabase
-        .from("resources")
-        .select("*", { count: "exact", head: true })
-        .eq("status", "REJECTED"),
-      supabase
-        .from("resources")
-        .select("*", { count: "exact", head: true })
-        .eq("status", "PENDING"),
-    ]);
-
-    setCounts({
-      total: total.count || 0,
-      approved: approved.count || 0,
-      rejected: rejected.count || 0,
-      pending: pending.count || 0,
-    });
-  };
-
   const handleStatusChange = (status) => {
     const resetFilters = { status, subject: "", contributor: "", course: "" };
     setFilters(resetFilters);
     setActiveStatus(status);
     setPage(0);
-    fetchResources(status, 0, resetFilters);
+    fetchTeacherSubjectResources(status, 0, resetFilters);
   };
 
   const handleAction = async () => {
     setPage(0);
     setResources([]);
-    await fetchResources(activeStatus, 0);
+    await fetchTeacherSubjectResources(activeStatus, 0);
     await updateCounts();
   };
 
   const loadMoreResources = () => {
     const nextPage = page + 1;
     setPage(nextPage);
-    fetchResources(activeStatus, nextPage);
+    fetchTeacherSubjectResources(activeStatus, nextPage);
   };
 
   useEffect(() => {
-    fetchTeacherResources();
+    fetchTeacherResources(); // for 'MINE' view
     updateCounts();
-    fetchResources(activeStatus, 0, filters);
+    fetchTeacherSubjectResources(activeStatus, 0, filters); // for 'ALL' view
     supabase
       .from("courses")
       .select("id, name")
@@ -220,7 +226,6 @@ const TeacherDashboardPage = () => {
       .then(({ data }) => {
         setDepartments(data || []);
       });
-    // Always refetch when modal closes (after upload or cancel)
   }, [session?.user?.id, isUploadModalOpen]);
 
   const handleResourceUploaded = () => {

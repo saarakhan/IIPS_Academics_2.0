@@ -13,6 +13,7 @@ const SignIn = () => {
   const [loading, setLoading] = useState(false);
   const [fieldError, setFieldError] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
+  const [role, setRole] = useState("student"); // NEW: role toggle
 
   const { SignInUser, signInWithGoogle, signInWithGitHub, refreshUserProfile } =
     UserAuth();
@@ -42,17 +43,17 @@ const SignIn = () => {
     } = await SignInUser(email, password);
     setLoading(false);
 
-    // Check if user exists in the database (profile table)
     let userExists = false;
+    let userRole = null;
     if (success && data?.user?.id) {
-      // Check in profiles table
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
-        .select("id")
+        .select("id, role")
         .eq("id", data.user.id)
         .single();
       if (profileData && !profileError) {
         userExists = true;
+        userRole = profileData.role;
       }
     }
 
@@ -77,6 +78,19 @@ const SignIn = () => {
     if (success && !userExists) {
       setError("No account found for this email. Please sign up first.");
       toast.error("No account found for this email. Please sign up first.");
+      setTimeout(() => setError(null), 4000);
+      return;
+    }
+    // Role check for teacher login
+    if (role === "teacher" && userRole !== "teacher") {
+      setError("This account is not registered as a teacher.");
+      toast.error("This account is not registered as a teacher.");
+      setTimeout(() => setError(null), 4000);
+      return;
+    }
+    if (role === "student" && userRole !== "student") {
+      setError("This account is not registered as a student.");
+      toast.error("This account is not registered as a student.");
       setTimeout(() => setError(null), 4000);
       return;
     }
@@ -185,7 +199,24 @@ const SignIn = () => {
             <XMarkIcon className="h-8 w-8 p-1 text-[#2B3333] hover:bg-[#C79745] rounded-full" />
           </button>
         </div>
-
+        {/* Role Toggle */}
+        <div className="flex justify-center gap-4 my-4">
+          <button
+            type="button"
+            className={`px-4 py-2 rounded-md font-semibold border transition-colors duration-200 ${role === "student" ? "bg-[#2B3333] text-white" : "bg-white text-[#2B3333]"}`}
+            onClick={() => setRole("student")}
+          >
+            Student
+          </button>
+          <button
+            type="button"
+            className={`px-4 py-2 rounded-md font-semibold border transition-colors duration-200 ${role === "teacher" ? "bg-[#2B3333] text-white" : "bg-white text-[#2B3333]"}`}
+            onClick={() => setRole("teacher")}
+          >
+            Teacher
+          </button>
+        </div>
+        {/* Email and Password Fields */}
         <div className="flex flex-col py-2">
           <input
             onChange={(e) => setEmail(e.target.value)}
@@ -235,7 +266,6 @@ const SignIn = () => {
             </Link>
           </div>
         </div>
-
         <button
           type="submit"
           disabled={loading}
@@ -273,39 +303,42 @@ const SignIn = () => {
             "Sign In"
           )}
         </button>
-
-        <div className="flex items-center my-4">
-          <div className="flex-grow h-px bg-gray-300" />
-          <span className="mx-2 text-gray-400 text-sm">OR</span>
-          <div className="flex-grow h-px bg-gray-300" />
-        </div>
-        <div className="flex flex-col py-2">
-          <button
-            type="button"
-            className="flex items-center justify-center w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 mb-2"
-            onClick={handleSignInByGoogle}
-          >
-            <img
-              src="https://www.svgrepo.com/show/475656/google-color.svg"
-              alt="Google"
-              className="h-5 w-5 mr-2"
-            />
-            Continue with Google
-          </button>
-          <button
-            type="button"
-            className="flex items-center justify-center w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-            onClick={handleSignInByGitHub}
-          >
-            <img
-              src="https://www.svgrepo.com/show/512317/github-142.svg"
-              alt="GitHub"
-              className="h-5 w-5 mr-2"
-            />
-            Continue with GitHub
-          </button>
-        </div>
-
+        {/* Only show OAuth for students */}
+        {role === "student" && (
+          <>
+            <div className="flex items-center my-4">
+              <div className="flex-grow h-px bg-gray-300" />
+              <span className="mx-2 text-gray-400 text-sm">OR</span>
+              <div className="flex-grow h-px bg-gray-300" />
+            </div>
+            <div className="flex flex-col py-2">
+              <button
+                type="button"
+                className="flex items-center justify-center w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 mb-2"
+                onClick={handleSignInByGoogle}
+              >
+                <img
+                  src="https://www.svgrepo.com/show/475656/google-color.svg"
+                  alt="Google"
+                  className="h-5 w-5 mr-2"
+                />
+                Continue with Google
+              </button>
+              <button
+                type="button"
+                className="flex items-center justify-center w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                onClick={handleSignInByGitHub}
+              >
+                <img
+                  src="https://www.svgrepo.com/show/512317/github-142.svg"
+                  alt="GitHub"
+                  className="h-5 w-5 mr-2"
+                />
+                Continue with GitHub
+              </button>
+            </div>
+          </>
+        )}
         {error && (
           <p className="text-red-600 text-center pt-4 text-sm">{error}</p>
         )}
